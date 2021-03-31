@@ -1,5 +1,6 @@
 #include "QClient.h"
 
+#include <qmessagebox.h>
 #include <nlohmann/json.hpp>
 #include <iostream>
 QClient* QClient::instance = nullptr;
@@ -10,11 +11,10 @@ QClient::QClient(QWidget *parent)
 
 
     // facere formular
-    
 }
 QClient:: ~QClient()
 {
-    delete this;
+
 }
 QClient* QClient::getInstance()
 {

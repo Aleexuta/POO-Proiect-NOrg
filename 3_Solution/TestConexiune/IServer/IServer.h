@@ -4,7 +4,11 @@
 #include "DataBase.h"
 enum class CustomMsgTypes : uint32_t
 {
-	ServerAccept,
+    ServerAccept,
+	ServerAcceptRegister,
+	ServerDenyRegister,
+    ServerAcceptLogin,
+    ServerDenyLogin,
 	ServerDeny,
     ServerRegister,
     ServerLogin,

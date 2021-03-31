@@ -50,6 +50,6 @@ void RegisterForm::on_RegisterButton_clicked()
 	//afiseaza doar daca primeste aprobare de la server
 
 
-	main->show();
-	close();
+	//main->show();
+	//close();
 }

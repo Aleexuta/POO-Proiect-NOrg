@@ -25,9 +25,16 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 		if (RegisterUser(str))
 		{
 			std::cout << "\n Adaugare User Succes";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::ServerAcceptRegister;
+			client->Send(msg2);
+			//trimite un mesaj catre client cu s a efectuat cu succes
 		}
 		else
 		{
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::ServerDenyRegister;
+			client->Send(msg2);
 			std::cout << "\nAdaugare User Error";
 		}
 	}
@@ -83,13 +90,16 @@ bool IServer::RegisterUser(std::string j)
 		std::string email=js["email"];
 		std::string password=js["password"];
 		//aici ^^^
-		if (DB.insertUser(username, firstname,lastname,email, password))
+		if (DB.insertUser(username, firstname, lastname, email, password))
+		{	
+			
 			return true;
+		}
 		return false;
 	}
 	catch (...)
 	{
-		std::cout << "Eroare la RegisterUser(ISERVER)";
+		std::cout << "\nEroare la RegisterUser(ISERVER)";
 	}
 }
 
