@@ -11,6 +11,10 @@
 enum class CustomMsgTypes : uint32_t
 {
     ServerAccept,
+    ServerAcceptRegister,
+    ServerDenyRegister,
+    ServerAcceptLogin,
+    ServerDenyLogin,
     ServerDeny,
 	ServerRegister,
     ServerLogin,
