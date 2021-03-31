@@ -39,6 +39,6 @@ private:
 public:
     static QClient* getInstance();
     void deleteInstance();
-
+   // void IncomingMessages
     void sendRegisterMessage(std::string j);
 };

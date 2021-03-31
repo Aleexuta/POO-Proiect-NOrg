@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     w->Connect("6.tcp.ngrok.io",16296);
     f1.show();
 	bool bQuit = false;
-	while (!bQuit)
+	//while (!bQuit)
 	{
 		if (w->IsConnected())
 		{
@@ -47,12 +47,12 @@ int main(int argc, char *argv[])
 			QMessageBox::warning(w, "Server Message", "Server Down");
 			//a se decomenta la lansare(teste)
 
-			w->disconnect();
+			/*w->disconnect();
 			w->deleteInstance();
 			exit(EXIT_FAILURE);
-			QApplication::quit();
+			QApplication::quit();*/
 			bQuit = true;
-
+			
 		}
 	}
 

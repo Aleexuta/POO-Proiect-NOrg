@@ -48,8 +48,15 @@ void RegisterForm::on_RegisterButton_clicked()
 
 	main->sendRegisterMessage(str);
 	//afiseaza doar daca primeste aprobare de la server
-
-
-	//main->show();
-	//close();
+	auto msg = main->Incoming().pop_front().msg;
+	if (msg.header.id == CustomMsgTypes::ServerAcceptRegister)
+	{
+		QMessageBox::information(main, "Server Message", "Server Accepted Connection");
+		main->show();
+		close();
+	}
+	if (msg.header.id == CustomMsgTypes::ServerDenyRegister)
+	{
+		//QMessageBox::warning(w, "Server Message", "Server Deny Connection");
+	}
 }
