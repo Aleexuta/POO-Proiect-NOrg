@@ -21,8 +21,10 @@ public:
 	
 
 	bool insertUser(/* date de inregistrare sub forma de stringuri*/ std::string username,std::string firstname, std::string lastname,std::string email, std::string password);
-	bool loginUser(std::string username, std::string password);
+	std::string loginUser(std::string email, std::string password);
 	
 	void createTable();
+
+	std::string rasp;
 };
 

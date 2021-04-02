@@ -2,6 +2,21 @@
 #include "ui_FirstForm.h"
 #include <qmessagebox.h>
 #include "RegisterForm.h"
+#include "LoginForm.h"
+#include "QClient.h"
+FirstForm* FirstForm::instance = nullptr;
+FirstForm* FirstForm::getInstance()
+{
+	if (!instance)
+		instance = new FirstForm();
+	return instance;
+}
+
+void FirstForm::deleteInstance()
+{
+	if (instance)
+		delete instance;
+}
 FirstForm::FirstForm(QWidget* parent):
 	QDialog(parent),
 	ui(new Ui::FirstForm)
@@ -14,21 +29,26 @@ FirstForm::~FirstForm()
 	delete ui;
 }
 
+void FirstForm::on_closeButton_clicked()
+{
+	close();
+}
+
 void FirstForm::on_pushButton_clicked()
 {
-	if (ui->RegisterButton->isCheckable())
+	if (ui->RegisterButton->isChecked())
 	{	
 		RegisterForm* reg = RegisterForm::getInstance();
 		reg->show();
 		//close this one
 		
 	}
-	if (ui->LoginButton->isCheckable())
+	if (ui->LoginButton->isChecked())
 	{
-		//open login form
-		//close this one
+		LoginForm* log = LoginForm::getInstance();
+		log->show();
 	}
-	if (ui->GuestButton->isCheckable())
+	if (ui->GuestButton->isChecked())
 	{
 		//close and make guest user
 	}

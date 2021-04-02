@@ -31,12 +31,12 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>QT 2019</QtInstall>
+    <QtInstall>5.15.2_msvc2019_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>QT 2019</QtInstall>
+    <QtInstall>5.15.2_msvc2019_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
@@ -89,9 +89,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LoginForm.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
     <QtRcc Include="QClient.qrc" />
     <QtUic Include="FirstForm.ui" />
+    <QtUic Include="LoginForm.ui" />
     <QtUic Include="QClient.ui" />
     <QtMoc Include="QClient.h" />
     <ClCompile Include="FirstForm.cpp" />
@@ -101,6 +103,8 @@
     <QtUic Include="RegisterForm.ui" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common_function.h" />
+    <QtMoc Include="LoginForm.h" />
     <QtMoc Include="RegisterForm.h" />
     <QtMoc Include="FirstForm.h" />
     <ClInclude Include="IUser.h" />

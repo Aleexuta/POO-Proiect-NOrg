@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FirstForm</class>
- <widget class="QDialog" name="FirstForm">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -12,7 +12,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>30</width>
+    <width>31</width>
     <height>50</height>
    </size>
   </property>
@@ -25,16 +25,13 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <property name="autoFillBackground">
-   <bool>false</bool>
-  </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(198, 224, 255);</string>
   </property>
   <widget class="QLabel" name="Logo">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>20</y>
      <width>171</width>
      <height>61</height>
@@ -53,56 +50,63 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>90</y>
-     <width>171</width>
-     <height>191</height>
+     <width>181</width>
+     <height>181</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QRadioButton" name="RegisterButton">
-      <property name="minimumSize">
+     <widget class="QLabel" name="emailLabe">
+      <property name="maximumSize">
        <size>
-        <width>1</width>
-        <height>0</height>
+        <width>70</width>
+        <height>20</height>
        </size>
       </property>
       <property name="text">
-       <string>REGISTER</string>
+       <string>Email</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="LoginButton">
-      <property name="minimumSize">
+     <widget class="QLineEdit" name="emailText">
+      <property name="maximumSize">
        <size>
-        <width>1</width>
-        <height>0</height>
+        <width>250</width>
+        <height>20</height>
        </size>
       </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="passwordLabel">
+      <property name="maximumSize">
+       <size>
+        <width>70</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Password</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="passwordText">
+      <property name="maximumSize">
+       <size>
+        <width>250</width>
+        <height>20</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="LoginButton">
       <property name="text">
        <string>LOGIN</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="GuestButton">
-      <property name="minimumSize">
-       <size>
-        <width>1</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>GUEST</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Continue</string>
       </property>
      </widget>
     </item>

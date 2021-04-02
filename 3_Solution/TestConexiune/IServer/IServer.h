@@ -37,7 +37,7 @@ protected:
 	virtual void OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> client, olc::net::message<CustomMsgTypes>& msg);
     
     bool RegisterUser(std::string j);
-
+    std::string LoginUser(std::string j);
 
 private:
     DataBase DB;
