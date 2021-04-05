@@ -81,6 +81,7 @@ std::string DataBase::loginUser(std::string email, std::string password)
 	std::string sql("SELECT iduser, username, password FROM USER where email like '"+email+"'");
 	std::string data("CALLBACK FUNCTION");
 	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
+	//adauga in final si nr de noduri pe care le are userul
 	if (exit != SQLITE_OK)
 	{
 		std::cerr << "Error Select" << std::endl;

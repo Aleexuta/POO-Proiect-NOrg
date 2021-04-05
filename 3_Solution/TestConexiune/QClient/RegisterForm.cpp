@@ -14,7 +14,7 @@ RegisterForm::RegisterForm(QWidget* parent) :
 	ui(new Ui::RegisterForm)
 {
 	ui->setupUi(this);
-	//QObject::connect(ui->RegisterButton, SIGNAL(clicked()), this, SLOT(on_RegisterButton_clicked()));
+	
 }
 RegisterForm::~RegisterForm()
 {

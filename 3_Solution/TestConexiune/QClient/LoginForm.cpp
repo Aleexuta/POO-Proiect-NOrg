@@ -45,7 +45,7 @@ void LoginForm::on_LoginButton_clicked()
 
 	bool incorect = false;
 	j["email"] = (ui->emailText->text()).toStdString();
-	j["password"] = (ui->passwordText->text()).toStdString();
+	j["password"] = (ui->PasswordText->text()).toStdString();
 	QClient* main = QClient::getInstance();
 	if (!validateString(j["email"], StrType::Email))
 	{
@@ -62,6 +62,12 @@ void LoginForm::on_LoginButton_clicked()
 		std::string str = j.dump();
 		main->sendLoginMessage(str);
 		//asteapta un mesaj de confirmare, la primirea acestuia se afiseaza urmatoarea fereastra
+		main->IncomingMessages();
+	}
+	if (ui->KeepLogged->isChecked())
+	{
+		//create a file with email and password
+		createLoginFile(j["email"], j["password"]);
 		main->IncomingMessages();
 	}
 }

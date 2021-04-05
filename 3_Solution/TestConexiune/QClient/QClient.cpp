@@ -6,6 +6,7 @@
 
 #include "RegisterForm.h"
 #include "LoginForm.h"
+#include "FirstForm.h"
 QClient* QClient::instance = nullptr;
 QClient::QClient(QWidget *parent)
     : QMainWindow(parent)
@@ -73,6 +74,8 @@ void QClient::IncomingMessages()
                     reg->close();
                     std::string rasp(msg.body.begin(), msg.body.end());
                     this->setUserInfo(rasp);
+                    FirstForm* ff = FirstForm::getInstance();
+                    ff->close();
                 }
                 break;
                 case CustomMsgTypes::ServerDenyLogin:
@@ -80,6 +83,8 @@ void QClient::IncomingMessages()
                     QMessageBox::warning(this, "Server Message", "Login Error");
                     LoginForm* reg = LoginForm::getInstance();
                     reg->show();
+                    FirstForm* ff = FirstForm::getInstance();
+                    ff->close();
                 }
                 break;
                 case CustomMsgTypes::ServerAccept:
@@ -148,4 +153,9 @@ void QClient::setUserInfo(std::string mesaj)
     this->user->setID(idd);
     //sparge in json
     //pune valorile unde trebe
+}
+
+void QClient::setGuestInfo()
+{
+    user = new Guest;
 }

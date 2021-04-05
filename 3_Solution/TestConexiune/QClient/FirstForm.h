@@ -20,6 +20,7 @@ private:
 public slots:
     void on_pushButton_clicked();
     void on_closeButton_clicked();
+    void on_ConnectButton_clicked();
 private:
     Ui::FirstForm* ui;
 };

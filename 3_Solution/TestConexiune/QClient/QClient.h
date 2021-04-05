@@ -42,4 +42,5 @@ public:
     void sendRegisterMessage(std::string j);
     void sendLoginMessage(std::string j);
     void setUserInfo(std::string mesaj);
+    void setGuestInfo();
 };

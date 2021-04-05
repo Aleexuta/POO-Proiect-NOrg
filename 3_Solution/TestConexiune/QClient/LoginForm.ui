@@ -53,7 +53,7 @@
      <x>10</x>
      <y>90</y>
      <width>181</width>
-     <height>181</height>
+     <height>221</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -94,12 +94,9 @@
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="passwordText">
-      <property name="maximumSize">
-       <size>
-        <width>250</width>
-        <height>20</height>
-       </size>
+     <widget class="QLineEdit" name="PasswordText">
+      <property name="echoMode">
+       <enum>QLineEdit::Password</enum>
       </property>
      </widget>
     </item>
@@ -113,7 +110,14 @@
     <item>
      <widget class="QPushButton" name="closeButton">
       <property name="text">
-       <string>Close</string>
+       <string>CANCEL</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="KeepLogged">
+      <property name="text">
+       <string>Keep me logged</string>
       </property>
      </widget>
     </item>
