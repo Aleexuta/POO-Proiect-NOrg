@@ -41,7 +41,7 @@ void Mainwindow::on_actionPrint_triggered()
     ui.plainTextEdit->print(&printer);
 }
 
-void Mainwindow::on_actionExit_triggered()
+void Mainwindow::on_action_Exit_triggered()
 {
     QApplication::quit();
 }

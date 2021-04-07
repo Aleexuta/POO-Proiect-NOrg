@@ -1,5 +1,5 @@
 #include "QClient.h"
-#include <QtWidgets/QApplication>
+#include <QtWidgets/QApplication.h>
 #include <qmessagebox.h>
 #include "FirstForm.h"
 #include "RegisterForm.h"
@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     w->Connect("6.tcp.ngrok.io",16296);
     f1.show();
 	bool bQuit = false;
-	while (!bQuit)
+	//while (!bQuit)
 	{
 		if (w->IsConnected())
 		{
