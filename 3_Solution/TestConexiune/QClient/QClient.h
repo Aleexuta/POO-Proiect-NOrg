@@ -1,9 +1,8 @@
 #pragma once
 
-#include <QtWidgets/QMainWindow>
+//#include <QtWidgets/QMainWindow>
 #include <nlohmann/json.hpp>
-
-
+#include <qmainwindow.h>
 #include "ui_QClient.h"
 #include <olc_net.h>
 #include "IUser.h"
@@ -39,6 +38,9 @@ private:
 public:
     static QClient* getInstance();
     void deleteInstance();
-
+    void IncomingMessages();
     void sendRegisterMessage(std::string j);
+    void sendLoginMessage(std::string j);
+    void setUserInfo(std::string mesaj);
+    void setGuestInfo();
 };

@@ -41,7 +41,27 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 	break;
 	case CustomMsgTypes::ServerLogin:
 	{
-
+		std::cout << "Login Case";
+		std::string str(msg.body.begin(), msg.body.end());
+		std::string rasp = LoginUser(str);
+		if (rasp!="")
+		{
+			std::cout << "Login User Succes";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::ServerAcceptLogin;
+			for (int i = 0; i < rasp.size(); i++)
+				msg2 << rasp[i];
+			
+			client->Send(msg2);
+		}
+		else
+		{
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::ServerDenyLogin;
+			client->Send(msg2);
+			std::cout << "\nLogin User Error";
+		}
+		//se coneccteaza la functia pt baza de date
 	}
 	break;
 	case CustomMsgTypes::ServerAccept:
@@ -91,8 +111,7 @@ bool IServer::RegisterUser(std::string j)
 		std::string password=js["password"];
 		//aici ^^^
 		if (DB.insertUser(username, firstname, lastname, email, password))
-		{	
-			
+		{			
 			return true;
 		}
 		return false;
@@ -100,6 +119,32 @@ bool IServer::RegisterUser(std::string j)
 	catch (...)
 	{
 		std::cout << "\nEroare la RegisterUser(ISERVER)";
+	}
+}
+
+std::string IServer::LoginUser(std::string j)
+{
+	try
+	{
+		auto js = nlohmann::json::parse(j);
+		std::string email = js["email"];
+		std::string password = js["password"];
+		std::string rasp = DB.loginUser(email, password);
+
+		if (rasp!="")
+		{
+			auto js2 = nlohmann::json::parse(rasp);
+			if (js2["password"] != password)
+			{
+				return "";
+			}
+			return rasp;
+		}
+		return "";
+	}
+	catch (...)
+	{
+		std::cout << "\n Eroare la LoginUser(IServer)";
 	}
 }
 
