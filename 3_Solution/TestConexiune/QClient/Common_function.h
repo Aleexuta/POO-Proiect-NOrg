@@ -65,7 +65,7 @@ inline void createLoginFile(std::string email, std::string password)
 {
 	//creaza un fisier cu email, password
 	std::fstream f;
-	f.open("automatLogin2.txt", std::ios::out);
+	f.open("automatLogin.txt", std::ios::out);
 	f.clear();
 	email = cript(email, "monkey");
 	password = cript(password ,"monkey");
@@ -79,7 +79,7 @@ inline bool isAlreadyLogged()
 {
 	//return true daca exista fiserul 
 	std::fstream f;
-	f.open("automatLogin2.txt", std::ios::in);
+	f.open("automatLogin.txt", std::ios::in);
 	if (f.peek()==std::ifstream::traits_type::eof())
 		return false;
 	return true;
@@ -88,7 +88,7 @@ inline void LoginAutomatically()
 {
 	//deschide fisierul si alege emailul si passwordul de acolo
 	std::fstream f;
-	f.open("automatLogin2.txt", std::ios::in);
+	f.open("automatLogin.txt", std::ios::in);
 	std::string str = "{\"email\":\"";
 	std::string x;
 	f >> x;
