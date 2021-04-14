@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>Icons/add-file.png</file>
+        <file>Icons/bold.png</file>
+        <file>Icons/color-circle.png</file>
+        <file>Icons/Copy.bmp</file>
+        <file>Icons/Cut.bmp</file>
+        <file>Icons/cut.png</file>
+        <file>Icons/diskette.png</file>
+        <file>Icons/files.png</file>
+        <file>Icons/font.png</file>
+        <file>Icons/italic-text.png</file>
+        <file>Icons/logout.png</file>
+        <file>Icons/New.bmp</file>
+        <file>Icons/Open.bmp</file>
+        <file>Icons/open.png</file>
+        <file>Icons/Paste.bmp</file>
+        <file>Icons/paste.png</file>
+        <file>Icons/printer.png</file>
+        <file>Icons/redo.png</file>
+        <file>Icons/Save.bmp</file>
+        <file>Icons/strikethrough.png</file>
+        <file>Icons/underline.png</file>
+        <file>Icons/undo.png</file>
+    </qresource>
+</RCC>

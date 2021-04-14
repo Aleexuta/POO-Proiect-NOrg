@@ -89,8 +89,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Find_Form.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
+    <ClCompile Include="Replace_Form.cpp" />
     <QtRcc Include="QClient.qrc" />
+    <QtRcc Include="Icon_Resource.qrc" />
+    <QtUic Include="Find_Form.ui" />
     <QtUic Include="FirstForm.ui" />
     <QtUic Include="QClient.ui" />
     <QtMoc Include="QClient.h" />
@@ -99,11 +103,18 @@
     <ClCompile Include="QClient.cpp" />
     <ClCompile Include="main.cpp" />
     <QtUic Include="RegisterForm.ui" />
+    <QtUic Include="Replace_Form.ui" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <QtMoc Include="Replace_Form.h" />
     <QtMoc Include="RegisterForm.h" />
     <QtMoc Include="FirstForm.h" />
+    <QtMoc Include="Find_Form.h" />
     <ClInclude Include="IUser.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="QClient.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

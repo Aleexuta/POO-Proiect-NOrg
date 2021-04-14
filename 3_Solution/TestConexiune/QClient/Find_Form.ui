@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Find_Form</class>
+ <widget class="QWidget" name="Find_Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>311</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Find_Form</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>24</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Find</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>21</x>
+     <y>94</y>
+     <width>361</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="Case_Sensitive">
+   <property name="geometry">
+    <rect>
+     <x>21</x>
+     <y>152</y>
+     <width>108</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Case sensitive</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="Whole_Word">
+   <property name="geometry">
+    <rect>
+     <x>21</x>
+     <y>125</y>
+     <width>132</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Match whole word</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="Backwards">
+   <property name="geometry">
+    <rect>
+     <x>21</x>
+     <y>179</y>
+     <width>132</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Search backwards</string>
+   </property>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>270</y>
+     <width>193</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

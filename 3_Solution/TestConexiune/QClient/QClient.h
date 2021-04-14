@@ -13,6 +13,11 @@
 #include <QtPrintSupport/qprintdialog.h>
 #include <QtPrintSupport/qprinterinfo.h>
 #include <QCloseEvent>
+#include "Find_Form.h"
+#include "Replace_Form.h"
+#include <QColorDialog>
+#include <QFontDialog>
+
 enum class CustomMsgTypes : uint32_t
 {
     ServerAccept,
@@ -65,5 +70,13 @@ private slots:
     void on_actionRedo_triggered();
     void on_actionZoom_in_triggered();
     void on_actionZoom_out_triggered();
-    //void on_actionFont_triggered();
+    void on_actionSelect_All_triggered();
+    void on_actionFind_triggered();
+    void on_actionReplace_triggered();
+    void on_actionBold_triggered();
+    void on_actionItalic_triggered();
+    void on_actionStrikeout_triggered();
+    void on_actionUnderline_triggered();
+    void on_actionColor_triggered();
+    void on_actionFont_triggered();
 };
