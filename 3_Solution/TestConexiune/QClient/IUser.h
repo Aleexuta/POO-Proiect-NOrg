@@ -11,10 +11,11 @@ public:
 	virtual int getNumberOfNodes() =0;
 	virtual bool canNewNode()=0;
 	virtual void incrementNrNodes()=0;
-	virtual void setNumberOfNodes() = 0;
+	virtual void setNumberOfNodes(int) = 0;
 	virtual void setUsername(std::string user)=0;
 	virtual void setID(int id) = 0;
-
+	virtual int getID() = 0;
+	virtual int getType() = 0;
 };
 
 class User :public IUser
@@ -22,7 +23,7 @@ class User :public IUser
 private:
 	std::string m_username;
 	int m_id;
-	int numberOfNodes;
+	int numberOfNodes; //maximul idnode, nu nr de noduri
 public:
 	User() {
 		numberOfNodes = 0;
@@ -42,9 +43,9 @@ public:
 	{
 		numberOfNodes++;
 	}
-	void setNumberOfNodes()
+	void setNumberOfNodes(int nr)
 	{
-		//acceseaza nr total de noduri din BD
+		numberOfNodes = nr;
 	}
 	void setUsername(std::string user)
 	{
@@ -53,6 +54,14 @@ public:
 	void setID(int id)
 	{
 		m_id = id;
+	}
+	int getID()
+	{
+		return m_id;
+	}
+	int getType()
+	{
+		return 1;
 	}
 };
 
@@ -63,6 +72,7 @@ private:
 	int maxNumberOfNodes = MAXNUMBER;
 public:
 	Guest() { numberOfNodes = 0; }
+	~Guest() {};
 	std::string getUsername() {
 		return "guest";
 	}
@@ -79,7 +89,7 @@ public:
 	{
 		numberOfNodes++;
 	}
-	void setNumberOfNodes()
+	void setNumberOfNodes(int nr)
 	{
 		numberOfNodes = 0;
 	}
@@ -90,5 +100,13 @@ public:
 	void setID(int id)
 	{
 		
+	}
+	int getID()
+	{
+		return 0;
+	}
+	int getType()
+	{
+		return 0;
 	}
 };

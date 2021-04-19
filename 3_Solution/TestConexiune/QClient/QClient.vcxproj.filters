@@ -52,12 +52,24 @@
     <ClCompile Include="LoginForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TreeModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NewNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IUser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Common_function.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,6 +83,9 @@
     <QtUic Include="LoginForm.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="NewNode.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="FirstForm.h">
@@ -80,6 +95,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="LoginForm.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="TreeModel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="NewNode.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

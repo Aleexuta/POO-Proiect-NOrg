@@ -64,6 +64,23 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 		//se coneccteaza la functia pt baza de date
 	}
 	break;
+	case CustomMsgTypes::NewNode:
+	{
+		std::cout << "New Node Case";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (InsertNewNode(str))
+		{
+			std::cout << "Insert New Node Succes";
+			//trimite mesaj cu id ul nodului inapoi
+
+		}
+		else
+		{
+			std::cout << "\nInsert New Node Error";
+
+		}
+	}
+	break;
 	case CustomMsgTypes::ServerAccept:
 	{
 
@@ -74,11 +91,7 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 
 	}
 	break;
-	case CustomMsgTypes::CreateNode:
-	{
 
-	}
-	break;
 	case CustomMsgTypes::OpenNode:
 	{
 
@@ -89,9 +102,20 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 
 	}
 	break;
-	case CustomMsgTypes::LoadNodes:
+	case CustomMsgTypes::LoadAllNodes:
 	{
+		std::string str(msg.body.begin(), msg.body.end());
+		std::string rasp = loadAllNodes(str);
+		if (rasp != "")
+		{
+			std::cout << "Load All Nodes Succes";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::LoadAllNodesAccept;
+			for (int i = 0; i < rasp.size(); i++)
+				msg2 << rasp[i];
 
+			client->Send(msg2);
+		}
 	}
 	break;
 	}
@@ -119,7 +143,9 @@ bool IServer::RegisterUser(std::string j)
 	catch (...)
 	{
 		std::cout << "\nEroare la RegisterUser(ISERVER)";
+		return false;
 	}
+	
 }
 
 std::string IServer::LoginUser(std::string j)
@@ -134,7 +160,8 @@ std::string IServer::LoginUser(std::string j)
 		if (rasp!="")
 		{
 			auto js2 = nlohmann::json::parse(rasp);
-			if (js2["password"] != password)
+			std::string passCorect = js2[0]["password"];
+			if (passCorect!= password)
 			{
 				return "";
 			}
@@ -145,6 +172,40 @@ std::string IServer::LoginUser(std::string j)
 	catch (...)
 	{
 		std::cout << "\n Eroare la LoginUser(IServer)";
+	}
+}
+
+bool IServer::InsertNewNode(std::string j)
+{
+
+	try
+	{
+		auto js = nlohmann::json::parse(j);
+		std::string iduser = js["iduser"];
+		std::string idparent = js["idparent"];
+		std::string name = js["name"];
+		std::string photoname = js["photoname"];
+		std::string idnode = js["idnode"];
+		return DB.insertNewNode(iduser, idparent, name, photoname,idnode);
+
+	}
+	catch (...)
+	{
+		std::cout << "\n Eroare la InsertNewNode(IServer)";
+	}
+}
+
+std::string IServer::loadAllNodes(std::string j)
+{
+	try
+	{
+
+		return DB.selectAllNodes(std::stoi(j));
+
+	}
+		catch (...)
+	{
+		std::cout << "\n Eroare la LoadAllNodes(IServer)";
 	}
 }
 
