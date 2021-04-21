@@ -39,6 +39,7 @@ public:
     void setID(int id);
     int getIdForIndex(const QModelIndex& index);
     void setIDNode(int id, const QModelIndex & index=QModelIndex());
+    void setIcon(QIcon & icon,const QModelIndex& index = QModelIndex());
 private:
     void setupModelData(const QStringList& lines, TreeItem* parent);
     TreeItem* getItem(const QModelIndex & index) const;

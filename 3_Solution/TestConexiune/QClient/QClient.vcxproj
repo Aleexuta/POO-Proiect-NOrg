@@ -109,7 +109,7 @@
   <ItemGroup>
     <ClInclude Include="Common_function.h" />
     <QtMoc Include="NewNode.h" />
-    <ClInclude Include="TreeItem.h" />
+    <QtMoc Include="TreeItem.h" />
     <QtMoc Include="TreeModel.h" />
     <QtMoc Include="LoginForm.h" />
     <QtMoc Include="RegisterForm.h" />

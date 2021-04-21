@@ -131,7 +131,8 @@ void DataBase::createTable()
 
 	//creare tabel si apoi stergere cod
 	{
-		std::string sql = "CREATE TABLE USER("
+		std::string sql =
+			"CREATE TABLE USER("
 			"iduser				integer	primary key, "
 			"username           TEXT    NOT NULL, "
 			"firstname          TEXT    NOT NULL, "

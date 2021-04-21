@@ -5,6 +5,7 @@
 #include <iostream>
 #include <qvariant.h>
 #include <string>
+#include <qicon.h>
 
 #include "RegisterForm.h"
 #include "LoginForm.h"
@@ -30,12 +31,13 @@ QClient::QClient(QWidget* parent)
    // this->model = new TreeModel(headers, file.readAll());
     file.close();
     ui.treeView->setModel(model);
-    ui.treeView->header()->setSectionsMovable(false);
-    for (int column = 0; column < this->model->columnCount(); ++column)
-    {
-        ui.treeView->resizeColumnToContents(column);
-    }
-
+    //ui.treeView->header()->setSectionsMovable(false);
+    //for (int column = 0; column < this->model->columnCount(); ++column)
+    //{
+    //    ui.treeView->resizeColumnToContents(column);
+    //}
+    ui.treeView->setColumnWidth(0,100);
+    ui.treeView->setColumnWidth(1, 10);
     updateActions();
 }
 QClient:: ~QClient()
@@ -327,7 +329,7 @@ void QClient::prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, in
     std::string idparent = st1["idparent"];
     std::string name = st1["name"];
     std::string photoname = st1["photoname"];
-    root->insertChildrenLoad(0, std::stoi(idnode),NRCOL, QVariant(name.c_str()),QVariant(photoname.c_str()));
+    root->insertChildrenLoad(0, std::stoi(idnode),NRCOL, QVariant(name.c_str()),QVariant(QIcon(photoname.c_str())));
     
 }
 
@@ -335,28 +337,23 @@ void QClient::insertNewNode(const std::string photo, const std::string name)
 {
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
     if (!this->user->canNewNode())
+    {
+        QMessageBox::information(this, "client message", "You can't create more notes in guest mode");
         return;
+    }
 
     if (!model->insertRow(index.row() + 1, index.parent()))
         return;
-    //{
-    //    QModelIndex child = model->index(0, 0, index);
-    //    QPixmap ph(photo.c_str());
-    //    QImage img(photo.c_str());
-    //   // QStandardItem* item = new QStandardItem();
-    //   // item->setData(QVariant(QPixmap::fromImage(img)), Qt::DecorationRole);
-    //    model->setData(child, QVariant(QPixmap::fromImage(img)), Qt::DecorationRole);
-    //    if (!model->headerData(0, Qt::Horizontal).isValid())
-    //        model->setHeaderData(0, Qt::Horizontal, QVariant("name"), Qt::EditRole);
-    //}
-   
 
-    for (int column = 0; column < model->columnCount(index.parent()); ++column) {
-        QModelIndex child = model->index(index.row() + 1, column, index.parent());
-        model->setData(child, QVariant(name.c_str()), Qt::EditRole);
-    }
+
+    QModelIndex child = model->index(index.row() + 1, 1, index.parent());
+    model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
+
+    QModelIndex child2 = model->index(index.row() + 1, 0, index.parent());
+    QIcon icon(photo.c_str());
+    model->setData(child2, QVariant(icon), Qt::DecorationRole);
+
     updateActions();
-
     //make json
     if (user->getType())
     {
@@ -366,14 +363,19 @@ void QClient::insertNewNode(const std::string photo, const std::string name)
         nlohmann::json js = makeJsonNewNode(name, iduser, idparent, main->getNumberOfNodes(), photo);
         std::string mes = js.dump();
         sendNewNodeMessage(mes);
+        IncomingMessages();
     }
-    IncomingMessages();
+   
 }
 void QClient::inservNewSubnode(const std::string photo, const std::string name)
 {
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+
     if (!this->user->canNewNode())
+    {
+        QMessageBox::information(this, "client message", "You can't create more notes in guest mode");
         return;
+    }
     if (this->model->columnCount(index) == 0) {
         if (!model->insertColumn(0, index))
             return;
@@ -382,15 +384,22 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name)
     if (!model->insertRow(0, index))
         return;
 
-    for (int column = 0; column < model->columnCount(index); ++column) {
-        QModelIndex child = model->index(0, column, index);
-        model->setData(child, QVariant(name.c_str()), Qt::EditRole);
+
+    for (int column = 0; column < model->columnCount(index); ++column)
+    {
         if (!model->headerData(column, Qt::Horizontal).isValid())
             model->setHeaderData(column, Qt::Horizontal, QVariant("[caini]"),
-                Qt::EditRole);
+                Qt::DisplayRole);
+
     }
-    ui.treeView->selectionModel()->setCurrentIndex(model->index(0, 0, index),
-        QItemSelectionModel::ClearAndSelect);
+    QModelIndex child = model->index(0, 1, index);
+    model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
+
+    QModelIndex child2 = model->index(0,0, index);
+    QIcon icon(photo.c_str());
+    model->setData(child2, QVariant(icon), Qt::DecorationRole);
+
+    ui.treeView->selectionModel()->setCurrentIndex(model->index(0, 0, index),QItemSelectionModel::ClearAndSelect);
     updateActions();
 
 
@@ -403,8 +412,9 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name)
         nlohmann::json js = makeJsonNewNode(name, iduser, idparent, main->getNumberOfNodes(),photo);
         std::string mes = js.dump();
         sendNewNodeMessage(mes);
+        IncomingMessages();
     }
-    IncomingMessages();
+    
 }
 
 void QClient::updateActions()
@@ -415,6 +425,7 @@ void QClient::updateActions()
     
     bool hasCurrent = ui.treeView->selectionModel()->currentIndex().isValid();
     ui.actionAdd_New_Node->setEnabled(hasCurrent);
+
     if (hasCurrent)
     {
         ui.treeView->closePersistentEditor(ui.treeView->selectionModel()->currentIndex());

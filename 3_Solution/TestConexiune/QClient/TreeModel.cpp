@@ -10,7 +10,8 @@ TreeModel::TreeModel(const QStringList& headers, const QString& data, QObject* p
         rootData << header;
 
     rootItem = new TreeItem(rootData);
-    setupModelData(data.split(QString("\n")), rootItem);
+    setupModelData(data.split(QString(" ")), rootItem);
+
 }
 
 TreeModel::~TreeModel()
@@ -42,10 +43,13 @@ QVariant TreeModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    if (role != Qt::DisplayRole && role != Qt::EditRole)
+    if (role != Qt::DisplayRole && role != Qt::EditRole && role!=Qt::DecorationRole)
         return QVariant();
+
     TreeItem* item = getItem(index);
     return item->data(index.column());
+
+
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -100,15 +104,15 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex& index) const
 
 bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if (role == Qt::EditRole || role==Qt::DecorationRole)
+    if (role == Qt::EditRole || Qt::DisplayRole || Qt::DecorationRole)
     {
         TreeItem* item = getItem(index);
         bool result = item->setData(index.column(), value);
-
         if (result)
             emit dataChanged(index, index);
         return result;
     }
+
     return false;
 }
 
@@ -127,16 +131,10 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QV
 bool TreeModel::insertRows(int position, int rows, const QModelIndex& parent)
 {
     TreeItem* parentItem = getItem(parent);
-
-    //QClient* client = QClient::getInstance();
-
-
     bool succes;
     beginInsertRows(parent, position, position + rows - 1);
     succes = parentItem->insertChildren(position, rows, rootItem->columnCount());
     endInsertRows();
-
-    //client->incrementNumberOfNodes();
     return succes;
 }
 
@@ -172,6 +170,13 @@ void TreeModel::setIDNode(int id, const QModelIndex& index)
     item->sedID(id);
 }
 
+void TreeModel::setIcon(QIcon& icon, const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    item->setIcon(icon);
+    emit dataChanged(index, index);
+}
+
 
 
 
@@ -182,7 +187,7 @@ void TreeModel::setupModelData(const QStringList& lines, TreeItem* parent)
     QList<TreeItem*> parents;
     QList<int> indentation;
     parents << parent;
-    indentation << 5;
+    indentation << 0;
     int number = 0;
 
     while (number < lines.count())
@@ -198,7 +203,7 @@ void TreeModel::setupModelData(const QStringList& lines, TreeItem* parent)
         QString lineData = lines[number].mid(position).trimmed();
         if (!lineData.isEmpty())
         {
-            QStringList columnStrings = lineData.split("\t", QString::SkipEmptyParts);
+            QStringList columnStrings = lineData.split(" ", QString::SkipEmptyParts);
             QVector<QVariant> columnData;
             for (int column = 0; column < columnStrings.count(); ++column)
                 columnData << columnStrings[column];

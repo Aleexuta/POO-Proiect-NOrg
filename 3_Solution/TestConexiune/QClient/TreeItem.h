@@ -1,13 +1,14 @@
 #pragma once
 #ifndef TREEITEM_H
 #define TREEITEM_H
-
+#include <QStandardItem>
+#include <QObject>
 #include <QList>
 #include <QVariant>
 #include <QVector>
-class TreeItem
+class TreeItem: public QObject, public QStandardItem
 {
-
+	Q_OBJECT
 public:
 	TreeItem(const QVector<QVariant>& data, TreeItem* parent = 0);
 	~TreeItem();
@@ -22,7 +23,7 @@ public:
 	bool removeChildren(int position, int count);
 	int childNumber()const;
 	bool setData(int column, const QVariant& value);
-
+	
 	void sedID(int id);
 	int getID();
 

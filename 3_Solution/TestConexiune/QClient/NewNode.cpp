@@ -18,10 +18,10 @@ void NewNode::on_OKButton_clicked()
 	std::string name= (ui->NameText->text()).toStdString();
 	if (name == "")
 		name = "ERORR NAME";
-	std::string photo= "D:/app/Poo-Proiect-NOrg/3_Solution/TestConexiune/photos";
+	std::string photo= "../photos/home.png";
 	if (ui->homeButton->isChecked())
 	{
-		photo = "D:/app/Poo-Proiect-NOrg/3_Solution/TestConexiune/photos";
+		photo = "../photos/home.png";
 	}
 	if(ui->clockButton->isChecked())
 	{
