@@ -43,11 +43,22 @@ QVariant TreeModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    if (role != Qt::DisplayRole && role != Qt::EditRole && role!=Qt::DecorationRole)
-        return QVariant();
+    if (role == Qt::DisplayRole || role == Qt::EditRole)
+    {
+        TreeItem* item = getItem(index);
+        return item->data(0);
+    }
+    if (role == Qt::DecorationRole)
+    {
+        TreeItem* item = getItem(index);
+        return item->getPhoto();
+    }
+    return QVariant();
+    //if (role != Qt::DisplayRole && role != Qt::EditRole && role!=Qt::DecorationRole)
+    //    return QVariant();
 
-    TreeItem* item = getItem(index);
-    return item->data(index.column());
+    //TreeItem* item = getItem(index);
+    //return item->data(index.column());
 
 
 }
@@ -104,14 +115,32 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex& index) const
 
 bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if (role == Qt::EditRole || Qt::DisplayRole || Qt::DecorationRole)
+
+    if (role == Qt::EditRole || role == Qt::DisplayRole)
     {
         TreeItem* item = getItem(index);
-        bool result = item->setData(index.column(), value);
+        bool result = item->setData(0, value);
         if (result)
             emit dataChanged(index, index);
         return result;
     }
+    if(role==Qt::DecorationRole)
+    {
+        TreeItem* item = getItem(index);
+        bool result = item->setPhoto(value);
+        if (result)
+            emit dataChanged(index, index);
+        return result;
+    }
+
+    //if (role == Qt::EditRole || Qt::DisplayRole || Qt::DecorationRole)
+    //{
+    //    TreeItem* item = getItem(index);
+    //    bool result = item->setData(index.column(), value);
+    //    if (result)
+    //        emit dataChanged(index, index);
+    //    return result;
+    //}
 
     return false;
 }

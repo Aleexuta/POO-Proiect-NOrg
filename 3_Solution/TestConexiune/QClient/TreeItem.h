@@ -26,11 +26,13 @@ public:
 	
 	void sedID(int id);
 	int getID();
-
+	bool setPhoto(QVariant photo);
+	QVariant getPhoto();
 private:
 	int IDNode;//il punem din iuser
 	QList<TreeItem*> m_childItems;
 	QVector<QVariant> m_itemData;
+	QVariant m_photoname;
 	TreeItem* m_parentItem;
 	
 

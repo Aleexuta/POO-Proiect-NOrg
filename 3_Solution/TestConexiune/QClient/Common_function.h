@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#define NRCOL 2
+#define NRCOL 1
 	enum class StrType
 	{
 		Email,

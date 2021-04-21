@@ -24,7 +24,7 @@ QClient::QClient(QWidget* parent)
     // arbore
 
     QStringList headers;
-    headers << tr("Poza") << tr("Nume");
+    headers << tr("Poza");
     QFile file(":/default.txt");
     file.open(QIODevice::ReadOnly);
     this->model = TreeModel::getInstance(headers, file.readAll());
@@ -346,7 +346,7 @@ void QClient::insertNewNode(const std::string photo, const std::string name)
         return;
 
 
-    QModelIndex child = model->index(index.row() + 1, 1, index.parent());
+    QModelIndex child = model->index(index.row() + 1, 0, index.parent());
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
 
     QModelIndex child2 = model->index(index.row() + 1, 0, index.parent());
@@ -392,7 +392,7 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name)
                 Qt::DisplayRole);
 
     }
-    QModelIndex child = model->index(0, 1, index);
+    QModelIndex child = model->index(0, 0, index);
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
 
     QModelIndex child2 = model->index(0,0, index);

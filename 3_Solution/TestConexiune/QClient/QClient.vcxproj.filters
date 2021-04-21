@@ -69,9 +69,6 @@
     <ClInclude Include="Common_function.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TreeItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="FirstForm.ui">
@@ -101,6 +98,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="NewNode.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="TreeItem.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

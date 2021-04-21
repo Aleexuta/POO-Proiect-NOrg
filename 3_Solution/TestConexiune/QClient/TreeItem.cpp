@@ -57,8 +57,8 @@ void TreeItem::insertChildrenLoad(int position, int id,int columns, QVariant& na
 		TreeItem* item = new TreeItem(data, this);
 		m_childItems.insert(position, item);
 		item->sedID(id);
-		item->setData(0, photoname);
-		item->setData(1, name);
+		item->setPhoto(photoname);
+		item->setData(0, name);
 	}
 }
 
@@ -101,5 +101,15 @@ void TreeItem::sedID(int id)
 int TreeItem::getID()
 {
 	return IDNode;
+}
+bool TreeItem::setPhoto(QVariant photo)
+{
+	m_photoname = photo;
+	return true;
+}
+
+QVariant TreeItem::getPhoto()
+{
+	return m_photoname;
 }
 
