@@ -90,10 +90,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="LoginForm.cpp" />
+    <ClCompile Include="NewNode.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
+    <ClCompile Include="TreeItem.cpp" />
+    <ClCompile Include="TreeModel.cpp" />
     <QtRcc Include="QClient.qrc" />
     <QtUic Include="FirstForm.ui" />
     <QtUic Include="LoginForm.ui" />
+    <QtUic Include="NewNode.ui" />
     <QtUic Include="QClient.ui" />
     <QtMoc Include="QClient.h" />
     <ClCompile Include="FirstForm.cpp" />
@@ -104,6 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common_function.h" />
+    <QtMoc Include="NewNode.h" />
+    <QtMoc Include="TreeItem.h" />
+    <QtMoc Include="TreeModel.h" />
     <QtMoc Include="LoginForm.h" />
     <QtMoc Include="RegisterForm.h" />
     <QtMoc Include="FirstForm.h" />

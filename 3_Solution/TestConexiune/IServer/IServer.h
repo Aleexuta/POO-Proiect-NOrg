@@ -12,10 +12,14 @@ enum class CustomMsgTypes : uint32_t
 	ServerDeny,
     ServerRegister,
     ServerLogin,
-    CreateNode,
+    NewNode,
+    NewNodeAccept,
+    NewNodeDeny,
+    LoadAllNodes,
+    LoadAllNodesAccept,
+    RemoveNode,
     OpenNode,
-    SaveNode,
-    LoadNodes
+    SaveNode
 };
 class IServer : public olc::net::server_interface<CustomMsgTypes>
 {
@@ -35,10 +39,11 @@ protected:
 		std::cout << "Removing client [" << client->GetID() << "]\n";
 	}
 	virtual void OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> client, olc::net::message<CustomMsgTypes>& msg);
-    
+private:   
     bool RegisterUser(std::string j);
     std::string LoginUser(std::string j);
-
+    bool InsertNewNode(std::string j);
+    std::string loadAllNodes(std::string j);
 private:
     DataBase DB;
 };
