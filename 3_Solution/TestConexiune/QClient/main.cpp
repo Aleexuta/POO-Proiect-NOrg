@@ -1,60 +1,30 @@
 #include "QClient.h"
+//#include <QtWidgets/QApplication>
+#include <fstream>
+
+#include <qapplication.h>
 #include <QtWidgets/QApplication.h>
 #include <qmessagebox.h>
 #include "FirstForm.h"
 #include "RegisterForm.h"
+#include "Common_function.h"
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     QClient* w = QClient::getInstance();
-    FirstForm f1;
+
     // apare doar daca s a conectat la server
     w->Connect("8.tcp.ngrok.io",15085);
-    f1.show();
-	bool bQuit = false;
-	//while (!bQuit)
-	{
-		if (w->IsConnected())
-		{
-			if (!w->Incoming().empty())
-			{
+
+    w->IncomingMessages();
 
 
-				auto msg = w->Incoming().pop_front().msg;
+    //deschide un fisier
 
-				switch (msg.header.id)
-				{
-				case CustomMsgTypes::ServerAcceptRegister:
-				{
-					// Server has responded to a ping request				
-					QMessageBox::information(w, "Server Message", "Server Accepted Connection");
-					QClient* main = QClient::getInstance();
-					main->show();
-				}
-				break;
-				case CustomMsgTypes::ServerDenyRegister:
-				{
-					// Server has responded to a ping request				
-					QMessageBox::warning(w, "Server Message", "Server Deny Connection");
-				}
-				break;
 
-				}
-			}
-		}
-		else
-		{
-			QMessageBox::warning(w, "Server Message", "Server Down");
-			//a se decomenta la lansare(teste)
-
-			w->disconnect();
-			w->deleteInstance();
-			exit(EXIT_FAILURE);
-			QApplication::quit();
-			bQuit = true;
-
-		}
-	}
-
+        FirstForm* f1 = FirstForm::getInstance();
+        f1->show();
+        w->IncomingMessages();
+    w->IncomingMessages();
     return a.exec();
 }

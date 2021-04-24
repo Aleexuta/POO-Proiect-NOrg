@@ -1,7 +1,8 @@
 #pragma once
 #ifndef FIRSTFORM_H
 #define FIRSTFORM_H
-#include <QtWidgets/QMainWindow>
+//#include <QtWidgets/QMainWindow>
+#include <qmainwindow.h>
 #include <qdialog.h>
 #include "ui_FirstForm.h"
 class FirstForm :
@@ -9,10 +10,17 @@ class FirstForm :
 {
     Q_OBJECT
 public:
+    static FirstForm* getInstance();
+    void deleteInstance();
+private:
+    static FirstForm* instance;
+    
     FirstForm(QWidget* parent = 0);
     ~FirstForm();
- public slots:
+public slots:
     void on_pushButton_clicked();
+    void on_closeButton_clicked();
+    void on_ConnectButton_clicked();
 private:
     Ui::FirstForm* ui;
 };

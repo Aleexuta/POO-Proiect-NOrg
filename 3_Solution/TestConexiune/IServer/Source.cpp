@@ -4,12 +4,12 @@
 
 int main()
 {
-	IServer server(50000);
-	server.Start();
+	IServer* server = IServer::getInstance(50000);
+	server->Start();
 	try
 	{
-		server.connectDataBase();
-		server.createTable();
+		server->connectDataBase();
+		server->createTable();
 	}
 	catch (const char*mess)
 	{
@@ -17,7 +17,7 @@ int main()
 	}
 	while (1)
 	{
-		server.Update(-1, true);
+		server->Update(-1, true);
 	}
 
 	return 0;

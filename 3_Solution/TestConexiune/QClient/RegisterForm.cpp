@@ -1,4 +1,4 @@
-#include <map>
+
 #include <qmessagebox.h>
 #include <nlohmann/json.hpp>
 #include <qstring.h>
@@ -6,19 +6,21 @@
 #include "RegisterForm.h"
 #include "ui_RegisterForm.h"
 #include "QClient.h"
-
+#include "FirstForm.h"
+#include "Common_function.h"
 RegisterForm* RegisterForm::instance = 0;
 RegisterForm::RegisterForm(QWidget* parent) :
 	QDialog(parent),
 	ui(new Ui::RegisterForm)
 {
 	ui->setupUi(this);
-	QObject::connect(ui->RegisterButton, SIGNAL(clicked()), this, SLOT(on_RegisterButton_clicked()));
+	
 }
 RegisterForm::~RegisterForm()
 {
 	delete ui;
 }
+
 RegisterForm* RegisterForm::getInstance()
 {
 	if (!instance)
@@ -32,24 +34,53 @@ void RegisterForm::deleteInstance()
 		delete instance;
 }
 
+void RegisterForm::on_CloseButton_clicked()
+{
+	close();
+	FirstForm* ff = FirstForm::getInstance();
+	ff->show();
+}
+
 void RegisterForm::on_RegisterButton_clicked()
 {
 	nlohmann::json j;
+
+	bool incorect = false;
+
+
 	j["username"] = (ui->UsernameText->text()).toStdString();
 	j["firstname"] = (ui->FirstnameText->text()).toStdString();
 	j["lastname"] = (ui->LastnameText->text()).toStdString();
 	j["email"] = (ui->EmailText->text()).toStdString();
 	j["password"] = (ui->PasswordText->text()).toStdString();
-	//se afiseaza fereastra principala din aplicatie
 	QClient* main = QClient::getInstance();
-	std::string str = j.dump();
-
-	//QMessageBox::information(main, "debug", QString::fromStdString(j["email"]));
-
-	main->sendRegisterMessage(str);
-	//afiseaza doar daca primeste aprobare de la server
-
-
-	main->show();
-	close();
+	if (!validateString(j["email"], StrType::Email))
+	{
+		QMessageBox::warning(main, "client message", "The email has not a correct format");
+		incorect = true;
+	}
+	if (!validateString(j["username"], StrType::Username))
+	{
+		QMessageBox::warning(main, "client message", "The username has not a correct format");
+		incorect = true;
+	}
+	if (!validateString(j["password"], StrType::Username))
+	{
+		QMessageBox::warning(main, "client message", "The password has not a correct format");
+		incorect = true;
+	}
+	if (j["password"] != (ui->ConfirmText->text()).toStdString())
+	{
+		QMessageBox::warning(main, "client message", "The passwords does not match");
+		incorect = true;
+	}
+	if (!incorect)
+	{
+		std::string str = j.dump();
+		main->sendRegisterMessage(str);
+		//asteapta un mesaj de confirmare, la primirea acestuia se afiseaza urmatoarea fereastra
+		main->IncomingMessages();
+		//close();
+		//QMessageBox::information(main, "client message", "totul este corect");
+	}
 }

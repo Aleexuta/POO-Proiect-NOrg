@@ -31,12 +31,14 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
+    <QtInstall>5.15.2_msvc2019_64</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
     <QtInstall>5.15.2_msvc2015_64</QtInstall>
     <QtModules>core;gui;printsupport;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>QT 2019</QtInstall>
+    <QtInstall>5.15.2_msvc2019_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
@@ -60,7 +62,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <ExecutablePath>$(VC_ExecutablePath_x64);$(CommonExecutablePath)</ExecutablePath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\NetCommon;D:\sdk\asio-1.18.1\include;..\library\json\include</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\NetCommon;..\library\asio-1.18.1\include;..\library\json\include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
@@ -89,13 +91,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LoginForm.cpp" />
+    <ClCompile Include="NewNode.cpp" />
     <ClCompile Include="Find_Form.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
+    <ClCompile Include="TreeItem.cpp" />
+    <ClCompile Include="TreeModel.cpp" />
     <ClCompile Include="Replace_Form.cpp" />
     <QtRcc Include="QClient.qrc" />
     <QtRcc Include="Icon_Resource.qrc" />
     <QtUic Include="Find_Form.ui" />
     <QtUic Include="FirstForm.ui" />
+    <QtUic Include="LoginForm.ui" />
+    <QtUic Include="NewNode.ui" />
     <QtUic Include="QClient.ui" />
     <QtMoc Include="QClient.h" />
     <ClCompile Include="FirstForm.cpp" />
@@ -106,6 +114,11 @@
     <QtUic Include="Replace_Form.ui" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common_function.h" />
+    <QtMoc Include="NewNode.h" />
+    <QtMoc Include="TreeItem.h" />
+    <QtMoc Include="TreeModel.h" />
+    <QtMoc Include="LoginForm.h" />
     <ClInclude Include="resource.h" />
     <QtMoc Include="Replace_Form.h" />
     <QtMoc Include="RegisterForm.h" />

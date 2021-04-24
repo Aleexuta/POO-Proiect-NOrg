@@ -5,6 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include "IServer.h"
+IServer* IServer::instance = nullptr;
 bool IServer::OnClientConnect(std::shared_ptr<olc::net::connection<CustomMsgTypes>> client)
 {
 	olc::net::message<CustomMsgTypes> msg;
@@ -41,7 +42,44 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 	break;
 	case CustomMsgTypes::ServerLogin:
 	{
+		std::cout << "Login Case";
+		std::string str(msg.body.begin(), msg.body.end());
+		std::string rasp = LoginUser(str);
+		if (rasp!="")
+		{
+			std::cout << "Login User Succes";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::ServerAcceptLogin;
+			for (int i = 0; i < rasp.size(); i++)
+				msg2 << rasp[i];
+			
+			client->Send(msg2);
+		}
+		else
+		{
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::ServerDenyLogin;
+			client->Send(msg2);
+			std::cout << "\nLogin User Error";
+		}
+		//se coneccteaza la functia pt baza de date
+	}
+	break;
+	case CustomMsgTypes::NewNode:
+	{
+		std::cout << "New Node Case";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (InsertNewNode(str))
+		{
+			std::cout << "Insert New Node Succes";
+			//trimite mesaj cu id ul nodului inapoi
 
+		}
+		else
+		{
+			std::cout << "\nInsert New Node Error";
+
+		}
 	}
 	break;
 	case CustomMsgTypes::ServerAccept:
@@ -54,14 +92,21 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 
 	}
 	break;
-	case CustomMsgTypes::CreateNode:
+	case CustomMsgTypes::RemoveNode:
 	{
+		std::cout << "Remove node case\n";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (removeNode(str))
+		{
+			std::cout << "Delete Node Succes";
+			//trimite mesaj cu id ul nodului inapoi
 
-	}
-	break;
-	case CustomMsgTypes::OpenNode:
-	{
+		}
+		else
+		{
+			std::cout << "\nDelete Node Error";
 
+		}
 	}
 	break;
 	case CustomMsgTypes::SaveNode:
@@ -69,9 +114,20 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 
 	}
 	break;
-	case CustomMsgTypes::LoadNodes:
+	case CustomMsgTypes::LoadAllNodes:
 	{
+		std::string str(msg.body.begin(), msg.body.end());
+		std::string rasp = loadAllNodes(str);
+		if (rasp != "")
+		{
+			std::cout << "Load All Nodes Succes";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::LoadAllNodesAccept;
+			for (int i = 0; i < rasp.size(); i++)
+				msg2 << rasp[i];
 
+			client->Send(msg2);
+		}
 	}
 	break;
 	}
@@ -91,8 +147,7 @@ bool IServer::RegisterUser(std::string j)
 		std::string password=js["password"];
 		//aici ^^^
 		if (DB.insertUser(username, firstname, lastname, email, password))
-		{	
-			
+		{			
 			return true;
 		}
 		return false;
@@ -100,6 +155,84 @@ bool IServer::RegisterUser(std::string j)
 	catch (...)
 	{
 		std::cout << "\nEroare la RegisterUser(ISERVER)";
+		return false;
+	}
+	
+}
+
+std::string IServer::LoginUser(std::string j)
+{
+	try
+	{
+		auto js = nlohmann::json::parse(j);
+		std::string email = js["email"];
+		std::string password = js["password"];
+		std::string rasp = DB.loginUser(email, password);
+
+		if (rasp!="")
+		{
+			auto js2 = nlohmann::json::parse(rasp);
+			std::string passCorect = js2[0]["password"];
+			if (passCorect!= password)
+			{
+				return "";
+			}
+			return rasp;
+		}
+		return "";
+	}
+	catch (...)
+	{
+		std::cout << "\n Eroare la LoginUser(IServer)";
+	}
+}
+
+bool IServer::InsertNewNode(std::string j)
+{
+
+	try
+	{
+		auto js = nlohmann::json::parse(j);
+		std::string iduser = js["iduser"];
+		std::string idparent = js["idparent"];
+		std::string name = js["name"];
+		std::string photoname = js["photoname"];
+		std::string idnode = js["idnode"];
+		return DB.insertNewNode(iduser, idparent, name, photoname,idnode);
+
+	}
+	catch (...)
+	{
+		std::cout << "\n Eroare la InsertNewNode(IServer)";
+	}
+}
+
+std::string IServer::loadAllNodes(std::string j)
+{
+	try
+	{
+
+		return DB.selectAllNodes(std::stoi(j));
+
+	}
+		catch (...)
+	{
+		std::cout << "\n Eroare la LoadAllNodes(IServer)";
+	}
+}
+
+bool IServer::removeNode(std::string j)
+{
+	try 
+	{
+		auto js = nlohmann::json::parse(j);
+		std::string id = js["idnode"];
+		std::string iduser = js["iduser"];
+		return DB.removeNode(id,iduser);
+	}
+	catch (...)
+	{
+		std::cout << "\nEroare la removeNode(IServer)";
 	}
 }
 
@@ -107,6 +240,24 @@ bool IServer::RegisterUser(std::string j)
 IServer::~IServer()
 {
 	DB.closeDataBase();
+}
+
+IServer* IServer::getInstance(uint16_t nPort)
+{
+	if (!instance)
+		instance = new IServer(nPort);
+	return instance;
+}
+
+IServer* IServer::getInstance()
+{
+	return instance;
+}
+
+void IServer::deleteInstance()
+{
+	if (instance)
+		delete instance;
 }
 
 void IServer::connectDataBase()
@@ -119,4 +270,10 @@ void IServer::connectDataBase()
 void IServer::createTable()
 {
 	DB.createTable();
+	DB.createTrigger();
+}
+
+DataBase IServer::getDatabase()
+{
+	return DB;
 }
