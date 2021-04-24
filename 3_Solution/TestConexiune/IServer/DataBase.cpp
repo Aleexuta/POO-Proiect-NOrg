@@ -4,8 +4,10 @@
 #include <iostream>
 #include <string>
 #include <nlohmann/json.hpp>
+#include "IServer.h"
 //DataBase* DataBase::instance = 0;
 std::string final;
+std::string finalText;
 int DataBase::callback(void* data, int argc, char** argv, char** azColName)
 {
 	int i;
@@ -29,27 +31,44 @@ int DataBase::callback(void* data, int argc, char** argv, char** azColName)
 	final = rasp;
 	return 0;
 }
+int DataBase::callbackString(void* data, int argc, char** argv, char** azColName)
+{
+	int i;
+	fprintf(stderr, "%s: ", (const char*)data);
+	std::string rasp("");
+
+	for (i = 0; i < argc; i++) {
+		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+		std::string col(azColName[i]);
+		std::string sol(argv[i] ? argv[i] : "NULL");
+		rasp += "\"" + col + "\":" + "\"" + sol + "\"";
+
+	}
+	finalText = rasp;
+	return 0;
+}
 int DataBase::callbackMore(void* data, int argc, char** argv, char** azColName)
 {
 	int i;
 	fprintf(stderr, "%s: ", (const char*)data);
 	std::string rasp = "{";
-
-	for (i = 0; i < argc - 1; i++) {
+	std::string iduser, idnode;
+	for (i = 0; i < argc ; i++) {
 		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
 		std::string col(azColName[i]);
 		std::string sol(argv[i] ? argv[i] : "NULL");
 		rasp += "\"" + col + "\":" + "\"" + sol + "\",";
-
+		if (i == 0)
+			iduser = sol;
+		if (i == 1)
+			idnode = sol;
 	}
-	i = argc - 1;
-	printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-	std::string col(azColName[i]);
-	std::string sol(argv[i] ? argv[i] : "NULL");
-	rasp += "\"" + col + "\":" + "\"" + sol + "\"},";
-	std::cout << rasp << std::endl;
-	printf("\n");
-	final += rasp;
+	// acceseaza incarcarea notitei pt idnode ul primit
+	IServer* sv=IServer::getInstance();
+	std::string x=sv->getDatabase().getTextForNode(iduser, idnode);
+	rasp += x;
+	rasp += "},";
+	final+=rasp;
 	return 0;
 }
 DataBase::DataBase()
@@ -126,6 +145,28 @@ std::string DataBase::loginUser(std::string email, std::string password)
 }
 
 
+void DataBase::createTrigger()
+{
+	char* messaggeError;
+	std::string data("CALLBACK FUNCTION");
+	std::string sql(//"drop trigger stergere_nod;"
+		"CREATE TRIGGER stergere_nod "
+		"BEFORE DELETE ON NODE "
+		"BEGIN "
+		"DELETE FROM NODE WHERE idparent = old.idnode and iduser=old.iduser; DELETE FROM NODE WHERE iduser=old.iduser and idnode=old.idnode;  END;");
+	//insert in notes varianta 0 a nodului
+	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error <CreateTRIGGER> \n" << std::endl;
+	}
+	else
+	{
+		std::cout << "succes  <CreateTRIGGER> \n" << std::endl;
+		//return selectIdForLastNode(iduser);
+	}
+}
+
 void DataBase::createTable()
 {
 
@@ -155,18 +196,42 @@ void DataBase::createTable()
 			"CREATE TABLE NODE ("	//CREAZA TABEL NODE, cheie primara dubla(idnod si iduser)
 			"iduser		integer not null,"
 			"idnode		integer not null,"
-			"idparent	integer	not null,"
+			"idparent	integer	not null FOREIGN KEY references NODE(idnode) on delete cascade,"
 			"name		TEXT	not null,"
 			"photoname	text	not null,"
 			"Primary key(iduser,idnode),"
-			"Foreign key(iduser) REFERENCES USER(iduser)"
-			"Foreign key(idparent) REFERENCES NODE(idnode));";
+			"Foreign key(iduser) REFERENCES USER(iduser));";
+			"PRAGMA foreign_keys=ON; PRAGMA recursive_triggers =on ;";
 			
 		char* messaggeError;
 		int exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messaggeError);
 
 		if (exit != SQLITE_OK) {
 			std::cerr << "Error Create Table NODE" << std::endl;
+			sqlite3_free(messaggeError);
+		}
+		else
+			std::cout << "Table created NODE Successfully" << std::endl;
+
+	}
+	{
+		std::string sql = 
+			"CREATE TABLE NOTES ("	
+			"id			integer not null,"	
+			"iduser		integer not null,"
+			"idnode		integer not null,"
+			"text		text,"
+			"versiune	int,"	
+			"Primary key(id),"
+			"Foreign key(iduser,idnode) REFERENCES NODE(iduser,idnode)"
+			"on delete cascade);"
+			"PRAGMA foreign_keys=ON;";//merge asta pt stergere?
+
+		char* messaggeError;
+		int exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messaggeError);
+
+		if (exit != SQLITE_OK) {
+			std::cerr << "Error Create Table NOTES" << std::endl;
 			sqlite3_free(messaggeError);
 		}
 		else
@@ -181,7 +246,7 @@ void DataBase::createNodeRoot(std::string email)
 	std::string sql("SELECT iduser FROM USER where email like '" + email + "'");
 	std::string data("CALLBACK FUNCTION");
 	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
-	//adauga in final si nr de noduri pe care le are userul
+	//nu ii trebe ca si text nimic pt ca e un nod invizibil
 	if (exit != SQLITE_OK)
 	{
 		std::cerr << "Error <CreateNodeRoot> Select" << std::endl;
@@ -192,6 +257,7 @@ void DataBase::createNodeRoot(std::string email)
 		auto js = nlohmann::json::parse(final);
 		std::string id = js["iduser"];
 		std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname) VALUES(" + id+",0,0"+",'root','-')");
+		//adauga insertia in notes versiunea 0
 		exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
 		if (exit != SQLITE_OK)
 		{
@@ -208,7 +274,9 @@ bool DataBase::insertNewNode(std::string iduser, std::string idparent, std::stri
 {
 	char* messaggeError;
 	std::string data("CALLBACK FUNCTION");
-	std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname) VALUES(" + iduser + ","+idnode+","+idparent+ ",'"+name+"','"+photo+"')");
+	std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname) VALUES(" + iduser + "," + idnode + "," + idparent + ",'" + name + "','" + photo + "');"
+		+ "INSERT INTO NOTES(idnode, iduser,text,versiune) VALUES ("+idnode+","+iduser+",'Bine ai venit',0);");
+	//insert in notes varianta 0 a nodului
 	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
 	if (exit != SQLITE_OK)
 	{
@@ -245,11 +313,12 @@ std::string DataBase::selectIdForLastNode(std::string iduser)
 std::string DataBase::selectAllNodes(int iduser)
 {
 	char* messaggeError;
-	std::string sql("SELECT NODE.idnode, NODE.idparent, NODE.name, NODE.photoname FROM NODE where NODE.iduser like "+ std::to_string(iduser)+" and NODE.idnode is not 0 ORDER BY NODE.idparent asc , NODE.idnode desc");
+	std::string sql("SELECT NODE.iduser, NODE.idnode, NODE.idparent, NODE.name, NODE.photoname FROM NODE where NODE.iduser like " + std::to_string(iduser) + " and NODE.idnode is not 0 ORDER BY NODE.idparent asc , NODE.idnode desc");
 	std::string data("CALLBACK FUNCTION");
 	//final = "[";
 	int exit = sqlite3_exec(DB, sql.c_str(), callbackMore, (void*)data.c_str(), NULL);
-	final[final.size() - 1] = ']';
+	final[final.size()-1] = ']';
+	//final[final.size() + 1] = '\n';
 	std::cout << final << std::endl;
 	//adauga in final si nr de noduri pe care le are userul
 	if (exit != SQLITE_OK)
@@ -260,5 +329,42 @@ std::string DataBase::selectAllNodes(int iduser)
 	else
 	{
 		return final;
+	}
+}
+
+std::string DataBase::getTextForNode(std::string iduser, std::string idnode)
+{
+	char* messaggeError;
+	std::string sql("SELECT NOTES.text FROM NOTES where NOTES.iduser = " + iduser + " and NOTES.idnode = "+idnode+" order by NOTES.id ");
+	std::string data("CALLBACK FUNCTION");
+	int exit = sqlite3_exec(DB, sql.c_str(), callbackString, (void*)data.c_str(), NULL);
+	//adauga in final si nr de noduri pe care le are userul
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Select<SELECT TEXT NOTES> \n" << std::endl;
+		return "";
+	}
+	else
+	{
+		return finalText;
+	}
+}
+
+bool DataBase::removeNode(std::string id,std::string iduser)
+{
+	char* messaggeError;
+	std::string sql("PRAGMA recursive_triggers=ON; DELETE FROM NODE WHERE NODE.idnode = "+ id+" and NODE.iduser="+ iduser);
+	std::string data("CALLBACK FUNCTION");
+	int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
+
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Delete<DELETE> \n" << std::endl;
+		std::cout << "\n\n" << messaggeError << "\n\n";
+		return false;
+	}
+	else
+	{
+		return true;
 	}
 }

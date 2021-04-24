@@ -44,11 +44,12 @@ bool TreeItem::insertChildren(int position, int count, int columns)
 		QClient* main = QClient::getInstance();
 		item->sedID(main->getNumberOfNodes()+1);
 		main->incrementNumberOfNodes();
+		item->setText("Bine ai venit wai!");
 	}
 	return true;
 }
 
-void TreeItem::insertChildrenLoad(int position, int id,int columns, QVariant& name, QVariant& photoname)
+void TreeItem::insertChildrenLoad(int position, int id,int columns,std::string text, QVariant& name, QVariant& photoname)
 {
 	if (position<0 || position>m_childItems.size())
 		return;
@@ -59,6 +60,7 @@ void TreeItem::insertChildrenLoad(int position, int id,int columns, QVariant& na
 		item->sedID(id);
 		item->setPhoto(photoname);
 		item->setData(0, name);
+		item->setText(text);
 	}
 }
 
@@ -75,6 +77,9 @@ bool TreeItem::removeChildren(int position, int count)
 	{
 		delete m_childItems.takeAt(position);
 	}
+	//decrement nr of nodes
+	QClient* main = QClient::getInstance();
+	main->decrementNumberOfNodes();
 	return true;
 }
 
@@ -111,5 +116,15 @@ bool TreeItem::setPhoto(QVariant photo)
 QVariant TreeItem::getPhoto()
 {
 	return m_photoname;
+}
+
+void TreeItem::setText(std::string text)
+{
+	m_text = text;
+}
+
+std::string TreeItem::getText()
+{
+	return m_text;
 }
 

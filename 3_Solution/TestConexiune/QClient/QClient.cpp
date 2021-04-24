@@ -14,6 +14,7 @@
 #include"TreeModel.h"
 #include "TreeItem.h"
 #include "Common_function.h"
+bool isloged = false;
 QClient* QClient::instance = nullptr;
 QClient::QClient(QWidget* parent)
     : QMainWindow(parent)
@@ -38,6 +39,8 @@ QClient::QClient(QWidget* parent)
     //}
     ui.treeView->setColumnWidth(0,100);
     ui.treeView->setColumnWidth(1, 10);
+
+    isloged = false;
     updateActions();
 }
 QClient:: ~QClient()
@@ -93,14 +96,19 @@ void QClient::IncomingMessages()
                 break;
                 case CustomMsgTypes::ServerAcceptLogin:
                 {
-                    QMessageBox::information(this, "Server Message", "Login Succes");
-                    this->show();
-                    LoginForm* reg = LoginForm::getInstance();
-                    reg->close();
-                    std::string rasp(msg.body.begin(), msg.body.end());
-                    this->setUserInfo(rasp);
-                    FirstForm* ff = FirstForm::getInstance();
-                    ff->close();
+                    if (!isloged)
+                    {
+                        isloged = true;
+                        QMessageBox::information(this, "Server Message", "Login Succes");
+                        this->show();
+                        LoginForm* reg = LoginForm::getInstance();
+                        reg->close();
+                        std::string rasp(msg.body.begin(), msg.body.end());
+                        this->setUserInfo(rasp);
+                        FirstForm* ff = FirstForm::getInstance();
+                        ff->close();
+
+                    }
                 }
                 break;
                 case CustomMsgTypes::ServerDenyLogin:
@@ -138,12 +146,6 @@ void QClient::IncomingMessages()
                     //QMessageBox::warning(this, "Server Message", "The New Note was not created correcty");
                 }
                 break;
-                case CustomMsgTypes::LoadAllNodesAccept:
-                {
-                    std::string rasp(msg.body.begin(), msg.body.end());
-                    //LoadAllNodes(rasp);
-                }
-                break;
                 }
             }
             else
@@ -154,8 +156,6 @@ void QClient::IncomingMessages()
         else
         {
             QMessageBox::warning(this, "Server Message", "Server Down");
-            //a se decomenta la lansare(teste)
-
             this->disconnect();
             this->deleteInstance();
             exit(EXIT_FAILURE);
@@ -219,7 +219,7 @@ void QClient::setUserInfo(std::string mesaj)
     this->user->setUsername(user);
     this->user->setID(idd);
     //adauga idul in nodul tata
-
+    
     std::string nrnode = js2[0]["nrnodes"];
     int nr = std::stoi(nrnode);
     this->user->setNumberOfNodes(nr);
@@ -227,7 +227,9 @@ void QClient::setUserInfo(std::string mesaj)
     this->model->setID(0);
     //sendLoadAllNodesMessage(id);
     LoadAllNodes(mesaj);
+    updateActions();
     IncomingMessages();
+
 }
 
 void QClient::setGuestInfo()
@@ -256,6 +258,11 @@ void QClient::incrementNumberOfNodes()
     user->incrementNrNodes();
 }
 
+void QClient::decrementNumberOfNodes()
+{
+    user->decrementNrNodes();
+}
+
 auto QClient::makeJsonNewNode(std::string name, int iduser, int idparent, int idnode,std::string namephoto)
 {
     nlohmann::json js;
@@ -282,15 +289,6 @@ void QClient::LoadAllNodes(std::string j)
     int pos = 1;
     LoadChildren(getRootItem(), js1, pos);
     updateActions();
-    //for (int i = 1; i < js1.size(); i++)
-    //{
-    //    auto st1 = js1[i];
-    //    std::string idnode = st1["idnode"];
-    //    std::string idparent = st1["idparent"];
-    //    std::string name = st1["name"];
-    //    std::string photoname = st1["photoname"];
-    //    //insereaza, functie recursiva lucrand pe st1
-    //}
 }
 
 void QClient::LoadChildren(TreeItem* root, nlohmann::basic_json<> js, int &pos)
@@ -329,7 +327,8 @@ void QClient::prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, in
     std::string idparent = st1["idparent"];
     std::string name = st1["name"];
     std::string photoname = st1["photoname"];
-    root->insertChildrenLoad(0, std::stoi(idnode),NRCOL, QVariant(name.c_str()),QVariant(QIcon(photoname.c_str())));
+    std::string text = st1["text"];
+    root->insertChildrenLoad(0, std::stoi(idnode),NRCOL,text, QVariant(name.c_str()),QVariant(QIcon(photoname.c_str())));
     
 }
 
@@ -348,10 +347,8 @@ void QClient::insertNewNode(const std::string photo, const std::string name)
 
     QModelIndex child = model->index(index.row() + 1, 0, index.parent());
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
-
-    QModelIndex child2 = model->index(index.row() + 1, 0, index.parent());
     QIcon icon(photo.c_str());
-    model->setData(child2, QVariant(icon), Qt::DecorationRole);
+    model->setData(child, QVariant(icon), Qt::DecorationRole);
 
     updateActions();
     //make json
@@ -394,10 +391,8 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name)
     }
     QModelIndex child = model->index(0, 0, index);
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
-
-    QModelIndex child2 = model->index(0,0, index);
     QIcon icon(photo.c_str());
-    model->setData(child2, QVariant(icon), Qt::DecorationRole);
+    model->setData(child, QVariant(icon), Qt::DecorationRole);
 
     ui.treeView->selectionModel()->setCurrentIndex(model->index(0, 0, index),QItemSelectionModel::ClearAndSelect);
     updateActions();
@@ -444,9 +439,35 @@ void QClient::updateActions()
 void QClient::deleteNode()
 {
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
-    QAbstractItemModel* model = ui.treeView->model();
+
+
+    if (user->getType())
+    {
+        QClient* main = QClient::getInstance();
+        int idnode = model->getIdForIndex(index);
+        int iduser = user->getID();
+        nlohmann::json js;
+        js["idnode"] = std::to_string(idnode);//nu ia id ul cum trebe
+        js["iduser"] = std::to_string(iduser);
+        std::string mes = js.dump();
+        sendRemoveNodeMessage(mes);
+        IncomingMessages();
+    }
+
     if (model->removeRow(index.row(), index.parent()))
         updateActions();
+}
+
+void QClient::OpenNote()
+{
+    //vezi care e selectat
+    //de la itemul selectat se ia textul din memorie si se trimite la editorul de text pt a l scrie pe ecran
+    QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+    std::string name = model->getText(index);
+    name += " hello";
+    QMessageBox::information(this, "test message", name.c_str());
+
+
 }
 
 
@@ -471,5 +492,11 @@ void QClient::on_actionDelete_Node_triggered()
 {
     deleteNode();
 }
+
+void QClient::on_actionOpen_Note_triggered()
+{
+    OpenNote();
+}
+
 
 

@@ -1,4 +1,5 @@
 #include <QtGui>
+#include <qstring.h>
 #include "treeitem.h"
 #include "treemodel.h"
 TreeModel* TreeModel::instance = 0;
@@ -54,13 +55,6 @@ QVariant TreeModel::data(const QModelIndex& index, int role) const
         return item->getPhoto();
     }
     return QVariant();
-    //if (role != Qt::DisplayRole && role != Qt::EditRole && role!=Qt::DecorationRole)
-    //    return QVariant();
-
-    //TreeItem* item = getItem(index);
-    //return item->data(index.column());
-
-
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -132,16 +126,6 @@ bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int rol
             emit dataChanged(index, index);
         return result;
     }
-
-    //if (role == Qt::EditRole || Qt::DisplayRole || Qt::DecorationRole)
-    //{
-    //    TreeItem* item = getItem(index);
-    //    bool result = item->setData(index.column(), value);
-    //    if (result)
-    //        emit dataChanged(index, index);
-    //    return result;
-    //}
-
     return false;
 }
 
@@ -204,6 +188,20 @@ void TreeModel::setIcon(QIcon& icon, const QModelIndex& index)
     TreeItem* item = getItem(index);
     item->setIcon(icon);
     emit dataChanged(index, index);
+}
+
+std::string TreeModel::getName(const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    QVariant var = item->data(0);
+    return var.toString().toStdString();
+}
+
+std::string TreeModel::getText(const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    std::string text = item->getText();
+    return text;
 }
 
 
