@@ -43,7 +43,7 @@ QClient::QClient(QWidget* parent)
 }
 QClient:: ~QClient()
 {
-
+    
 }
 void QClient::closeEvent(QCloseEvent* event)
 {
@@ -107,9 +107,8 @@ void QClient::openFile()
     ui.statusBar->showMessage(m_path);
     m_changed = false;
 }
-    delete user;
-    model->deleteInstance();
-}
+    
+
 QClient* QClient::getInstance()
 {
     if (!instance)
@@ -533,10 +532,7 @@ void QClient::OpenNote()
 }
 
 
-void QClient::on_actionExit_triggered()
-{
-    close();
-}
+
 
 void QClient::on_actionAdd_New_Node_triggered()
 {

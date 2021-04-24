@@ -93,7 +93,7 @@ public:
     void deleteNode();
     void OpenNote();
 public slots:
-    void on_actionExit_triggered();
+    
     void on_actionAdd_New_Node_triggered();
     void on_actionAdd_New_Subnode_triggered();
     void on_actionDelete_Node_triggered();
