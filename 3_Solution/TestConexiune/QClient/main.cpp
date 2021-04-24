@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     QClient* w = QClient::getInstance();
     FirstForm f1;
     // apare doar daca s a conectat la server
-    w->Connect("6.tcp.ngrok.io",16296);
+    w->Connect("8.tcp.ngrok.io",15085);
     f1.show();
 	bool bQuit = false;
 	//while (!bQuit)

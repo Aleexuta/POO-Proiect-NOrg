@@ -11,7 +11,7 @@ QClient::QClient(QWidget *parent)
 {
     ui.setupUi(this);
     m_changed = false;
-
+    m_path = "";
     // facere formular
 }
 QClient:: ~QClient()
@@ -20,6 +20,7 @@ QClient:: ~QClient()
 }
 void QClient::closeEvent(QCloseEvent* event)
 {
+    checkSave();
     event->accept();
 }
 void QClient::checkSave()
@@ -33,18 +34,50 @@ void QClient::checkSave()
 }
 void QClient::save()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, "Save");
-    QFile file(fileName);
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
+    QString path = QFileDialog::getSaveFileName(this, "Save File");
+    if (path.isEmpty())
+    {
         return;
     }
-    currentFile = fileName;
-    setWindowTitle(fileName);
-    QTextStream out(&file);
-    QString text = ui.textEdit->toPlainText();
-    out << text;
+    QFile file(path);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        //QMessageBox::critical(this, "Error", file.errorString());
+        ui.statusBar->showMessage("Error: could not save file!");
+        return;
+    }
+    QTextStream stream(&file);
+    stream << ui.textEdit->toHtml();
     file.close();
+
+    m_path = path;
+    ui.statusBar->showMessage(m_path);
+    m_changed = false;
+
+}
+void QClient::newFile()
+{
+    ui.textEdit->clear();
+    ui.statusBar->showMessage("New File");
+    m_changed = false;
+    m_path = "";
+}
+void QClient::openFile()
+{
+    QString path = QFileDialog::getOpenFileName(this, "Open File");
+    if (path.isEmpty())
+        return;
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        QMessageBox::critical(this, "Error", file.errorString());
+        return;
+    }
+    QTextStream stream(&file);
+    ui.textEdit->setHtml(stream.readAll());
+    file.close();
+    m_path = path;
+    ui.statusBar->showMessage(m_path);
     m_changed = false;
 }
 QClient* QClient::getInstance()
@@ -73,19 +106,8 @@ void QClient::sendRegisterMessage(std::string j)
 
 void QClient::on_actionOpen_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Open the file");
-    QFile file(fileName);
-    currentFile = fileName;
-    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Warning", "Cannot open file: " + file.errorString());
-        return;
-    }
-    setWindowTitle(fileName);
-    QTextStream in(&file);
-    QString text = in.readAll();
-    ui.textEdit->setText(text);
-    file.close();
-    m_changed = false;
+    checkSave();
+    openFile();
 }
 
 void QClient::on_actionPrint_triggered()
@@ -250,6 +272,6 @@ void QClient::on_actionFont_triggered()
 void QClient::on_actionNew_triggered()
 {
     checkSave();
-    currentFile.clear();
-    ui.textEdit->setText(QString());
+    newFile();
 }
+

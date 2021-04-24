@@ -17,7 +17,7 @@
 #include "Replace_Form.h"
 #include <QColorDialog>
 #include <QFontDialog>
-
+#include <QCloseEvent>
 enum class CustomMsgTypes : uint32_t
 {
     ServerAccept,
@@ -45,10 +45,13 @@ private:
     void closeEvent(QCloseEvent *event)override;
     void checkSave();
     void save();
+    void newFile();
+    void openFile();
+    
 private:
     Ui::QClientClass ui;
     IUser* user;
-    QString currentFile = "";
+    QString m_path;
     bool m_changed;
 
 public:
@@ -57,6 +60,7 @@ public:
     void sendRegisterMessage(std::string j);
 
 private slots:
+    
     void on_actionNew_triggered();
     void on_actionOpen_triggered();
     void on_actionPrint_triggered();
@@ -79,4 +83,5 @@ private slots:
     void on_actionUnderline_triggered();
     void on_actionColor_triggered();
     void on_actionFont_triggered();
+    
 };
