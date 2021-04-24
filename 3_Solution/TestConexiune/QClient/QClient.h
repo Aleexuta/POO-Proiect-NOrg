@@ -54,6 +54,7 @@ private:
     void save();
     void newFile();
     void openFile();
+
     
 private:
     Ui::QClientClass ui;

@@ -57,19 +57,22 @@ void QClient::checkSave()
     QMessageBox::StandardButton value = QMessageBox::question(this, "Save file", "You have unsaved changes.Do you want to save now?");
     if (value == QMessageBox::StandardButton::No)
         return;
-    else save();
+    else
+    {
+        save();
+    }
 }
 void QClient::save()
 {
-    QString path = QFileDialog::getSaveFileName(this, "Save File");
+    QString path = QFileDialog::getSaveFileName(this, "Save file");
     if (path.isEmpty())
     {
         return;
     }
     QFile file(path);
-    if (file.open(QIODevice::WriteOnly))
+    if (!file.open(QIODevice::WriteOnly))
     {
-        //QMessageBox::critical(this, "Error", file.errorString());
+        QMessageBox::critical(this, "Error", file.errorString());
         ui.statusBar->showMessage("Error: could not save file!");
         return;
     }
@@ -107,6 +110,7 @@ void QClient::openFile()
     ui.statusBar->showMessage(m_path);
     m_changed = false;
 }
+
     
 
 QClient* QClient::getInstance()
