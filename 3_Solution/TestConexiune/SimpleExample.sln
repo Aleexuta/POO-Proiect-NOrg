@@ -5,11 +5,6 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetCommon", "NetCommon\NetCommon.vcxproj", "{D44D7A8A-37FD-490B-B786-817930EF9289}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetServer", "NetServer\NetServer.vcxproj", "{45A37D0F-597E-41C1-AA8D-B5BFDB991DBC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D44D7A8A-37FD-490B-B786-817930EF9289} = {D44D7A8A-37FD-490B-B786-817930EF9289}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QClient", "QClient\QClient.vcxproj", "{EE6FE640-66AA-49A5-9CF6-DB4767911AC9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D44D7A8A-37FD-490B-B786-817930EF9289} = {D44D7A8A-37FD-490B-B786-817930EF9289}
@@ -33,14 +28,6 @@ Global
 		{D44D7A8A-37FD-490B-B786-817930EF9289}.Release|x64.Build.0 = Release|x64
 		{D44D7A8A-37FD-490B-B786-817930EF9289}.Release|x86.ActiveCfg = Release|Win32
 		{D44D7A8A-37FD-490B-B786-817930EF9289}.Release|x86.Build.0 = Release|Win32
-		{45A37D0F-597E-41C1-AA8D-B5BFDB991DBC}.Debug|x64.ActiveCfg = Debug|x64
-		{45A37D0F-597E-41C1-AA8D-B5BFDB991DBC}.Debug|x64.Build.0 = Debug|x64
-		{45A37D0F-597E-41C1-AA8D-B5BFDB991DBC}.Debug|x86.ActiveCfg = Debug|Win32
-		{45A37D0F-597E-41C1-AA8D-B5BFDB991DBC}.Debug|x86.Build.0 = Debug|Win32
-		{45A37D0F-597E-41C1-AA8D-B5BFDB991DBC}.Release|x64.ActiveCfg = Release|x64
-		{45A37D0F-597E-41C1-AA8D-B5BFDB991DBC}.Release|x64.Build.0 = Release|x64
-		{45A37D0F-597E-41C1-AA8D-B5BFDB991DBC}.Release|x86.ActiveCfg = Release|Win32
-		{45A37D0F-597E-41C1-AA8D-B5BFDB991DBC}.Release|x86.Build.0 = Release|Win32
 		{EE6FE640-66AA-49A5-9CF6-DB4767911AC9}.Debug|x64.ActiveCfg = Debug|x64
 		{EE6FE640-66AA-49A5-9CF6-DB4767911AC9}.Debug|x64.Build.0 = Debug|x64
 		{EE6FE640-66AA-49A5-9CF6-DB4767911AC9}.Debug|x86.ActiveCfg = Debug|x64
@@ -60,6 +47,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		Qt5Version = 5.15.2_msvc2019_64(2)
 		SolutionGuid = {32A55B58-5D09-4F48-8BB5-C7ACF62A656F}
 	EndGlobalSection
 EndGlobal

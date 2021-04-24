@@ -2,6 +2,7 @@
 #include <qmessagebox.h>
 #include <nlohmann/json.hpp>
 #include <qstring.h>
+#include <qmessagebox.h>
 
 #include "RegisterForm.h"
 #include "ui_RegisterForm.h"
@@ -9,7 +10,7 @@
 #include "FirstForm.h"
 #include "Common_function.h"
 RegisterForm* RegisterForm::instance = 0;
-RegisterForm::RegisterForm(QWidget* parent) :
+RegisterForm::RegisterForm(QWidget* parent):
 	QDialog(parent),
 	ui(new Ui::RegisterForm)
 {

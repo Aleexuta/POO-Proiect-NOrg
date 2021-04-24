@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     QClient* w = QClient::getInstance();
 
     // apare doar daca s a conectat la server
-    w->Connect("8.tcp.ngrok.io",15085);
+    w->Connect("2.tcp.ngrok.io",11020);
 
     w->IncomingMessages();
 

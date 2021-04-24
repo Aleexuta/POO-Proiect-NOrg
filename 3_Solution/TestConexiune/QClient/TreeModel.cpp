@@ -162,6 +162,15 @@ bool TreeModel::removeRows(int position, int rows, const QModelIndex& parent)
     return succes;
 }
 
+std::string TreeModel::getAllChildren(std::string iduser,QModelIndex& parent)
+{
+    std::string mesaj = "[";
+    TreeItem* item = getItem(parent);
+    getChildren(iduser, item, mesaj);
+    mesaj[mesaj.size() - 1] = ']';
+    return mesaj;
+}
+
 TreeItem* TreeModel::getRootItem()
 {
     return rootItem;
@@ -202,6 +211,16 @@ std::string TreeModel::getText(const QModelIndex& index)
     TreeItem* item = getItem(index);
     std::string text = item->getText();
     return text;
+}
+
+void TreeModel::getChildren(std::string iduser, TreeItem* parent, std::string& full)
+{
+    for (int i = 0; i < parent->childCount(); i++)
+    {
+        getChildren(iduser,parent->child(i), full);
+    }
+    int idnode = parent->getID();
+    full += "{\"iduser\":\"" + iduser + "\",\"idnode\":\"" + std::to_string(idnode) + "\"},";
 }
 
 

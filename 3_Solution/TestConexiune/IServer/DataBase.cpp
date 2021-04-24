@@ -172,14 +172,15 @@ void DataBase::createTable()
 
 	//creare tabel si apoi stergere cod
 	{
-		std::string sql =
+		std::string sql =//"DROP TABLE USER;"
 			"CREATE TABLE USER("
-			"iduser				integer	primary key, "
+			"iduser				integer NOT NULL, "
 			"username           TEXT    NOT NULL, "
 			"firstname          TEXT    NOT NULL, "
 			"lastname			TEXT    NOT NULL, "
 			"email			    TEXT	NOT NULL unique, "
-			"password			TEXT    NOT NULL)";
+			"password			TEXT    NOT NULL,"
+			"PRIMARY KEY(iduser));";
 		char* messaggeError;
 		int exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messaggeError);
 
@@ -192,16 +193,16 @@ void DataBase::createTable()
 	}
 
 	{
-		std::string sql =
-			"CREATE TABLE NODE ("	//CREAZA TABEL NODE, cheie primara dubla(idnod si iduser)
+		std::string sql =//"DROP TABLE NODE;"
+			"CREATE TABLE NODE("	//CREAZA TABEL NODE, cheie primara dubla(idnod si iduser)
 			"iduser		integer not null,"
 			"idnode		integer not null,"
-			"idparent	integer	not null FOREIGN KEY references NODE(idnode) on delete cascade,"
+			"idparent	integer	not null,"
 			"name		TEXT	not null,"
 			"photoname	text	not null,"
 			"Primary key(iduser,idnode),"
-			"Foreign key(iduser) REFERENCES USER(iduser));";
-			"PRAGMA foreign_keys=ON; PRAGMA recursive_triggers =on ;";
+			"Foreign key(iduser) REFERENCES USER(iduser),"
+			"Foreign key(idparent) REFERENCES NODE(idnode));";
 			
 		char* messaggeError;
 		int exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messaggeError);
@@ -215,17 +216,14 @@ void DataBase::createTable()
 
 	}
 	{
-		std::string sql = 
-			"CREATE TABLE NOTES ("	
-			"id			integer not null,"	
+		std::string sql = //  "drop table NOTES;"
+			"CREATE TABLE NOTES ("
 			"iduser		integer not null,"
 			"idnode		integer not null,"
 			"text		text,"
-			"versiune	int,"	
-			"Primary key(id),"
-			"Foreign key(iduser,idnode) REFERENCES NODE(iduser,idnode)"
-			"on delete cascade);"
-			"PRAGMA foreign_keys=ON;";//merge asta pt stergere?
+			"versiune	int,"
+			"Primary key(iduser,idnode,versiune),"
+			"Foreign key(iduser,idnode) REFERENCES NODE(iduser,idnode));";
 
 		char* messaggeError;
 		int exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messaggeError);
@@ -235,7 +233,7 @@ void DataBase::createTable()
 			sqlite3_free(messaggeError);
 		}
 		else
-			std::cout << "Table created NODE Successfully" << std::endl;
+			std::cout << "Table created NOTES Successfully" << std::endl;
 
 	}
 }
@@ -332,10 +330,29 @@ std::string DataBase::selectAllNodes(int iduser)
 	}
 }
 
+bool DataBase::newVersionText(std::string text, std::string iduser, std::string idnode)
+{
+	char* messaggeError;
+	std::string data("CALLBACK FUNCTION");
+	std::string sql("INSERT INTO NOTES(iduser,idnode,text) VALUES "+ iduser+","+idnode+",'"+text+"'");
+	//insert in notes varianta 0 a nodului
+	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error <createVerion> Insert" << std::endl;
+		return false;
+	}
+	else
+	{
+		std::cout << "Insert  <createVersion> successfully!" << std::endl;
+		return true;
+	}
+}
+
 std::string DataBase::getTextForNode(std::string iduser, std::string idnode)
 {
 	char* messaggeError;
-	std::string sql("SELECT NOTES.text FROM NOTES where NOTES.iduser = " + iduser + " and NOTES.idnode = "+idnode+" order by NOTES.id ");
+	std::string sql("SELECT NOTES.text FROM NOTES where NOTES.iduser = " + iduser + " and NOTES.idnode = "+idnode+" order by NOTES.versiune desc limit 1");
 	std::string data("CALLBACK FUNCTION");
 	int exit = sqlite3_exec(DB, sql.c_str(), callbackString, (void*)data.c_str(), NULL);
 	//adauga in final si nr de noduri pe care le are userul
@@ -353,7 +370,7 @@ std::string DataBase::getTextForNode(std::string iduser, std::string idnode)
 bool DataBase::removeNode(std::string id,std::string iduser)
 {
 	char* messaggeError;
-	std::string sql("PRAGMA recursive_triggers=ON; DELETE FROM NODE WHERE NODE.idnode = "+ id+" and NODE.iduser="+ iduser);
+	std::string sql("DELETE FROM NODE WHERE NODE.idnode = "+ id+" and NODE.iduser="+ iduser);
 	std::string data("CALLBACK FUNCTION");
 	int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
 
@@ -367,4 +384,5 @@ bool DataBase::removeNode(std::string id,std::string iduser)
 	{
 		return true;
 	}
+	//stergere si din versiune textele de la toate versiunile
 }

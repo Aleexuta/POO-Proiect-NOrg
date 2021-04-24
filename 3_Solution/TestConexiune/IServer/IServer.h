@@ -45,6 +45,7 @@ private:
     bool InsertNewNode(std::string j);
     std::string loadAllNodes(std::string j);
     bool removeNode(std::string j);
+    bool saveNode(std::string j);
 private:
     static IServer* instance;
     IServer(uint16_t nPort) :

@@ -36,7 +36,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <QtRcc Include="Icon_Resource.qrc">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files\Resource Files</Filter>
     </QtRcc>
   </ItemGroup>
   <ItemGroup>
@@ -130,7 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="QClient.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files\Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
 </Project>

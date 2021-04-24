@@ -32,7 +32,7 @@ public:
 
     bool insertRows(int position, int rows, const QModelIndex& parent = QModelIndex());
     bool removeRows(int position, int rows, const QModelIndex& parent = QModelIndex());
-
+    std::string getAllChildren(std::string iduser,QModelIndex& parent = QModelIndex());
 
 public:
     TreeItem* getRootItem();
@@ -43,6 +43,9 @@ public:
     std::string getName(const QModelIndex& index = QModelIndex());
     std::string getText(const QModelIndex& index = QModelIndex());
 private:
+    void getChildren(std::string iduser,TreeItem* parent, std::string& full);
+
+
     void setupModelData(const QStringList& lines, TreeItem* parent);
     TreeItem* getItem(const QModelIndex & index) const;
 

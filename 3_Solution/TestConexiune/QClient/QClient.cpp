@@ -393,6 +393,8 @@ void QClient::prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, in
     
 }
 
+
+
 void QClient::insertNewNode(const std::string photo, const std::string name)
 {
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
@@ -501,16 +503,16 @@ void QClient::deleteNode()
 {
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
 
-
+    //verifica daca chiar vrea sa l stearga
     if (user->getType())
     {
         QClient* main = QClient::getInstance();
         int idnode = model->getIdForIndex(index);
         int iduser = user->getID();
-        nlohmann::json js;
-        js["idnode"] = std::to_string(idnode);//nu ia id ul cum trebe
-        js["iduser"] = std::to_string(iduser);
-        std::string mes = js.dump();
+        std::string mes=model->getAllChildren(std::to_string(iduser), index);
+        //js["idnode"] = std::to_string(idnode);//nu ia id ul cum trebe
+        //js["iduser"] = std::to_string(iduser);
+        //std::string mes = js.dump();
         sendRemoveNodeMessage(mes);
         IncomingMessages();
     }
@@ -530,9 +532,6 @@ void QClient::OpenNote()
 
 
 }
-
-
-
 
 void QClient::on_actionAdd_New_Node_triggered()
 {
@@ -555,9 +554,6 @@ void QClient::on_actionOpen_Note_triggered()
 {
     OpenNote();
 }
-
-
-
 
 void QClient::on_actionOpen_triggered()
 {
