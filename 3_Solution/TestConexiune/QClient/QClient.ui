@@ -110,6 +110,7 @@
     <addaction name="actionAdd_New_Node"/>
     <addaction name="actionAdd_New_Subnode"/>
     <addaction name="actionDelete_Node"/>
+    <addaction name="actionOpen_Note"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuNodes"/>
@@ -123,6 +124,7 @@
    </attribute>
    <addaction name="actionAdd_New_Node"/>
    <addaction name="actionAdd_New_Subnode"/>
+   <addaction name="actionOpen_Note"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionExit">
@@ -151,6 +153,15 @@
   <action name="actionDelete_Node">
    <property name="text">
     <string>Delete Node</string>
+   </property>
+  </action>
+  <action name="actionOpen_Note">
+   <property name="icon">
+    <iconset>
+     <normaloff>../photos/open.png</normaloff>../photos/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open Note</string>
    </property>
   </action>
  </widget>

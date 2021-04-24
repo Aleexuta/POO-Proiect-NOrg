@@ -18,7 +18,7 @@ public:
 	int columnCount() const;
 	QVariant data(int column)const;
 	bool insertChildren(int position, int count, int columns);
-	void insertChildrenLoad(int  position, int id, int columns ,QVariant& name, QVariant& photoname);
+	void insertChildrenLoad(int  position, int id, int columns,std::string text ,QVariant& name, QVariant& photoname);
 	TreeItem* parent();
 	bool removeChildren(int position, int count);
 	int childNumber()const;
@@ -28,13 +28,15 @@ public:
 	int getID();
 	bool setPhoto(QVariant photo);
 	QVariant getPhoto();
+	void setText(std::string text);
+	std::string getText();
 private:
 	int IDNode;//il punem din iuser
 	QList<TreeItem*> m_childItems;
 	QVector<QVariant> m_itemData;
 	QVariant m_photoname;
 	TreeItem* m_parentItem;
-	
+	std::string m_text;
 
 };
 #endif

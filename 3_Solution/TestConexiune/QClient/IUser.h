@@ -11,6 +11,7 @@ public:
 	virtual int getNumberOfNodes() =0;
 	virtual bool canNewNode()=0;
 	virtual void incrementNrNodes()=0;
+	virtual void decrementNrNodes() = 0;
 	virtual void setNumberOfNodes(int) = 0;
 	virtual void setUsername(std::string user)=0;
 	virtual void setID(int id) = 0;
@@ -43,6 +44,7 @@ public:
 	{
 		numberOfNodes++;
 	}
+	void decrementNrNodes() { numberOfNodes--; }
 	void setNumberOfNodes(int nr)
 	{
 		numberOfNodes = nr;
@@ -89,6 +91,7 @@ public:
 	{
 		numberOfNodes++;
 	}
+	void decrementNrNodes() { numberOfNodes--; }
 	void setNumberOfNodes(int nr)
 	{
 		numberOfNodes = 0;

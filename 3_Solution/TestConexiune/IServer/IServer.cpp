@@ -5,6 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include "IServer.h"
+IServer* IServer::instance = nullptr;
 bool IServer::OnClientConnect(std::shared_ptr<olc::net::connection<CustomMsgTypes>> client)
 {
 	olc::net::message<CustomMsgTypes> msg;
@@ -91,10 +92,21 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 
 	}
 	break;
-
-	case CustomMsgTypes::OpenNode:
+	case CustomMsgTypes::RemoveNode:
 	{
+		std::cout << "Remove node case\n";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (removeNode(str))
+		{
+			std::cout << "Delete Node Succes";
+			//trimite mesaj cu id ul nodului inapoi
 
+		}
+		else
+		{
+			std::cout << "\nDelete Node Error";
+
+		}
 	}
 	break;
 	case CustomMsgTypes::SaveNode:
@@ -209,10 +221,43 @@ std::string IServer::loadAllNodes(std::string j)
 	}
 }
 
+bool IServer::removeNode(std::string j)
+{
+	try 
+	{
+		auto js = nlohmann::json::parse(j);
+		std::string id = js["idnode"];
+		std::string iduser = js["iduser"];
+		return DB.removeNode(id,iduser);
+	}
+	catch (...)
+	{
+		std::cout << "\nEroare la removeNode(IServer)";
+	}
+}
+
 
 IServer::~IServer()
 {
 	DB.closeDataBase();
+}
+
+IServer* IServer::getInstance(uint16_t nPort)
+{
+	if (!instance)
+		instance = new IServer(nPort);
+	return instance;
+}
+
+IServer* IServer::getInstance()
+{
+	return instance;
+}
+
+void IServer::deleteInstance()
+{
+	if (instance)
+		delete instance;
 }
 
 void IServer::connectDataBase()
@@ -225,4 +270,10 @@ void IServer::connectDataBase()
 void IServer::createTable()
 {
 	DB.createTable();
+	DB.createTrigger();
+}
+
+DataBase IServer::getDatabase()
+{
+	return DB;
 }

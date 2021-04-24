@@ -24,7 +24,6 @@ enum class CustomMsgTypes : uint32_t
     LoadAllNodes,
     LoadAllNodesAccept,
     RemoveNode,
-    OpenNode,
     SaveNode
 };
 
@@ -58,6 +57,7 @@ public:
     TreeItem* getRootItem();
     int  getNumberOfNodes();
     void incrementNumberOfNodes();
+    void decrementNumberOfNodes();
 private:
     auto makeJsonNewNode(std::string name, int iduser, int idparent, int idnode, std::string namephoto = "");
     void sendLoadAllNodesMessage(std::string id);
@@ -69,10 +69,12 @@ public:
     void inservNewSubnode(const std::string photo,const std::string name);
     void updateActions();
     void deleteNode();
+    void OpenNote();
 public slots:
     void on_actionExit_triggered();
     void on_actionAdd_New_Node_triggered();
     void on_actionAdd_New_Subnode_triggered();
     void on_actionDelete_Node_triggered();
+    void on_actionOpen_Note_triggered();
 
 };
