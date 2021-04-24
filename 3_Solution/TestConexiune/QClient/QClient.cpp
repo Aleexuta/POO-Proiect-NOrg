@@ -64,25 +64,48 @@ void QClient::checkSave()
 }
 void QClient::save()
 {
-    QString path = QFileDialog::getSaveFileName(this, "Save file");
-    if (path.isEmpty())
+    if (!user->getType())
     {
-        return;
-    }
-    QFile file(path);
-    if (!file.open(QIODevice::WriteOnly))
-    {
-        QMessageBox::critical(this, "Error", file.errorString());
-        ui.statusBar->showMessage("Error: could not save file!");
-        return;
-    }
-    QTextStream stream(&file);
-    stream << ui.textEdit->toHtml();
-    file.close();
+        QString path = QFileDialog::getSaveFileName(this, "Save file");
+        if (path.isEmpty())
+        {
+            return;
+        }
+        QFile file(path);
+        if (!file.open(QIODevice::WriteOnly))
+        {
+            QMessageBox::critical(this, "Error", file.errorString());
+            ui.statusBar->showMessage("Error: could not save file!");
+            return;
+        }
+        QTextStream stream(&file);
+        stream << ui.textEdit->toHtml();
+        file.close();
 
-    m_path = path;
-    ui.statusBar->showMessage(m_path);
-    m_changed = false;
+        m_path = path;
+        ui.statusBar->showMessage(m_path);
+        m_changed = false;
+    }
+    else
+    {
+        QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+        //memorie
+        model->setText((ui.textEdit->toHtml()).toStdString(),index);
+
+        //baza de data
+       
+        int iduser = user->getID();
+        int idnode = model->getIdForIndex(index);
+        nlohmann::json js;
+        js["idnode"] = std::to_string(idnode);//nu ia id ul cum trebe
+        js["iduser"] = std::to_string(iduser);
+        QString str= (ui.textEdit->toHtml()).toStdString().c_str();
+        convertIntoTilda(str);
+        js["text"] = str.toStdString();
+        std::string mes = js.dump();
+        sendSaveNotesMessage(mes);
+        IncomingMessages();
+    }
 
 }
 void QClient::newFile()
@@ -272,6 +295,16 @@ void QClient::sendRemoveNodeMessage(std::string j)
     Send(msg);
 }
 
+void QClient::sendSaveNotesMessage(std::string j)
+{
+    olc::net::message<CustomMsgTypes> msg;
+    msg.header.id = CustomMsgTypes::SaveNode;
+    char* vect = const_cast<char*>(j.c_str());
+    for (int i = 0; i < j.size(); i++)
+        msg << vect[i];
+    Send(msg);
+}
+
 void QClient::setUserInfo(std::string mesaj)
 {
 
@@ -393,6 +426,9 @@ void QClient::prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, in
     std::string name = st1["name"];
     std::string photoname = st1["photoname"];
     std::string text = st1["text"];
+    QString t = text.c_str();
+    convertFromTilda(t);
+    text = t.toStdString();
     root->insertChildrenLoad(0, std::stoi(idnode),NRCOL,text, QVariant(name.c_str()),QVariant(QIcon(photoname.c_str())));
     
 }
@@ -530,10 +566,10 @@ void QClient::OpenNote()
     //vezi care e selectat
     //de la itemul selectat se ia textul din memorie si se trimite la editorul de text pt a l scrie pe ecran
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
-    std::string name = model->getText(index);
-    name += " hello";
-    QMessageBox::information(this, "test message", name.c_str());
-
+    std::string text = model->getText(index);
+   // name += " hello";
+   // QMessageBox::information(this, "test message", name.c_str());
+    ui.textEdit->setHtml(text.c_str());
 
 }
 

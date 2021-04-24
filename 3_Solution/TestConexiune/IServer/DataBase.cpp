@@ -216,12 +216,12 @@ void DataBase::createTable()
 
 	}
 	{
-		std::string sql = //  "drop table NOTES;"
+		std::string sql =   //"drop table NOTES;"
 			"CREATE TABLE NOTES ("
 			"iduser		integer not null,"
 			"idnode		integer not null,"
 			"text		text,"
-			"versiune	int,"
+			"versiune	int		not null,"
 			"Primary key(iduser,idnode,versiune),"
 			"Foreign key(iduser,idnode) REFERENCES NODE(iduser,idnode));";
 
@@ -334,8 +334,9 @@ bool DataBase::newVersionText(std::string text, std::string iduser, std::string 
 {
 	char* messaggeError;
 	std::string data("CALLBACK FUNCTION");
-	std::string sql("INSERT INTO NOTES(iduser,idnode,text) VALUES "+ iduser+","+idnode+",'"+text+"'");
+	std::string sql("INSERT INTO NOTES(iduser,idnode,versiune,text) VALUES ("+ iduser+","+idnode+",2,'"+text+"')");
 	//insert in notes varianta 0 a nodului
+	std::cout << sql<<"\n\n\n";
 	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
 	if (exit != SQLITE_OK)
 	{

@@ -104,3 +104,31 @@
 		main->sendLoginMessage(str);
 		main->IncomingMessages();
 	}
+	inline void convertIntoTilda(QString& str)
+	{
+		for (int i = 0; i < str.size(); i++)
+		{
+			if (str[i] == '\'')
+			{
+				str[i] = '~';
+			}
+			if (str[i] == '"')
+			{
+				str[i] = '~';
+			}
+		}
+	}
+	inline void convertFromTilda(QString& str)
+	{
+		for (int i = 0; i < str.size(); i++)
+		{
+			if (str[i] == '~')
+			{
+				str[i] = '\'';
+			}
+			if (str[i] == '^')
+			{
+				str[i] = '"';
+			}
+		}
+	}

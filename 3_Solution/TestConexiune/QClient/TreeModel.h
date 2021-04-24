@@ -42,6 +42,7 @@ public:
     void setIcon(QIcon & icon,const QModelIndex& index = QModelIndex());
     std::string getName(const QModelIndex& index = QModelIndex());
     std::string getText(const QModelIndex& index = QModelIndex());
+    void setText(std::string text,const QModelIndex& index = QModelIndex());
 private:
     void getChildren(std::string iduser,TreeItem* parent, std::string& full);
 

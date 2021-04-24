@@ -72,6 +72,7 @@ public:
     void sendLoginMessage(std::string j);
     void sendNewNodeMessage(std::string j);
     void sendRemoveNodeMessage(std::string j);
+    void sendSaveNotesMessage(std::string j);
 
     void setUserInfo(std::string mesaj);
     void setGuestInfo();

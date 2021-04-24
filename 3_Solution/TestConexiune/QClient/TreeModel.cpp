@@ -213,6 +213,12 @@ std::string TreeModel::getText(const QModelIndex& index)
     return text;
 }
 
+void TreeModel::setText(std::string text, const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    item->setText(text);
+}
+
 void TreeModel::getChildren(std::string iduser, TreeItem* parent, std::string& full)
 {
     for (int i = 0; i < parent->childCount(); i++)
