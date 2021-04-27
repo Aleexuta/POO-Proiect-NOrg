@@ -6,7 +6,6 @@
 #include <qvariant.h>
 #include <string>
 #include <qicon.h>
-
 #include "RegisterForm.h"
 #include "LoginForm.h"
 #include "FirstForm.h"
@@ -37,9 +36,9 @@ QClient::QClient(QWidget* parent)
     //}
     ui.treeView->setColumnWidth(0,100);
     ui.treeView->setColumnWidth(1, 10);
-
     isloged = false;
     updateActions();
+    ui.textEdit->setAcceptRichText(true);
 }
 QClient:: ~QClient()
 {
@@ -47,20 +46,25 @@ QClient:: ~QClient()
 }
 void QClient::closeEvent(QCloseEvent* event)
 {
-    checkSave();
-    event->accept();
+    bool cancel = false;
+    checkSave(cancel);
+    if (!cancel)
+        event->accept();
+    else event->ignore();
+
 }
-void QClient::checkSave()
+void QClient::checkSave(bool &cancel)
 {
     if (!m_changed)
         return;
-    QMessageBox::StandardButton value = QMessageBox::question(this, "Save file", "You have unsaved changes.Do you want to save now?");
+    QMessageBox::StandardButton value = QMessageBox::question(this, "Save file", "You have unsaved changes. Do you want to save now?", QMessageBox::Yes | QMessageBox::No |QMessageBox::Cancel);
     if (value == QMessageBox::StandardButton::No)
         return;
-    else
+    else if (value == QMessageBox::StandardButton::Yes)
     {
         save();
     }
+    else cancel = true;
 }
 void QClient::save()
 {
@@ -83,7 +87,6 @@ void QClient::save()
     m_path = path;
     ui.statusBar->showMessage(m_path);
     m_changed = false;
-
 }
 void QClient::newFile()
 {
@@ -111,8 +114,7 @@ void QClient::openFile()
     m_changed = false;
 }
 
-    
-
+   
 QClient* QClient::getInstance()
 {
     if (!instance)
@@ -559,10 +561,54 @@ void QClient::on_actionOpen_Note_triggered()
     OpenNote();
 }
 
+void QClient::add_corresponding_checkboxes()
+{
+    QTextCursor cursor(ui.textEdit->textCursor());
+    while (cursor.position() != ui.textEdit->textCursor().End)
+    {
+        bool is_there_a_checkbox = ui.textEdit->find("~c");
+        if (!is_there_a_checkbox)
+            break;
+         QCheckBox* check = new QCheckBox(this);
+         check->isCheckable();
+         QRect rect1(ui.textEdit->cursorRect());
+         QRect rect2(ui.textEdit->geometry());
+         QRect rect3(check->geometry());
+         QRect rect4(ui.toolBar->geometry());
+         check->show();
+         check->move(rect1.x() + rect2.x() + rect3.x() - 15, rect1.y() + rect2.y() + rect3.height() - 10 + rect4.height());
+         cursor = ui.textEdit->textCursor();
+         m_checkboxes << check;
+    }
+    cursor.movePosition(QTextCursor::Start);
+    ui.textEdit->setTextCursor(cursor);
+    while (cursor.position() != ui.textEdit->textCursor().End)
+    {
+        bool is_there_a_checked_checkbox = ui.textEdit->find("`c");
+        if (!is_there_a_checked_checkbox)
+            break;
+         QCheckBox* check = new QCheckBox(this);
+         check->isCheckable();
+         check->setChecked(true);
+         QRect rect1(ui.textEdit->cursorRect());
+         QRect rect2(ui.textEdit->geometry());
+         QRect rect3(check->geometry());
+         QRect rect4(ui.toolBar->geometry());
+         check->show();
+         check->move(rect1.x() + rect2.x() + rect3.x() - 15, rect1.y() + rect2.y() + rect3.height() - 10 + rect4.height());
+         cursor = ui.textEdit->textCursor();
+         m_checkboxes << check;
+        
+    }
+}
+
 void QClient::on_actionOpen_triggered()
 {
-    checkSave();
+    bool cancel = false;
+    checkSave(cancel);
+    if(!cancel)
     openFile();
+    add_corresponding_checkboxes();
 }
 
 void QClient::on_actionPrint_triggered()
@@ -579,12 +625,37 @@ void QClient::on_actionPrint_triggered()
 
 void QClient::on_actionExit_triggered()
 {
-    checkSave();
-    QApplication::quit();
+    bool cancel = false;
+    checkSave(cancel);
+    if(!cancel)
+        QApplication::quit();
+}
+
+void QClient::save_type_checkboxes()
+{
+    QTextCursor textCursor = ui.textEdit->textCursor();
+    textCursor.movePosition(QTextCursor::Start);
+    ui.textEdit->setTextCursor(textCursor);
+    int nr_of_checked = 0;
+    for (int i = 0;i < m_checkboxes.size();i++)
+    {
+        if (m_checkboxes[i]->isChecked())
+        {
+            for (int j = 0;j <= i - nr_of_checked;j++)
+            {
+               ui.textEdit->find("~c"); 
+            }
+            ui.textEdit->textCursor().insertText("`c");
+            textCursor.movePosition(QTextCursor::Start);
+            ui.textEdit->setTextCursor(textCursor);
+            nr_of_checked++;
+        }
+    }
 }
 
 void QClient::on_actionSave_triggered()
 {
+    save_type_checkboxes();
     save();
 }
 
@@ -596,6 +667,11 @@ void QClient::on_actionCopy_triggered()
 void QClient::on_textEdit_textChanged()
 {
     m_changed = true;
+    int wordCount = ui.textEdit->toPlainText().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts).count();
+    wordCount -= m_checkboxes.size();
+    QString display = QString::number(wordCount);
+    ui.nr_of_words->setText(display);
+    ui.nr_of_words->show();
 }
 
 void QClient::on_actionCut_triggered()
@@ -724,9 +800,142 @@ void QClient::on_actionFont_triggered()
         ui.textEdit->setFont(font);
 }
 
+void QClient::on_actionAlign_Left_triggered()
+{
+    ui.textEdit->setAlignment(Qt::AlignLeft);
+}
+
+void QClient::on_actionAlign_Right_triggered()
+{
+    ui.textEdit->setAlignment(Qt::AlignRight);
+}
+
+void QClient::on_actionAlign_Center_triggered()
+{
+    ui.textEdit->setAlignment(Qt::AlignCenter);
+}
+
+void QClient::on_action_Insert_List_triggered()
+{
+    QTextCursor* cursor = new QTextCursor(ui.textEdit->textCursor());
+    static int indent = 0;
+    if (!cursor->currentList())
+    {
+        indent = 1;
+        QTextDocument* document = ui.textEdit->document();
+        QTextListFormat listFormat;
+        listFormat.setIndent(indent);
+        listFormat.setStyle(QTextListFormat::ListSquare);
+        cursor->insertList(listFormat);
+        indent +=1;
+    }
+    else
+    {
+        QTextDocument* document = ui.textEdit->document();
+        QTextListFormat listFormat;
+        listFormat.setIndent(indent);
+        listFormat.setStyle(QTextListFormat::ListSquare);
+        cursor->insertList(listFormat);
+        indent += 1;
+    }
+}
+
+void QClient::on_actionInsert_Table_triggered()
+{
+    Table_Dialog* diag = new Table_Dialog(this);
+    if (!diag->exec())
+        return;
+    QTextCursor* cursor = new QTextCursor(ui.textEdit->textCursor());
+    cursor->insertTable(diag->get_rows(), diag->get_columns());
+    for(int i=0;i<diag->get_rows()*diag->get_columns();i++)
+    {
+        cursor->insertText("\ttext\t");
+        cursor->movePosition(QTextCursor::NextCell);
+    }
+    ui.actionAdd_Column->setVisible(true);
+    ui.actionAdd_Row->setVisible(true);
+}
+
+void QClient::on_actionAdd_Column_triggered()
+{
+    QTextCursor* cursor = new QTextCursor(ui.textEdit->textCursor());
+    if (cursor->currentTable())
+        cursor->currentTable()->appendColumns(1);
+    else
+    {
+            QMessageBox::information(this, "Error", "Select in which table you want to add the column or create a table first!");
+            return;
+    }
+}
+
+void QClient::on_actionAdd_Row_triggered()
+{
+    QTextCursor* cursor = new QTextCursor(ui.textEdit->textCursor());
+    if (cursor->currentTable())
+        cursor->currentTable()->appendRows(1);
+    else 
+    {
+        QMessageBox::information(this, "Error", "Select in which table you want to add the row or create a table first!");
+        return;
+    }
+}
+
+void QClient::on_actionInsert_Image_triggered()
+{
+    QString file = QFileDialog::getOpenFileName(this, tr("Select an image"),
+        ".", tr("Bitmap Files (*.bmp)\n"
+            "JPEG (*.jpg *jpeg)\n"
+            "GIF (*.gif)\n"
+            "PNG (*.png)\n"));
+    QUrl Uri(QString("%1").arg(file));
+    QImage image = QImageReader(file).read();
+
+    QTextDocument* textDocument = ui.textEdit->document();
+    textDocument->addResource(QTextDocument::ImageResource, Uri, QVariant(file));
+    QTextCursor cursor = ui.textEdit->textCursor();
+    QTextImageFormat imageFormat;
+    imageFormat.setWidth(image.width());
+    imageFormat.setHeight(image.height());
+    imageFormat.setName(Uri.toString());
+    cursor.insertImage(imageFormat);
+    
+}
+
+void QClient::on_actionInsert_Checkbox_triggered()
+{
+    QCheckBox* check = new QCheckBox(this);
+    check->isCheckable();
+    QRect rect1(ui.textEdit->cursorRect());
+    QRect rect2(ui.textEdit->geometry());
+    QRect rect3(check->geometry());
+    QRect rect4(ui.toolBar->geometry());
+    QTextCursor cursor(ui.textEdit->textCursor());
+    check->show();
+    check->move(rect1.x()+rect2.x()+rect3.x(),rect1.y()+rect2.y()+rect3.height()-10+rect4.height());
+    
+    /*QColor old_color = ui.textEdit->textColor();
+    QPalette hidingspot = ui.textEdit->palette();
+    hidingspot.setColor(QPalette::Text, ui.textEdit->palette().base().color());
+    ui.textEdit->setPalette(hidingspot);
+    cursor.insertText("<ckb>");
+    cursor.insertText("          ");
+    ui.textEdit->setTextColor(old_color);*/
+    QColor old_color = ui.textEdit->textColor();
+    QColor hidingspot = ui.textEdit->palette().base().color();
+    ui.textEdit->setTextColor(hidingspot);
+    cursor.insertText("~c");
+    cursor.insertText("        ");
+    m_checkboxes << check;
+    
+}
+
 void QClient::on_actionNew_triggered()
 {
-    checkSave();
-    newFile();
+    bool cancel = false;
+    checkSave(cancel);
+    if(!cancel)
+        newFile();
+    qDeleteAll(m_checkboxes.begin(), m_checkboxes.end());
+    m_checkboxes.clear();
 }
 

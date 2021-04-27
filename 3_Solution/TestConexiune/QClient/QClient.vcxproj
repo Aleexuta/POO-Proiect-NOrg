@@ -33,12 +33,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>5.15.2_msvc2019_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
-    <QtInstall>5.15.2_msvc2019_64(2)</QtInstall>
+    <QtInstall>5.15.2_msvc2015_64</QtInstall>
     <QtModules>core;gui;widgets;printsupport;</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>5.15.2_msvc2019_64(2)</QtInstall>
+    <QtInstall>5.15.2_msvc2015_64</QtInstall>
     <QtModules>core;gui;widgets;printsupport;</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
@@ -95,6 +95,7 @@
     <ClCompile Include="NewNode.cpp" />
     <ClCompile Include="Find_Form.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
+    <ClCompile Include="Table_Dialog.cpp" />
     <ClCompile Include="TreeItem.cpp" />
     <ClCompile Include="TreeModel.cpp" />
     <ClCompile Include="Replace_Form.cpp" />
@@ -112,9 +113,11 @@
     <ClCompile Include="main.cpp" />
     <QtUic Include="RegisterForm.ui" />
     <QtUic Include="Replace_Form.ui" />
+    <QtUic Include="Table_Dialog.ui" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common_function.h" />
+    <QtMoc Include="Table_Dialog.h" />
     <QtMoc Include="NewNode.h" />
     <QtMoc Include="TreeItem.h" />
     <QtMoc Include="TreeModel.h" />
