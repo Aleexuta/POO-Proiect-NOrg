@@ -285,7 +285,7 @@ void IServer::connectDataBase()
 void IServer::createTable()
 {
 	DB.createTable();
-	DB.createTrigger();
+	//DB.createTrigger();
 }
 
 DataBase IServer::getDatabase()

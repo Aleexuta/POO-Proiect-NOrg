@@ -41,6 +41,7 @@ int DataBase::callbackString(void* data, int argc, char** argv, char** azColName
 		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
 		std::string col(azColName[i]);
 		std::string sol(argv[i] ? argv[i] : "NULL");
+		std::string text("<!DOCTYPE HTML PUBLIC @-//W3C//DTD HTML 4.0//EN@ @http://www.w3.org/TR/REC-html40/strict.dtd@> < html > <head><meta name = @qrichtext@ content = @1@ / ><style type = @text / css@>p, li(white - space: pre - wrap; )< / style > < / head> < body style = @ font - family:~MS Shell Dlg 2~; font - size:8pt; font - weight:400; font - style:normal; @ >< p style = @ margin - top:0px; margin - bottom:0px; margin - left:0px; margin - right:0px; -qt - block - indent:0; text - indent:0px; @ > test< / p>< / body> < / html>");
 		rasp += "\"" + col + "\":" + "\"" + sol + "\"";
 
 	}
@@ -216,7 +217,7 @@ void DataBase::createTable()
 
 	}
 	{
-		std::string sql =   //"drop table NOTES;"
+		std::string sql =  // "drop table NOTES;"
 			"CREATE TABLE NOTES ("
 			"iduser		integer not null,"
 			"idnode		integer not null,"
@@ -273,7 +274,7 @@ bool DataBase::insertNewNode(std::string iduser, std::string idparent, std::stri
 	char* messaggeError;
 	std::string data("CALLBACK FUNCTION");
 	std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname) VALUES(" + iduser + "," + idnode + "," + idparent + ",'" + name + "','" + photo + "');"
-		+ "INSERT INTO NOTES(idnode, iduser,text,versiune) VALUES ("+idnode+","+iduser+",'Bine ai venit',0);");
+		+ "INSERT INTO NOTES(idnode, iduser,versiune,text) VALUES ("+idnode+","+iduser+",0,"+" 'Bine ai venit!' );");//pune in loc de bine ai venit codul aferent
 	//insert in notes varianta 0 a nodului
 	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
 	if (exit != SQLITE_OK)
@@ -329,13 +330,31 @@ std::string DataBase::selectAllNodes(int iduser)
 		return final;
 	}
 }
-
+void convertTextToInsert(std::string& text)
+{
+	for (int i = 0; i < text.size(); i++)
+	{
+		if (text[i] == '\'')
+			text[i] = '~';
+		if (text[i] == '"')
+			text[i] = '@';
+		if (text[i] == '{')
+			text[i] = '(';
+		if (text[i] == '}')
+			text[i] = ')';
+	}
+}
 bool DataBase::newVersionText(std::string text, std::string iduser, std::string idnode)
 {
+	std::string vers = getLastVersionText(iduser, idnode);
+	int ver = std::stoi(vers);
+	ver++;
+	convertTextToInsert(text);
 	char* messaggeError;
 	std::string data("CALLBACK FUNCTION");
-	std::string sql("INSERT INTO NOTES(iduser,idnode,versiune,text) VALUES ("+ iduser+","+idnode+",2,'"+text+"')");
+	std::string sql("INSERT INTO NOTES(iduser,idnode,versiune,text) VALUES ("+ iduser+","+idnode+","+std::to_string(ver)+",'"+text+"')");
 	//insert in notes varianta 0 a nodului
+	//fa versiunea
 	std::cout << sql<<"\n\n\n";
 	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
 	if (exit != SQLITE_OK)
@@ -365,6 +384,26 @@ std::string DataBase::getTextForNode(std::string iduser, std::string idnode)
 	else
 	{
 		return finalText;
+	}
+}
+
+std::string DataBase::getLastVersionText(std::string iduser, std::string idnode)
+{
+	char* messaggeError;
+	std::string sql("SELECT NOTES.versiune FROM NOTES where NOTES.iduser = " + iduser + " and NOTES.idnode = " + idnode + " order by NOTES.versiune desc limit 1");
+	std::string data("CALLBACK FUNCTION");
+	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
+	//adauga in final si nr de noduri pe care le are userul
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Select<SELECT TEXT NOTES> \n" << std::endl;
+		return "0";
+	}
+	else
+	{
+		auto js = nlohmann::json::parse(final);
+		std::string rasp= js["versiune"];
+		return rasp;
 	}
 }
 

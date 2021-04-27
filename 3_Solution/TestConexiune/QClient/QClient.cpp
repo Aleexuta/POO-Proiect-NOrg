@@ -15,6 +15,7 @@
 #include "TreeItem.h"
 #include "Common_function.h"
 bool isloged = false;
+bool isregistered = false;
 QClient* QClient::instance = nullptr;
 QClient::QClient(QWidget* parent)
     : QMainWindow(parent)
@@ -99,9 +100,9 @@ void QClient::save()
         nlohmann::json js;
         js["idnode"] = std::to_string(idnode);//nu ia id ul cum trebe
         js["iduser"] = std::to_string(iduser);
-        QString str= (ui.textEdit->toHtml()).toStdString().c_str();
+        std::string str= ui.textEdit->toHtml().toStdString();
         convertIntoTilda(str);
-        js["text"] = str.toStdString();
+        js["text"] = str;
         std::string mes = js.dump();
         sendSaveNotesMessage(mes);
         IncomingMessages();
@@ -166,21 +167,27 @@ void QClient::IncomingMessages()
 
                 case CustomMsgTypes::ServerAcceptRegister:
                 {
-                    QMessageBox::information(this, "Server Message", "Register Succes");
-                    LoginForm* log = LoginForm::getInstance();
-                    log->show();
-                    
-                    RegisterForm* reg = RegisterForm::getInstance();
-                    reg->close();
-                   // reg->deleteInstance();
+                    if (!isregistered)
+                    {
+                        isregistered = true;
+                        QMessageBox::information(this, "Server Message", "Register Succes");
+                        LoginForm* log = LoginForm::getInstance();
+                        log->show();
+
+                        RegisterForm* reg = RegisterForm::getInstance();
+                        reg->close();
+                        // reg->deleteInstance();
+                    }
                 }
                 break;
                 case CustomMsgTypes::ServerDenyRegister:
                 {
-                    QMessageBox::warning(this, "Server Message", "Register Error");
-                    RegisterForm* reg = RegisterForm::getInstance();
-                    reg->show();
-                }
+                    if (!isregistered)
+                    {
+                        QMessageBox::warning(this, "Server Message", "Register Error");
+                        RegisterForm* reg = RegisterForm::getInstance();
+                        reg->show();
+                    }}
                 break;
                 case CustomMsgTypes::ServerAcceptLogin:
                 {
@@ -201,11 +208,14 @@ void QClient::IncomingMessages()
                 break;
                 case CustomMsgTypes::ServerDenyLogin:
                 {
-                    QMessageBox::warning(this, "Server Message", "Login Error");
-                    LoginForm* reg = LoginForm::getInstance();
-                    reg->show();
-                    FirstForm* ff = FirstForm::getInstance();
-                    ff->close();
+                    if (!isloged)
+                    {
+                        QMessageBox::warning(this, "Server Message", "Login Error");
+                        LoginForm* reg = LoginForm::getInstance();
+                        reg->show();
+                        FirstForm* ff = FirstForm::getInstance();
+                        ff->close();
+                    }
                 }
                 break;
                 case CustomMsgTypes::ServerAccept:
@@ -426,11 +436,9 @@ void QClient::prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, in
     std::string name = st1["name"];
     std::string photoname = st1["photoname"];
     std::string text = st1["text"];
-    QString t = text.c_str();
-    convertFromTilda(t);
-    text = t.toStdString();
+
+    convertFromTilda(text);
     root->insertChildrenLoad(0, std::stoi(idnode),NRCOL,text, QVariant(name.c_str()),QVariant(QIcon(photoname.c_str())));
-    
 }
 
 
@@ -569,6 +577,8 @@ void QClient::OpenNote()
     std::string text = model->getText(index);
    // name += " hello";
    // QMessageBox::information(this, "test message", name.c_str());
+    ui.textEdit->setText("");//merge?
+
     ui.textEdit->setHtml(text.c_str());
 
 }

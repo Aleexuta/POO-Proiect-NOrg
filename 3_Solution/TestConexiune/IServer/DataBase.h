@@ -38,5 +38,6 @@ public:
 
 private:
 	std::string getTextForNode(std::string iduser, std::string idnode);
+	std::string getLastVersionText(std::string iduser, std::string idnode);
 };
 

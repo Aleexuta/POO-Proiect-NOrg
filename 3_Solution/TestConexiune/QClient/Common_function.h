@@ -104,31 +104,36 @@
 		main->sendLoginMessage(str);
 		main->IncomingMessages();
 	}
-	inline void convertIntoTilda(QString& str)
+	inline void convertIntoTilda(std::string& str)
 	{
+		std::string nou="";
+		int k = 0;
 		for (int i = 0; i < str.size(); i++)
 		{
+			if (str[i] == '\n')
+				str[i] = ' ';
 			if (str[i] == '\'')
-			{
 				str[i] = '~';
-			}
 			if (str[i] == '"')
-			{
-				str[i] = '~';
-			}
+				str[i] = '@';
+			if (str[i] == '{')
+				str[i] = '(';
+			if (str[i] == '}')
+				str[i] = ')';	
 		}
 	}
-	inline void convertFromTilda(QString& str)
+	inline void convertFromTilda(std::string& str)
 	{
-		for (int i = 0; i < str.size(); i++)
+		std::string nou="";
+		for (int i = 0; i <= str.size(); i++)
 		{
 			if (str[i] == '~')
-			{
 				str[i] = '\'';
-			}
-			if (str[i] == '^')
-			{
+			if (str[i] == '@')
 				str[i] = '"';
-			}
+			if (str[i] == '(')
+				str[i] = '{';
+			if (str[i] == ')')
+				str[i] = '}';
 		}
 	}
