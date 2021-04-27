@@ -58,10 +58,9 @@ void QClient::checkSave(bool &cancel)
 {
     if (!m_changed)
         return;
-    QMessageBox::StandardButton value = QMessageBox::question(this, "Save file", "You have unsaved changes.Do you want to save now?", QMessageBox::Yes | QMessageBox::No |QMessageBox::Cancel);
+    QMessageBox::StandardButton value = QMessageBox::question(this, "Save file", "You have unsaved changes. Do you want to save now?", QMessageBox::Yes | QMessageBox::No |QMessageBox::Cancel);
     if (value == QMessageBox::StandardButton::No)
         return;
-
     else if (value == QMessageBox::StandardButton::Yes)
     {
         save();
@@ -89,7 +88,6 @@ void QClient::save()
     m_path = path;
     ui.statusBar->showMessage(m_path);
     m_changed = false;
-
 }
 void QClient::newFile()
 {
@@ -732,6 +730,31 @@ void QClient::on_actionFont_triggered()
     QFont font = QFontDialog::getFont(&ok, ui.textEdit->currentFont(), this, "Select a font");
     if (ok)
         ui.textEdit->setFont(font);
+}
+
+void QClient::on_actionAlign_Left_triggered()
+{
+    ui.textEdit->setAlignment(Qt::AlignLeft);
+}
+
+void QClient::on_actionAlign_Right_triggered()
+{
+    ui.textEdit->setAlignment(Qt::AlignRight);
+}
+
+void QClient::on_actionAlign_Center_triggered()
+{
+    ui.textEdit->setAlignment(Qt::AlignCenter);
+}
+
+void QClient::on_action_Insert_List_triggered()
+{
+    QTextDocument* document = ui.textEdit->document();
+    QTextCursor* cursor = new QTextCursor(document);
+
+    QTextListFormat listFormat;
+    listFormat.setStyle(QTextListFormat::ListSquare);
+    cursor->insertList(listFormat);
 }
 
 void QClient::on_actionNew_triggered()

@@ -26,5 +26,8 @@
         <file>Icons/zoom-in.png</file>
         <file>Icons/find.png</file>
         <file>Icons/replacement.png</file>
+        <file>Icons/align left.png</file>
+        <file>Icons/align_center.png</file>
+        <file>Icons/align_right.png</file>
     </qresource>
 </RCC>

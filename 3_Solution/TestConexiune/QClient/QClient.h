@@ -124,5 +124,8 @@ private slots:
     void on_actionUnderline_triggered();
     void on_actionColor_triggered();
     void on_actionFont_triggered();
-    
+    void on_actionAlign_Left_triggered();
+    void on_actionAlign_Right_triggered();
+    void on_actionAlign_Center_triggered();
+    void on_action_Insert_List_triggered();
 };

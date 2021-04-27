@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>610</width>
+    <width>803</width>
     <height>452</height>
    </rect>
   </property>
@@ -23,7 +23,7 @@
       <x>10</x>
       <y>30</y>
       <width>200</width>
-      <height>192</height>
+      <height>311</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -95,8 +95,8 @@
      <rect>
       <x>269</x>
       <y>30</y>
-      <width>253</width>
-      <height>192</height>
+      <width>511</width>
+      <height>311</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -109,7 +109,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>610</width>
+     <width>803</width>
      <height>26</height>
     </rect>
    </property>
@@ -157,6 +157,12 @@
     <addaction name="separator"/>
     <addaction name="actionColor"/>
     <addaction name="actionFont"/>
+    <addaction name="separator"/>
+    <addaction name="actionAlign_Left"/>
+    <addaction name="actionAlign_Center"/>
+    <addaction name="actionAlign_Right"/>
+    <addaction name="separator"/>
+    <addaction name="action_Insert_List"/>
    </widget>
    <widget class="QMenu" name="menuNodes">
     <property name="title">
@@ -183,6 +189,18 @@
    <addaction name="actionAdd_New_Node"/>
    <addaction name="actionAdd_New_Subnode"/>
    <addaction name="actionOpen_Note"/>
+   <addaction name="separator"/>
+   <addaction name="actionBold"/>
+   <addaction name="actionItalic"/>
+   <addaction name="actionUnderline"/>
+   <addaction name="actionStrikeout"/>
+   <addaction name="actionColor"/>
+   <addaction name="actionFont"/>
+   <addaction name="separator"/>
+   <addaction name="actionAlign_Left"/>
+   <addaction name="actionAlign_Center"/>
+   <addaction name="actionAlign_Right"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew">
@@ -351,6 +369,9 @@
    <property name="shortcut">
     <string>Ctrl+B</string>
    </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionItalic">
    <property name="icon">
@@ -433,6 +454,38 @@
    </property>
    <property name="text">
     <string>Open Note</string>
+   </property>
+  </action>
+  <action name="actionAlign_Left">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align left.png</normaloff>:/new/prefix1/Icons/align left.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Left</string>
+   </property>
+  </action>
+  <action name="actionAlign_Center">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align_center.png</normaloff>:/new/prefix1/Icons/align_center.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Center</string>
+   </property>
+  </action>
+  <action name="actionAlign_Right">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align_right.png</normaloff>:/new/prefix1/Icons/align_right.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Right</string>
+   </property>
+  </action>
+  <action name="action_Insert_List">
+   <property name="text">
+    <string>Insert Bulleted List</string>
    </property>
   </action>
  </widget>
