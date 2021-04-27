@@ -47,20 +47,26 @@ QClient:: ~QClient()
 }
 void QClient::closeEvent(QCloseEvent* event)
 {
-    checkSave();
-    event->accept();
+    bool cancel = false;
+    checkSave(cancel);
+    if (!cancel)
+        event->accept();
+    else event->ignore();
+
 }
-void QClient::checkSave()
+void QClient::checkSave(bool &cancel)
 {
     if (!m_changed)
         return;
-    QMessageBox::StandardButton value = QMessageBox::question(this, "Save file", "You have unsaved changes.Do you want to save now?");
+    QMessageBox::StandardButton value = QMessageBox::question(this, "Save file", "You have unsaved changes.Do you want to save now?", QMessageBox::Yes | QMessageBox::No |QMessageBox::Cancel);
     if (value == QMessageBox::StandardButton::No)
         return;
-    else
+
+    else if (value == QMessageBox::StandardButton::Yes)
     {
         save();
     }
+    else cancel = true;
 }
 void QClient::save()
 {
@@ -561,7 +567,9 @@ void QClient::on_actionOpen_Note_triggered()
 
 void QClient::on_actionOpen_triggered()
 {
-    checkSave();
+    bool cancel = false;
+    checkSave(cancel);
+    if(!cancel)
     openFile();
 }
 
@@ -579,8 +587,10 @@ void QClient::on_actionPrint_triggered()
 
 void QClient::on_actionExit_triggered()
 {
-    checkSave();
-    QApplication::quit();
+    bool cancel = false;
+    checkSave(cancel);
+    if(!cancel)
+        QApplication::quit();
 }
 
 void QClient::on_actionSave_triggered()
@@ -726,7 +736,9 @@ void QClient::on_actionFont_triggered()
 
 void QClient::on_actionNew_triggered()
 {
-    checkSave();
-    newFile();
+    bool cancel = false;
+    checkSave(cancel);
+    if(!cancel)
+        newFile();
 }
 

@@ -22,7 +22,7 @@
      <rect>
       <x>10</x>
       <y>30</y>
-      <width>253</width>
+      <width>200</width>
       <height>192</height>
      </rect>
     </property>
@@ -186,106 +186,219 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/add-file.png</normaloff>:/new/prefix1/Icons/add-file.png</iconset>
+   </property>
    <property name="text">
     <string>New</string>
    </property>
   </action>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/open.png</normaloff>:/new/prefix1/Icons/open.png</iconset>
+   </property>
    <property name="text">
     <string>Open</string>
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/diskette.png</normaloff>:/new/prefix1/Icons/diskette.png</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
   </action>
   <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/printer.png</normaloff>:/new/prefix1/Icons/printer.png</iconset>
+   </property>
    <property name="text">
     <string>Print</string>
    </property>
   </action>
   <action name="actionCopy_Text">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/files.png</normaloff>:/new/prefix1/Icons/files.png</iconset>
+   </property>
    <property name="text">
     <string>Copy Text</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
   </action>
   <action name="actionCut_Text">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/cut.png</normaloff>:/new/prefix1/Icons/cut.png</iconset>
+   </property>
    <property name="text">
     <string>Cut Text</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
   </action>
   <action name="actionPaste_Text">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/paste.png</normaloff>:/new/prefix1/Icons/paste.png</iconset>
+   </property>
    <property name="text">
     <string>Paste Text</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
   </action>
   <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/undo.png</normaloff>:/new/prefix1/Icons/undo.png</iconset>
+   </property>
    <property name="text">
     <string>Undo</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
   </action>
   <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/redo.png</normaloff>:/new/prefix1/Icons/redo.png</iconset>
+   </property>
    <property name="text">
     <string>Redo</string>
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/logout.png</normaloff>:/new/prefix1/Icons/logout.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
   </action>
   <action name="actionZoom_in">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/zoom-in.png</normaloff>:/new/prefix1/Icons/zoom-in.png</iconset>
+   </property>
    <property name="text">
     <string>Zoom in</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
   </action>
   <action name="actionZoom_out">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/zoom_out.png</normaloff>:/new/prefix1/Icons/zoom_out.png</iconset>
+   </property>
    <property name="text">
     <string>Zoom out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
    </property>
   </action>
   <action name="actionSelect_All">
    <property name="text">
     <string>Select All</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
   </action>
   <action name="actionFind">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/find.png</normaloff>:/new/prefix1/Icons/find.png</iconset>
+   </property>
    <property name="text">
     <string>Find</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
   </action>
   <action name="actionReplace">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/replacement.png</normaloff>:/new/prefix1/Icons/replacement.png</iconset>
+   </property>
    <property name="text">
     <string>Replace</string>
    </property>
   </action>
   <action name="actionBold">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/bold.png</normaloff>:/new/prefix1/Icons/bold.png</iconset>
+   </property>
    <property name="text">
     <string>Bold</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
   </action>
   <action name="actionItalic">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/italic-text.png</normaloff>:/new/prefix1/Icons/italic-text.png</iconset>
+   </property>
    <property name="text">
     <string>Italic</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
   </action>
   <action name="actionUnderline">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/underline.png</normaloff>:/new/prefix1/Icons/underline.png</iconset>
+   </property>
    <property name="text">
     <string>Underline</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
   </action>
   <action name="actionStrikeout">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/strikethrough.png</normaloff>:/new/prefix1/Icons/strikethrough.png</iconset>
+   </property>
    <property name="text">
     <string>Strikethrough</string>
    </property>
   </action>
   <action name="actionColor">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/color-circle.png</normaloff>:/new/prefix1/Icons/color-circle.png</iconset>
+   </property>
    <property name="text">
     <string>Color</string>
    </property>
   </action>
   <action name="actionFont">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/font.png</normaloff>:/new/prefix1/Icons/font.png</iconset>
+   </property>
    <property name="text">
     <string>Font</string>
    </property>
@@ -293,7 +406,7 @@
   <action name="actionAdd_New_Node">
    <property name="icon">
     <iconset>
-     <normaloff>C:/Users/alexa/OneDrive/Pictures/Desktop/a se sterge regulat/n.png</normaloff>C:/Users/alexa/OneDrive/Pictures/Desktop/a se sterge regulat/n.png</iconset>
+     <normaloff>../../../../../../../../alexa/OneDrive/Pictures/Desktop/a se sterge regulat/n.png</normaloff>../../../../../../../../alexa/OneDrive/Pictures/Desktop/a se sterge regulat/n.png</iconset>
    </property>
    <property name="text">
     <string>Add New Node</string>
@@ -302,7 +415,7 @@
   <action name="actionAdd_New_Subnode">
    <property name="icon">
     <iconset>
-     <normaloff>C:/Users/alexa/OneDrive/Pictures/Desktop/a se sterge regulat/c.png</normaloff>C:/Users/alexa/OneDrive/Pictures/Desktop/a se sterge regulat/c.png</iconset>
+     <normaloff>../../../../../../../../alexa/OneDrive/Pictures/Desktop/a se sterge regulat/c.png</normaloff>../../../../../../../../alexa/OneDrive/Pictures/Desktop/a se sterge regulat/c.png</iconset>
    </property>
    <property name="text">
     <string>Add New Subnode</string>
@@ -326,6 +439,7 @@
  <layoutdefault spacing="6" margin="11"/>
  <resources>
   <include location="QClient.qrc"/>
+  <include location="Icon_Resource.qrc"/>
  </resources>
  <connections/>
 </ui>

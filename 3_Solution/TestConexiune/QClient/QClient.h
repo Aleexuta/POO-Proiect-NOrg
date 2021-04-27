@@ -50,7 +50,7 @@ private:
      QClient(QWidget *parent = Q_NULLPTR);
     ~QClient();
     void closeEvent(QCloseEvent *event)override;
-    void checkSave();
+    void checkSave(bool &cancel);
     void save();
     void newFile();
     void openFile();
