@@ -36,16 +36,22 @@ public:
 
 public:
     TreeItem* getRootItem();
+
     void setID(int id);
+    void setRootID(int id = -1);
     int getIdForIndex(const QModelIndex& index);
+    int getIdParentForIndex(const QModelIndex& index);
     void setIDNode(int id, const QModelIndex & index=QModelIndex());
     void setIcon(QIcon & icon,const QModelIndex& index = QModelIndex());
     std::string getName(const QModelIndex& index = QModelIndex());
     std::string getText(const QModelIndex& index = QModelIndex());
     void setText(std::string text,const QModelIndex& index = QModelIndex());
+    bool isTrash(const QModelIndex& index = QModelIndex());
+    void moveToTrash(const QModelIndex& index = QModelIndex());
+    void moveFromTrash(const QModelIndex& index = QModelIndex());
 private:
     void getChildren(std::string iduser,TreeItem* parent, std::string& full);
-
+    TreeItem* getTrashNode();
 
     void setupModelData(const QStringList& lines, TreeItem* parent);
     TreeItem* getItem(const QModelIndex & index) const;

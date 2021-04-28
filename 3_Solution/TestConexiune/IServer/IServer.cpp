@@ -123,6 +123,36 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 		}
 	}
 	break;
+	case CustomMsgTypes::MoveToTrashNode:
+	{
+		std::cout << "Move node case\n";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (moveNode(str))
+		{
+			std::cout << "Move Node Succes\n";
+			//trimite mesaj cu id ul nodului inapoi
+		}
+		else
+		{
+			std::cout << "Move Node Error\n";
+		}
+	}
+	break;
+	case CustomMsgTypes::MoveFromTrashNode:
+	{
+		std::cout << "Move node case\n";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (recoverNode(str))
+		{
+			std::cout << "Move Node Succes\n";
+			//trimite mesaj cu id ul nodului inapoi
+		}
+		else
+		{
+			std::cout << "Move Node Error\n";
+		}
+	}
+	break;
 	}
 }
 
@@ -248,6 +278,38 @@ bool IServer::saveNode(std::string j)
 	catch (...)
 	{
 		std::cout << "Eroare la saveNode(Iserver)\n";
+	}
+}
+
+bool IServer::moveNode(std::string j)
+{
+	try
+	{
+		auto js = nlohmann::json::parse(j);//array cu json
+		std::string id = js["idnode"];
+		std::string iduser = js["iduser"];
+		std::string idparent = js["idparent"];
+		return DB.moveToTrashNode(iduser, id,idparent);
+	}
+	catch (...)
+	{
+		std::cout << "\nEroare la moveNode(IServer)";
+	}
+}
+
+bool IServer::recoverNode(std::string j)
+{
+	try
+	{
+		auto js = nlohmann::json::parse(j);//array cu json
+		std::string id = js["idnode"];
+		std::string iduser = js["iduser"];
+		std::string idoldparent = js["idoldparent"];
+		return DB.moveFromTrashNode(iduser, id,idoldparent);
+	}
+	catch (...)
+	{
+		std::cout << "\nEroare la moveNode(IServer)";
 	}
 }
 

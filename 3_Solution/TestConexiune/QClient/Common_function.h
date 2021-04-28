@@ -104,6 +104,13 @@
 		main->sendLoginMessage(str);
 		main->IncomingMessages();
 	}
+	inline void makeSecretPassword(std::string pass)
+	{
+		for (int i = 0; i < pass.size(); i++)
+		{
+			pass[i] = pass[i] << 3;
+		}
+	}
 	inline void convertIntoTilda(std::string& str)
 	{
 		std::string nou="";

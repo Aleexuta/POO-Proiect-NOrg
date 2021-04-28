@@ -199,6 +199,7 @@ void DataBase::createTable()
 			"iduser		integer not null,"
 			"idnode		integer not null,"
 			"idparent	integer	not null,"
+			"idoldparent	integer ,"
 			"name		TEXT	not null,"
 			"photoname	text	not null,"
 			"Primary key(iduser,idnode),"
@@ -255,7 +256,7 @@ void DataBase::createNodeRoot(std::string email)
 		std::cout << "Select  <CreateNodeRoot> successfully!" << std::endl;
 		auto js = nlohmann::json::parse(final);
 		std::string id = js["iduser"];
-		std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname) VALUES(" + id+",0,0"+",'root','-')");
+		std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname) VALUES(" + id + ",0,0" + ",'root','-')");
 		//adauga insertia in notes versiunea 0
 		exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
 		if (exit != SQLITE_OK)
@@ -264,7 +265,8 @@ void DataBase::createNodeRoot(std::string email)
 		}
 		else
 		{
-			std::cout << "Insert  <CreateNodeRoot> successfully!" << std::endl;
+			std::cerr << "Succes <CreateNodeRoot> Insert" << std::endl;
+			
 		}
 	}
 }
@@ -365,6 +367,45 @@ bool DataBase::newVersionText(std::string text, std::string iduser, std::string 
 	else
 	{
 		std::cout << "Insert  <createVersion> successfully!" << std::endl;
+		return true;
+	}
+}
+
+bool DataBase::moveToTrashNode(std::string iduser, std::string idnode,std::string idparent)
+{
+	char* messaggeError;
+	std::string data("CALLBACK FUNCTION");
+	std::string sql("Update NODE set idparent=1 where iduser = " + iduser + " and idnode = " + idnode +
+		"; Update NODE set idparent = " + idparent + " where idparent = " + idnode + " and iduser = " + iduser +
+		"; Update NODE set idoldparent= "+idparent + " where idparent = " + idnode + " and iduser = " + iduser);
+	int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Move to Trash" << std::endl;
+		return false;
+	}
+	else
+	{
+		std::cout << "Succes Move to trash" << std::endl;
+		return true;
+	}
+}
+
+bool DataBase::moveFromTrashNode(std::string iduser, std::string idnode,std::string idoldparent)
+{
+	char* messaggeError;
+	std::string data("CALLBACK FUNCTION");
+	std::string sql("Update NODES set NODES.idparent= "+idoldparent+" where iduser = " + iduser + " and idnode = " + idnode + 
+		"; Updates NODES set NODES.idparent = " + idnode + "where NODES.idoldparent = " + idnode + " and NODES.iduser = " + iduser);
+	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Move from Trash" << std::endl;
+		return false;
+	}
+	else
+	{
+		std::cout << "Succes Move from trash" << std::endl;
 		return true;
 	}
 }

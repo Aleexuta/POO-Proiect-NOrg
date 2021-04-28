@@ -71,8 +71,7 @@ void FirstForm::on_pushButton_clicked()
 	{
 		QClient* main = QClient::getInstance();
 		main->setGuestInfo();
-		QClient* w = QClient::getInstance();
-		w->show();
+		main->show();
 		close();
 	}
 	if (!ui->RegisterButton->isChecked() && !ui->LoginButton->isChecked() && !ui->GuestButton->isChecked())

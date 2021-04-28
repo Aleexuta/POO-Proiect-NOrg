@@ -18,6 +18,8 @@ enum class CustomMsgTypes : uint32_t
     LoadAllNodes,
     LoadAllNodesAccept,
     RemoveNode,
+    MoveToTrashNode,
+    MoveFromTrashNode,
     SaveNode
 };
 class DataBase;
@@ -46,6 +48,8 @@ private:
     std::string loadAllNodes(std::string j);
     bool removeNode(std::string j);
     bool saveNode(std::string j);
+    bool moveNode(std::string j);
+    bool recoverNode(std::string j);
 private:
     static IServer* instance;
     IServer(uint16_t nPort) :
