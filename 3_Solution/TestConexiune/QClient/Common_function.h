@@ -28,7 +28,7 @@
 		break;
 		case StrType::Password:
 		{
-			regex = ("^.*(?=.{10,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$");
+			regex = ("(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}");
 		}
 		break;
 		default:
@@ -106,10 +106,12 @@
 	}
 	inline void makeSecretPassword(std::string& pass)
 	{
+		std::string crypto("make_password_secret123456789");
 		for (int i = 0; i < pass.size(); i++)
 		{
-			pass[i] = pass[i] << 3;
+			pass[i] = pass[i] ^ crypto[i];
 		}
+
 	}
 	inline void convertIntoTilda(std::string& str)
 	{

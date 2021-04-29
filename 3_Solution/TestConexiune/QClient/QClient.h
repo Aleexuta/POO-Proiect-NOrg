@@ -51,6 +51,8 @@ private:
     static QClient* instance;
      QClient(QWidget *parent = Q_NULLPTR);
     ~QClient();
+
+
     void closeEvent(QCloseEvent *event)override;
     void checkSave();
     void save();
@@ -88,7 +90,7 @@ public:
     void decrementNumberOfNodes();
 
 private:
-    auto makeJsonNewNode(std::string name, int iduser, int idparent, int idnode, std::string namephoto = "");
+    auto makeJsonNewNode(std::string name, int iduser, int idparent, int idnode,std::string font, std::string color, std::string date,std::string namephoto = "");
     void LoadAllNodes(std::string j);
     void LoadChildren(TreeItem * root,nlohmann::basic_json<> js, int &pos);
     void LoadChildrenOldParent(TreeItem* root, nlohmann::basic_json<> js, int& pos);
@@ -97,8 +99,8 @@ private:
     void recoverNodeFromTrash();
     void makeMotherNode();
 public:
-    void insertNewNode(const std::string photo,const std::string name);
-    void inservNewSubnode(const std::string photo,const std::string name);
+    void insertNewNode(const std::string photo, const std::string name, const QFont font, const QColor color, const QDate date);
+    void inservNewSubnode(const std::string photo,const std::string name, const QFont font, const QColor color, const QDate date);
     void updateActions();
     void deleteNode();
     void OpenNote();

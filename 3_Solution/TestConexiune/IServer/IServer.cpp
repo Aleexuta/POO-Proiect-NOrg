@@ -222,7 +222,10 @@ bool IServer::InsertNewNode(std::string j)
 		std::string name = js["name"];
 		std::string photoname = js["photoname"];
 		std::string idnode = js["idnode"];
-		return DB.insertNewNode(iduser, idparent, name, photoname,idnode);
+		std::string color = js["color"];
+		std::string font = js["font"];
+		std::string date = js["date"];
+		return DB.insertNewNode(iduser, idparent, name, photoname,idnode,color,font,date);
 
 	}
 	catch (...)

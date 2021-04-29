@@ -54,8 +54,7 @@ void RegisterForm::on_RegisterButton_clicked()
 	j["lastname"] = (ui->LastnameText->text()).toStdString();
 	j["email"] = (ui->EmailText->text()).toStdString();
 	std::string ps = (ui->PasswordText->text()).toStdString();
-	//makeSecretPassword(ps);
-	j["password"] = ps;
+	std::string ps2 = (ui->ConfirmText->text()).toStdString();
 	QClient* main = QClient::getInstance();
 	if (!validateString(j["email"], StrType::Email))
 	{
@@ -67,16 +66,18 @@ void RegisterForm::on_RegisterButton_clicked()
 		QMessageBox::warning(main, "client message", "The username has not a correct format");
 		incorect = true;
 	}
-	if (!validateString(j["password"], StrType::Username))
+	if (!validateString(ps, StrType::Password))
 	{
 		QMessageBox::warning(main, "client message", "The password has not a correct format");
 		incorect = true;
 	}
-	if (j["password"] != (ui->ConfirmText->text()).toStdString())
+	if (ps != ps2)
 	{
 		QMessageBox::warning(main, "client message", "The passwords does not match");
 		incorect = true;
 	}
+	//makeSecretPassword(ps);
+	j["password"] = ps;
 	if (!incorect)
 	{
 		std::string str = j.dump();

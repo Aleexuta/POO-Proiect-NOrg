@@ -2,6 +2,8 @@
 #include <qstring.h>
 #include "treeitem.h"
 #include "treemodel.h"
+#include "qcolor.h"
+#include "qbrush.h"
 TreeModel* TreeModel::instance = 0;
 TreeModel::TreeModel(const QStringList& headers, const QString& data, QObject* parent)
     : QAbstractItemModel(parent)
@@ -53,6 +55,16 @@ QVariant TreeModel::data(const QModelIndex& index, int role) const
     {
         TreeItem* item = getItem(index);
         return item->getPhoto();
+    }
+    if (role == Qt::ForegroundRole)
+    {
+        TreeItem* item = getItem(index);
+        return item->getColor();
+    }
+    if (role == Qt::FontRole)
+    {
+        TreeItem* item = getItem(index);
+        return item->getFont();
     }
     return QVariant();
 }
@@ -122,6 +134,22 @@ bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int rol
     {
         TreeItem* item = getItem(index);
         bool result = item->setPhoto(value);
+        if (result)
+            emit dataChanged(index, index);
+        return result;
+    }
+    if (role == Qt::ForegroundRole)
+    {
+        TreeItem* item = getItem(index);
+        bool result = item->setColor(value);
+        if (result)
+            emit dataChanged(index, index);
+        return result;
+    }
+    if (role == Qt::FontRole)
+    {
+        TreeItem* item = getItem(index);
+        bool result = item->setFont(value);
         if (result)
             emit dataChanged(index, index);
         return result;
@@ -242,6 +270,12 @@ void TreeModel::setText(std::string text, const QModelIndex& index)
 {
     TreeItem* item = getItem(index);
     item->setText(text);
+}
+
+void TreeModel::setDate(QDate date, QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    item->setDate(date.toString().toStdString());
 }
 
 bool TreeModel::isTrash(const QModelIndex& index)

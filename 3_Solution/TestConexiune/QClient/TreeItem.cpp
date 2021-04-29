@@ -45,12 +45,15 @@ bool TreeItem::insertChildren(int position, int count, int columns)
 		QClient* main = QClient::getInstance();
 		item->sedID(main->getNumberOfNodes()+1);
 		main->incrementNumberOfNodes();
+		item->setBackground(QBrush(QColor(255, 0, 0)));
 		item->setText("Bine ai venit wai!");
 	}
 	return true;
 }
 
-void TreeItem::insertChildrenLoad(int position, int id,int columns,std::string text, QVariant& name, QVariant& photoname)
+void TreeItem::insertChildrenLoad(int position, int id,int columns,std::string text,
+	QVariant& name, QVariant& photoname,
+	QVariant& color, QVariant& font, std::string date)
 {
 	if (position<0 || position>m_childItems.size())
 		return;
@@ -63,6 +66,9 @@ void TreeItem::insertChildrenLoad(int position, int id,int columns,std::string t
 		item->setData(0, name);
 		item->setText(text);
 		item->setOldParentNode(nullptr);
+		item->setColor(color);
+		item->setFont(font);
+		item->setDate(date);
 	}
 }
 
@@ -162,6 +168,17 @@ QVariant TreeItem::getPhoto()
 	return m_photoname;
 }
 
+bool TreeItem::setColor(QVariant color)
+{
+	m_color = color;
+	return true;
+}
+
+QVariant TreeItem::getColor()
+{
+	return m_color;
+}
+
 void TreeItem::setText(std::string text)
 {
 	m_text = text;
@@ -170,6 +187,28 @@ void TreeItem::setText(std::string text)
 std::string TreeItem::getText()
 {
 	return m_text;
+}
+
+bool TreeItem::setFont(QVariant font)
+{
+	m_font = font;
+	return true;
+}
+
+QVariant TreeItem::getFont()
+{
+	return m_font;
+}
+
+bool TreeItem::setDate(std::string date)
+{
+	m_date = date;
+	return true;
+}
+
+std::string TreeItem::getDate()
+{
+	return m_date;
 }
 
 bool TreeItem::isTrash()

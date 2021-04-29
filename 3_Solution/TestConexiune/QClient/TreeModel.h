@@ -47,6 +47,8 @@ public:
     std::string getName(const QModelIndex& index = QModelIndex());
     std::string getText(const QModelIndex& index = QModelIndex());
     void setText(std::string text,const QModelIndex& index = QModelIndex());
+    void setDate(QDate date, QModelIndex& index = QModelIndex());
+
     bool isTrash(const QModelIndex& index = QModelIndex());
     void moveToTrash(const QModelIndex& index = QModelIndex());
     bool moveFromTrash(const QModelIndex& index = QModelIndex());

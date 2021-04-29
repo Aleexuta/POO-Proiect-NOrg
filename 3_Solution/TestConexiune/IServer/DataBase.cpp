@@ -202,6 +202,9 @@ void DataBase::createTable()
 			"idoldparent	integer ,"
 			"name		TEXT	not null,"
 			"photoname	text	not null,"
+			"color		text,"
+			"font		text,"
+			"date		text,"
 			"Primary key(iduser,idnode),"
 			"Foreign key(iduser) REFERENCES USER(iduser),"
 			"Foreign key(idparent) REFERENCES NODE(idnode));";
@@ -218,7 +221,7 @@ void DataBase::createTable()
 
 	}
 	{
-		std::string sql =  // "drop table NOTES;"
+		std::string sql =   //"drop table NOTES;"
 			"CREATE TABLE NOTES ("
 			"iduser		integer not null,"
 			"idnode		integer not null,"
@@ -271,12 +274,13 @@ void DataBase::createNodeRoot(std::string email)
 	}
 }
 
-bool DataBase::insertNewNode(std::string iduser, std::string idparent, std::string name, std::string photo,std::string idnode)
+bool DataBase::insertNewNode(std::string iduser, std::string idparent, std::string name, std::string photo,
+	std::string idnode, std::string color, std::string font, std::string date)
 {
 	char* messaggeError;
 	std::string data("CALLBACK FUNCTION");
-	std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname) VALUES(" + iduser + "," + idnode + "," + idparent + ",'" + name + "','" + photo + "');"
-		+ "INSERT INTO NOTES(idnode, iduser,versiune,text) VALUES ("+idnode+","+iduser+",0,"+" 'Bine ai venit!' );");//pune in loc de bine ai venit codul aferent
+	std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname,color,font,date) VALUES(" + iduser + "," + idnode + "," + idparent + ",'" + name + "','" + photo + "','"+color+"','"+font+"','"+date+"');"
+		+ " INSERT INTO NOTES(idnode, iduser,versiune,text) VALUES ("+idnode+","+iduser+",0,"+" 'Bine ai venit!' );");//pune in loc de bine ai venit codul aferent
 	//insert in notes varianta 0 a nodului
 	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
 	if (exit != SQLITE_OK)
@@ -314,7 +318,7 @@ std::string DataBase::selectIdForLastNode(std::string iduser)
 std::string DataBase::selectAllNodes(int iduser)
 {
 	char* messaggeError;
-	std::string sql("SELECT NODE.iduser, NODE.idnode, NODE.idparent, NODE.name, NODE.photoname, NODE.idoldparent FROM NODE where NODE.iduser like " + std::to_string(iduser) + " and NODE.idnode is not 0 ORDER BY NODE.idparent asc , NODE.idnode desc");
+	std::string sql("SELECT NODE.iduser, NODE.idnode, NODE.idparent, NODE.name, NODE.photoname, NODE.idoldparent, NODE.color, NODE.font,NODE.date FROM NODE where NODE.iduser like " + std::to_string(iduser) + " and NODE.idnode is not 0 ORDER BY NODE.idparent asc , NODE.idnode desc");
 	std::string data("CALLBACK FUNCTION");
 	//final = "[";
 	int exit = sqlite3_exec(DB, sql.c_str(), callbackMore, (void*)data.c_str(), NULL);

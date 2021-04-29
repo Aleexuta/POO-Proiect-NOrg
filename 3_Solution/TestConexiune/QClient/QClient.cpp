@@ -396,7 +396,7 @@ void QClient::decrementNumberOfNodes()
 }
 
 
-auto QClient::makeJsonNewNode(std::string name, int iduser, int idparent, int idnode,std::string namephoto)
+auto QClient::makeJsonNewNode(std::string name, int iduser, int idparent, int idnode, std::string font, std::string color, std::string date, std::string namephoto)
 {
     nlohmann::json js;
     js["name"] = name;
@@ -404,6 +404,9 @@ auto QClient::makeJsonNewNode(std::string name, int iduser, int idparent, int id
     js["idparent"] = std::to_string(idparent);
     js["photoname"] = namephoto;
     js["idnode"] = std::to_string(idnode);
+    js["color"] = color;
+    js["font"] = font;
+    js["date"] = date;
     return js;
 }
 
@@ -483,12 +486,16 @@ void QClient::prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, in
     std::string photoname = st1["photoname"];
     std::string text = st1["text"];
     std::string idoldparent = st1["idoldparent"];
+    std::string color = st1["color"];
+    std::string font = st1["font"];
+    std::string date = st1["date"];
     if (idnode == "1")
     {
         idparent = "-1";
     }
     convertFromTilda(text);
-    root->insertChildrenLoad(0, std::stoi(idnode),NRCOL,text, QVariant(name.c_str()),QVariant(QIcon(photoname.c_str())));
+    root->insertChildrenLoad(0, std::stoi(idnode),NRCOL,text, QVariant(name.c_str()),
+        QVariant(QIcon(photoname.c_str())),QVariant(QColor(color.c_str())),QVariant(QFont(font.c_str())),date);
     updateActions();
 }
 
@@ -599,7 +606,7 @@ void QClient::makeMotherNode()
 
 
 
-void QClient::insertNewNode(const std::string photo, const std::string name)
+void QClient::insertNewNode(const std::string photo, const std::string name, const QFont font, const QColor color, const QDate date)
 {
     //daca e din cosul de gunoi sau cosul at nu se poate
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
@@ -617,6 +624,9 @@ void QClient::insertNewNode(const std::string photo, const std::string name)
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
     QIcon icon(photo.c_str());
     model->setData(child, QVariant(icon), Qt::DecorationRole);
+    model->setData(child, QVariant(color), Qt::ForegroundRole);
+    model->setData(child, QVariant(font), Qt::FontRole);
+    model->setDate(date, index);
 
     updateActions();
     //make json
@@ -625,14 +635,15 @@ void QClient::insertNewNode(const std::string photo, const std::string name)
         QClient* main = QClient::getInstance();
         int iduser = this->user->getID();
         int idparent = model->getIdForIndex(index.parent());
-        nlohmann::json js = makeJsonNewNode(name, iduser, idparent, main->getNumberOfNodes(), photo);
+        nlohmann::json js = makeJsonNewNode(name, iduser, idparent, main->getNumberOfNodes(),
+            font.family().toStdString(), color.name().toStdString(), date.toString().toStdString(), photo);
         std::string mes = js.dump();
         sendNewNodeMessage(mes);
         IncomingMessages();
     }
    
 }
-void QClient::inservNewSubnode(const std::string photo, const std::string name)
+void QClient::inservNewSubnode(const std::string photo, const std::string name, const QFont font, const QColor color, const QDate date)
 {
     //daca e din cosul de gunoi sau e cosul at nu se poate
 
@@ -663,6 +674,9 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name)
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
     QIcon icon(photo.c_str());
     model->setData(child, QVariant(icon), Qt::DecorationRole);
+    model->setData(child, QVariant(color), Qt::ForegroundRole);
+    model->setData(child, QVariant(font), Qt::FontRole);
+    model->setDate(date, index);
 
     ui.treeView->selectionModel()->setCurrentIndex(model->index(0, 0, index),QItemSelectionModel::ClearAndSelect);
     updateActions();
@@ -674,7 +688,8 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name)
         QClient* main = QClient::getInstance();
         int iduser = this->user->getID();
         int idparent = model->getIdForIndex(index);
-        nlohmann::json js = makeJsonNewNode(name, iduser, idparent, main->getNumberOfNodes(),photo);
+        nlohmann::json js = makeJsonNewNode(name, iduser, idparent, main->getNumberOfNodes(),
+            font.family().toStdString(), color.name().toStdString(), date.toString().toStdString(), photo); 
         std::string mes = js.dump();
         sendNewNodeMessage(mes);
         IncomingMessages();

@@ -29,7 +29,8 @@ public:
 	void createTrigger();
 	void createTable();
 	void createNodeRoot(std::string email);
-	bool insertNewNode(std::string iduser, std::string idparinte, std::string name, std::string photo, std::string idnode);
+	bool insertNewNode(std::string iduser, std::string idparinte, std::string name, std::string photo, 
+		std::string idnode,std::string color, std::string font, std::string date);
 	std::string selectIdForLastNode(std::string iduser);
 	bool removeNode(std::string id, std::string iduser);
 	std::string selectAllNodes(int iduser);

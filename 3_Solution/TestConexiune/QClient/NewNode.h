@@ -14,7 +14,9 @@ public:
     ~NewNode();
 public slots:
     void on_OKButton_clicked();
+    void on_colorSet_clicked();
 private:
+    QColor m_color;
     Ui::NewNode* ui;
     int m_tip;
 };
