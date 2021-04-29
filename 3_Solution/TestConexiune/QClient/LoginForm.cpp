@@ -14,6 +14,7 @@ LoginForm::LoginForm(QWidget* parent) :
 	ui(new Ui::Dialog)
 {
 	ui->setupUi(this);
+	this->freeText();
 }
 LoginForm::~LoginForm()
 {
@@ -31,6 +32,12 @@ void LoginForm::deleteInstance()
 {
 	if (instance)
 		delete instance;
+}
+
+void LoginForm::freeText()
+{
+	ui->emailText->setText("eg.email@gmail.com");
+	ui->PasswordText->setText("password");
 }
 
 void LoginForm::on_closeButton_clicked()

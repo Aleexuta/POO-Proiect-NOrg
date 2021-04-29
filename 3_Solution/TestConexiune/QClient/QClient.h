@@ -98,6 +98,7 @@ private:
     void moveNodeToTrash();
     void recoverNodeFromTrash();
     void makeMotherNode();
+    void logout();
 public:
     void insertNewNode(const std::string photo, const std::string name, const QFont font, const QColor color, const QDate date);
     void inservNewSubnode(const std::string photo,const std::string name, const QFont font, const QColor color, const QDate date);
@@ -111,6 +112,7 @@ public slots:
     void on_actionDelete_Node_triggered();
     void on_actionOpen_Note_triggered();
     void on_actionRecover_Node_triggered();
+    void on_actionLogout_triggered();
 private slots:
     
     void on_actionNew_triggered();

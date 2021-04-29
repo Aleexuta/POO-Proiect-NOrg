@@ -22,6 +22,7 @@ private://private function
 public:
     static LoginForm* getInstance();
     void deleteInstance();
+    void freeText();
 public slots:
     void on_LoginButton_clicked();
     void on_closeButton_clicked();

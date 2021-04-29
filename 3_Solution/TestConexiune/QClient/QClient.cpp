@@ -173,6 +173,7 @@ void QClient::IncomingMessages()
                         log->show();
 
                         RegisterForm* reg = RegisterForm::getInstance();
+                        reg->freeText();
                         reg->close();
                         // reg->deleteInstance();
                     }
@@ -195,6 +196,7 @@ void QClient::IncomingMessages()
                         QMessageBox::information(this, "Server Message", "Login Succes");
                         this->show();
                         LoginForm* reg = LoginForm::getInstance();
+                        reg->freeText();
                         reg->close();
                         std::string rasp(msg.body.begin(), msg.body.end());
                         this->setUserInfo(rasp);
@@ -560,6 +562,8 @@ void QClient::recoverNodeFromTrash()
 void QClient::makeMotherNode()
 {
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+  //  QModelIndex index = model->indexForTreeItem(model->getRootItem());
+
     if (this->model->columnCount(index) == 0) {
         if (!model->insertColumn(0, index))
             return;
@@ -567,7 +571,8 @@ void QClient::makeMotherNode()
     {
         if (!model->insertRow(0, index))
             return;
-
+        //if (!model->insertRows(0, 1))
+        //    return;
 
         for (int column = 0; column < model->columnCount(index); ++column)
         {
@@ -576,7 +581,7 @@ void QClient::makeMotherNode()
                     Qt::DisplayRole);
 
         }
-        QModelIndex child = model->index(0, 0, index);
+        QModelIndex child = model->indexForTreeItem(model->getRootItem()->child(0));
         model->setData(child, QVariant("Trash"), Qt::DisplayRole);
         QIcon icon("../photos/trash.png");
 
@@ -587,6 +592,8 @@ void QClient::makeMotherNode()
     {
         if (!model->insertRow(0, index))
             return;
+        /* if (!model->insertRows(0, 1))
+             return;*/
         for (int column = 0; column < model->columnCount(index); ++column)
         {
             if (!model->headerData(column, Qt::Horizontal).isValid())
@@ -594,14 +601,27 @@ void QClient::makeMotherNode()
                     Qt::DisplayRole);
 
         }
-        QModelIndex child = model->index(0, 0, index);
+        QModelIndex child = model->indexForTreeItem(model->getRootItem()->child(0));
         model->setData(child, QVariant("MyNotes"), Qt::DisplayRole);
         QIcon icon("../photos/icon.png");
         model->setData(child, QVariant(icon), Qt::DecorationRole);
         model->setID(0);
+
+        ui.treeView->selectionModel()->setCurrentIndex(model->index(0,0,index), QItemSelectionModel::ClearAndSelect);
     }
-    ui.treeView->selectionModel()->setCurrentIndex(model->index(0, 0, index), QItemSelectionModel::ClearAndSelect);
     updateActions();
+}
+
+void QClient::logout()
+{
+    ui.treeView->selectionModel()->setCurrentIndex(model->index(-1, -1), QItemSelectionModel::Clear);
+    isloged = false;
+    isregistered = false;
+    delete(user);
+    model->deleteChildren();
+    hide();
+    FirstForm* ff = FirstForm::getInstance();
+    ff->show();
 }
 
 
@@ -824,6 +844,11 @@ void QClient::on_actionOpen_Note_triggered()
 void QClient::on_actionRecover_Node_triggered()
 {
     recoverNodeFromTrash();
+}
+
+void QClient::on_actionLogout_triggered()
+{
+    logout();
 }
 
 void QClient::on_actionOpen_triggered()

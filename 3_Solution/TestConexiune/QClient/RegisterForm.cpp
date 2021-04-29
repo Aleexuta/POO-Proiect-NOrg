@@ -15,7 +15,7 @@ RegisterForm::RegisterForm(QWidget* parent):
 	ui(new Ui::RegisterForm)
 {
 	ui->setupUi(this);
-	
+	this->freeText();
 }
 RegisterForm::~RegisterForm()
 {
@@ -33,6 +33,16 @@ void RegisterForm::deleteInstance()
 {
 	if (instance)
 		delete instance;
+}
+
+void RegisterForm::freeText()
+{
+	ui->UsernameText->setText("eg.username");
+	ui->FirstnameText->setText("eg.Ana Maria");
+	ui->LastnameText->setText("eg.Popa");
+	ui->EmailText->setText("eg.email@gmail.com");
+	ui->PasswordText->setText("password");
+	ui->ConfirmText->setText("password");
 }
 
 void RegisterForm::on_CloseButton_clicked()

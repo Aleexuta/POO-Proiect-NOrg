@@ -22,6 +22,7 @@ private://private function
 public:
     static RegisterForm* getInstance();
     void deleteInstance();
+    void freeText();
 public slots:
     void on_RegisterButton_clicked();
     void on_CloseButton_clicked();

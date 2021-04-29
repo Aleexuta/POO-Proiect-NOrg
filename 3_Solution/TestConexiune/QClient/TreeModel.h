@@ -35,6 +35,7 @@ public:
     std::string getAllChildren(std::string iduser,QModelIndex& parent = QModelIndex());
 
 public:
+    QModelIndex indexForTreeItem(TreeItem* item);
     TreeItem* getRootItem();
     TreeItem* getNodeForId(int id);
     void setID(int id);
@@ -53,6 +54,7 @@ public:
     void moveToTrash(const QModelIndex& index = QModelIndex());
     bool moveFromTrash(const QModelIndex& index = QModelIndex());
 
+    void deleteChildren();
 private:
     void getChildren(std::string iduser,TreeItem* parent, std::string& full);
     TreeItem* getTrashNode();
