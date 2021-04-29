@@ -143,6 +143,8 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QV
 
 bool TreeModel::insertRows(int position, int rows, const QModelIndex& parent)
 {
+    
+
     TreeItem* parentItem = getItem(parent);
     bool succes;
     beginInsertRows(parent, position, position + rows - 1);
@@ -176,14 +178,26 @@ TreeItem* TreeModel::getRootItem()
     return rootItem;
 }
 
+
 void TreeModel::setID(int id)
 {
-    this->rootItem->sedID(id);
+    TreeItem* first = rootItem->child(0);
+    first->sedID(id);
+}
+
+void TreeModel::setRootID(int id)
+{
+    rootItem->sedID(id);
 }
 
 int TreeModel::getIdForIndex(const QModelIndex& index)
 {
     return getItem(index)->getID();
+}
+
+int TreeModel::getIdParentForIndex(const QModelIndex& index)
+{
+    return getItem(index)->getIDParent();
 }
 
 void TreeModel::setIDNode(int id, const QModelIndex& index)
@@ -219,6 +233,35 @@ void TreeModel::setText(std::string text, const QModelIndex& index)
     item->setText(text);
 }
 
+bool TreeModel::isTrash(const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    return item->isTrash();
+}
+
+void TreeModel::moveToTrash(const QModelIndex& index)
+{
+    //change the parent for the item with the trash(id node 1)
+    //set oldparent 
+    TreeItem* item = getItem(index);
+
+
+    //move all the children(list) to granny
+    item->moveChildrenToParent();
+    TreeItem* trash = getTrashNode();
+
+   
+    item->parent()->removeChild(item);
+    item->setOldParent(trash);
+    trash->addChild(item);
+    
+}
+
+void TreeModel::moveFromTrash(const QModelIndex& index)
+{
+
+}
+
 void TreeModel::getChildren(std::string iduser, TreeItem* parent, std::string& full)
 {
     for (int i = 0; i < parent->childCount(); i++)
@@ -227,6 +270,17 @@ void TreeModel::getChildren(std::string iduser, TreeItem* parent, std::string& f
     }
     int idnode = parent->getID();
     full += "{\"iduser\":\"" + iduser + "\",\"idnode\":\"" + std::to_string(idnode) + "\"},";
+}
+
+TreeItem* TreeModel::getTrashNode()
+{
+    for (int i = 0; i < rootItem->childCount(); i++)
+    {
+        if (rootItem->child(i)->getID() == 1)
+            return rootItem->child(i);
+    }
+    //return rootItem->child(rootItem->childCount() - 1);
+    return rootItem;
 }
 
 

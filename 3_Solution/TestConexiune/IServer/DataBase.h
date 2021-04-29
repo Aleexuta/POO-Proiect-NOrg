@@ -34,9 +34,11 @@ public:
 	bool removeNode(std::string id, std::string iduser);
 	std::string selectAllNodes(int iduser);
 	bool newVersionText(std::string text, std::string iduser, std::string idnode);
-
+	bool moveToTrashNode(std::string iduser, std::string idnode, std::string idparent);
+	bool moveFromTrashNode(std::string iduser, std::string idnode, std::string idoldparent);
 
 private:
 	std::string getTextForNode(std::string iduser, std::string idnode);
+	std::string getLastVersionText(std::string iduser, std::string idnode);
 };
 

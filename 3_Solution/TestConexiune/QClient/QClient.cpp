@@ -15,6 +15,7 @@
 #include "TreeItem.h"
 #include "Common_function.h"
 bool isloged = false;
+bool isregistered = false;
 QClient* QClient::instance = nullptr;
 QClient::QClient(QWidget* parent)
     : QMainWindow(parent)
@@ -23,18 +24,16 @@ QClient::QClient(QWidget* parent)
     m_changed = false;
     m_path = "";
     QStringList headers;
-    headers << tr("Poza");
+    headers << tr("Name of notes");
     QFile file(":/default.txt");
     file.open(QIODevice::ReadOnly);
     this->model = TreeModel::getInstance(headers, file.readAll());
    // this->model = new TreeModel(headers, file.readAll());
+
+
     file.close();
     ui.treeView->setModel(model);
-    //ui.treeView->header()->setSectionsMovable(false);
-    //for (int column = 0; column < this->model->columnCount(); ++column)
-    //{
-    //    ui.treeView->resizeColumnToContents(column);
-    //}
+
     ui.treeView->setColumnWidth(0,100);
     ui.treeView->setColumnWidth(1, 10);
 
@@ -99,9 +98,9 @@ void QClient::save()
         nlohmann::json js;
         js["idnode"] = std::to_string(idnode);//nu ia id ul cum trebe
         js["iduser"] = std::to_string(iduser);
-        QString str= (ui.textEdit->toHtml()).toStdString().c_str();
+        std::string str= ui.textEdit->toHtml().toStdString();
         convertIntoTilda(str);
-        js["text"] = str.toStdString();
+        js["text"] = str;
         std::string mes = js.dump();
         sendSaveNotesMessage(mes);
         IncomingMessages();
@@ -166,21 +165,27 @@ void QClient::IncomingMessages()
 
                 case CustomMsgTypes::ServerAcceptRegister:
                 {
-                    QMessageBox::information(this, "Server Message", "Register Succes");
-                    LoginForm* log = LoginForm::getInstance();
-                    log->show();
-                    
-                    RegisterForm* reg = RegisterForm::getInstance();
-                    reg->close();
-                   // reg->deleteInstance();
+                    if (!isregistered)
+                    {
+                        isregistered = true;
+                        QMessageBox::information(this, "Server Message", "Register Succes");
+                        LoginForm* log = LoginForm::getInstance();
+                        log->show();
+
+                        RegisterForm* reg = RegisterForm::getInstance();
+                        reg->close();
+                        // reg->deleteInstance();
+                    }
                 }
                 break;
                 case CustomMsgTypes::ServerDenyRegister:
                 {
-                    QMessageBox::warning(this, "Server Message", "Register Error");
-                    RegisterForm* reg = RegisterForm::getInstance();
-                    reg->show();
-                }
+                    if (!isregistered)
+                    {
+                        QMessageBox::warning(this, "Server Message", "Register Error");
+                        RegisterForm* reg = RegisterForm::getInstance();
+                        reg->show();
+                    }}
                 break;
                 case CustomMsgTypes::ServerAcceptLogin:
                 {
@@ -201,11 +206,14 @@ void QClient::IncomingMessages()
                 break;
                 case CustomMsgTypes::ServerDenyLogin:
                 {
-                    QMessageBox::warning(this, "Server Message", "Login Error");
-                    LoginForm* reg = LoginForm::getInstance();
-                    reg->show();
-                    FirstForm* ff = FirstForm::getInstance();
-                    ff->close();
+                    if (!isloged)
+                    {
+                        QMessageBox::warning(this, "Server Message", "Login Error");
+                        LoginForm* reg = LoginForm::getInstance();
+                        reg->show();
+                        FirstForm* ff = FirstForm::getInstance();
+                        ff->close();
+                    }
                 }
                 break;
                 case CustomMsgTypes::ServerAccept:
@@ -305,6 +313,26 @@ void QClient::sendSaveNotesMessage(std::string j)
     Send(msg);
 }
 
+void QClient::sendMoveNodeTrash(std::string j)
+{
+    olc::net::message<CustomMsgTypes> msg;
+    msg.header.id = CustomMsgTypes::MoveToTrashNode;
+    char* vect = const_cast<char*>(j.c_str());
+    for (int i = 0; i < j.size(); i++)
+        msg << vect[i];
+    Send(msg);
+}
+
+void QClient::sendRecoverNodeMessage(std::string j)
+{
+    olc::net::message<CustomMsgTypes> msg;
+    msg.header.id = CustomMsgTypes::MoveFromTrashNode;
+    char* vect = const_cast<char*>(j.c_str());
+    for (int i = 0; i < j.size(); i++)
+        msg << vect[i];
+    Send(msg);
+}
+
 void QClient::setUserInfo(std::string mesaj)
 {
 
@@ -320,9 +348,11 @@ void QClient::setUserInfo(std::string mesaj)
     
     std::string nrnode = js2[0]["nrnodes"];
     int nr = std::stoi(nrnode);
-    this->user->setNumberOfNodes(nr);
+    this->model->setRootID(-1);
+    this->makeMotherNode();
+    updateActions();
+    this->user->setNumberOfNodes(nr+1);
     //seteaza si load la toate nodurile
-    this->model->setID(0);
     //sendLoadAllNodesMessage(id);
     LoadAllNodes(mesaj);
     updateActions();
@@ -332,7 +362,11 @@ void QClient::setUserInfo(std::string mesaj)
 
 void QClient::setGuestInfo()
 {
-    this->user = new Guest;
+    this->user = new Guest;  
+    this->model->setRootID(-1);
+    this->makeMotherNode();
+    //this->insertNewNode("../photos/trash.png", "Trash");
+    updateActions();
 }
 
 void QClient::setNodeId(int id)
@@ -361,6 +395,7 @@ void QClient::decrementNumberOfNodes()
     user->decrementNrNodes();
 }
 
+
 auto QClient::makeJsonNewNode(std::string name, int iduser, int idparent, int idnode,std::string namephoto)
 {
     nlohmann::json js;
@@ -371,7 +406,7 @@ auto QClient::makeJsonNewNode(std::string name, int iduser, int idparent, int id
     js["idnode"] = std::to_string(idnode);
     return js;
 }
-//posibil sters
+
 void QClient::sendLoadAllNodesMessage(std::string id)
 {
     olc::net::message<CustomMsgTypes> msg;
@@ -426,17 +461,102 @@ void QClient::prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, in
     std::string name = st1["name"];
     std::string photoname = st1["photoname"];
     std::string text = st1["text"];
-    QString t = text.c_str();
-    convertFromTilda(t);
-    text = t.toStdString();
+    if (idnode == "1")
+    {
+        idparent = "-1";
+    }
+    convertFromTilda(text);
     root->insertChildrenLoad(0, std::stoi(idnode),NRCOL,text, QVariant(name.c_str()),QVariant(QIcon(photoname.c_str())));
-    
+    updateActions();
+}
+
+void QClient::moveNodeToTrash()
+{
+    QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+    if (user->getType())//daca e user se fac modificarile si in baza de date
+    {
+        QClient* main = QClient::getInstance();
+        int idnode = model->getIdForIndex(index);
+        int iduser = user->getID();
+        int idparent = model->getIdParentForIndex(index);
+        nlohmann::json js;
+        js["idnode"] = std::to_string(idnode);
+        js["iduser"] = std::to_string(iduser);
+        js["idparent"] = std::to_string(idparent);
+        std::string mes = js.dump();
+        sendMoveNodeTrash(mes);
+        IncomingMessages();
+    }
+
+    model->moveToTrash(index);
+    updateActions();
+    updateActions();
+}
+
+void QClient::recoverNodeFromTrash()
+{
+    QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+    if (user->getType())
+    {
+
+
+    }
+    model->moveFromTrash(index);
+    updateActions();
+}
+
+void QClient::makeMotherNode()
+{
+    QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+    if (this->model->columnCount(index) == 0) {
+        if (!model->insertColumn(0, index))
+            return;
+    }
+    {
+        if (!model->insertRow(0, index))
+            return;
+
+
+        for (int column = 0; column < model->columnCount(index); ++column)
+        {
+            if (!model->headerData(column, Qt::Horizontal).isValid())
+                model->setHeaderData(column, Qt::Horizontal, QVariant("[caini]"),
+                    Qt::DisplayRole);
+
+        }
+        QModelIndex child = model->index(0, 0, index);
+        model->setData(child, QVariant("Trash"), Qt::DisplayRole);
+        QIcon icon("../photos/trash.png");
+
+
+        model->setData(child, QVariant(icon), Qt::DecorationRole);
+        model->setID(1);
+    }
+    {
+        if (!model->insertRow(0, index))
+            return;
+        for (int column = 0; column < model->columnCount(index); ++column)
+        {
+            if (!model->headerData(column, Qt::Horizontal).isValid())
+                model->setHeaderData(column, Qt::Horizontal, QVariant("[caini]"),
+                    Qt::DisplayRole);
+
+        }
+        QModelIndex child = model->index(0, 0, index);
+        model->setData(child, QVariant("MyNotes"), Qt::DisplayRole);
+        QIcon icon("../photos/icon.png");
+        model->setData(child, QVariant(icon), Qt::DecorationRole);
+        model->setID(0);
+    }
+    ui.treeView->selectionModel()->setCurrentIndex(model->index(0, 0, index), QItemSelectionModel::ClearAndSelect);
+    updateActions();
 }
 
 
 
 void QClient::insertNewNode(const std::string photo, const std::string name)
 {
+    //daca e din cosul de gunoi sau cosul at nu se poate
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
     if (!this->user->canNewNode())
     {
@@ -444,11 +564,11 @@ void QClient::insertNewNode(const std::string photo, const std::string name)
         return;
     }
 
-    if (!model->insertRow(index.row() + 1, index.parent()))
+    if (!model->insertRow(index.row()+1, index.parent()))
         return;
 
 
-    QModelIndex child = model->index(index.row() + 1, 0, index.parent());
+    QModelIndex child = model->index(index.row()+1, 0, index.parent());
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
     QIcon icon(photo.c_str());
     model->setData(child, QVariant(icon), Qt::DecorationRole);
@@ -469,6 +589,8 @@ void QClient::insertNewNode(const std::string photo, const std::string name)
 }
 void QClient::inservNewSubnode(const std::string photo, const std::string name)
 {
+    //daca e din cosul de gunoi sau e cosul at nu se poate
+
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
 
     if (!this->user->canNewNode())
@@ -524,8 +646,13 @@ void QClient::updateActions()
     bool hasCurrent = ui.treeView->selectionModel()->currentIndex().isValid();
     ui.actionAdd_New_Node->setEnabled(hasCurrent);
 
+    ui.actionRecover_Node->setEnabled(false);
+
     if (hasCurrent)
     {
+        bool isTrash = model->isTrash((ui.treeView->selectionModel()->currentIndex()));
+        ui.actionRecover_Node->setEnabled(isTrash);
+
         ui.treeView->closePersistentEditor(ui.treeView->selectionModel()->currentIndex());
         
         int row = ui.treeView->selectionModel()->currentIndex().row();
@@ -544,21 +671,20 @@ void QClient::deleteNode()
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
 
     //verifica daca chiar vrea sa l stearga
+    //verifica daca e din cosul de gunoi at face ce e mai jos
     if (user->getType())
     {
         QClient* main = QClient::getInstance();
         int idnode = model->getIdForIndex(index);
         int iduser = user->getID();
         std::string mes=model->getAllChildren(std::to_string(iduser), index);
-        //js["idnode"] = std::to_string(idnode);//nu ia id ul cum trebe
-        //js["iduser"] = std::to_string(iduser);
-        //std::string mes = js.dump();
         sendRemoveNodeMessage(mes);
         IncomingMessages();
     }
 
     if (model->removeRow(index.row(), index.parent()))
         updateActions();
+    //daca nu e din cosul de gunoi face o mutare si un update in baza de date
 }
 
 void QClient::OpenNote()
@@ -569,6 +695,8 @@ void QClient::OpenNote()
     std::string text = model->getText(index);
    // name += " hello";
    // QMessageBox::information(this, "test message", name.c_str());
+    ui.textEdit->setText("");//merge?
+
     ui.textEdit->setHtml(text.c_str());
 
 }
@@ -587,12 +715,58 @@ void QClient::on_actionAdd_New_Subnode_triggered()
 
 void QClient::on_actionDelete_Node_triggered()
 {
-    deleteNode();
+    QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+    if (!model->isTrash(index))
+    {
+        QMessageBox msbox;
+        msbox.setText("Delete Node");
+        msbox.setInformativeText("Do you want to delete the node and all subnodes permanently or move the node to Trash?");
+        QAbstractButton* myDeleteButton = msbox.addButton("Delete permanently", QMessageBox::YesRole);
+        QAbstractButton* myTrashButton = msbox.addButton("Move to Trash", QMessageBox::NoRole);
+        QAbstractButton* myCancelButton = msbox.addButton("Cancel operation", QMessageBox::RejectRole);
+        msbox.setIcon(QMessageBox::Question);
+        msbox.exec();
+        if (msbox.clickedButton() == myDeleteButton)
+        {
+            deleteNode();
+        }
+        if (msbox.clickedButton() == myTrashButton)
+        {
+            moveNodeToTrash();
+        }
+        if (msbox.clickedButton() == myCancelButton)
+        {
+            return;
+        }
+    }
+    else
+    {
+        QMessageBox msbox;
+        msbox.setText("Delete Node");
+        msbox.setInformativeText("Do you want to delete the node permanently?");
+        QAbstractButton* myDeleteButton = msbox.addButton("Delete permanently", QMessageBox::YesRole);
+        QAbstractButton* myCancelButton = msbox.addButton("Cancel operation", QMessageBox::RejectRole);
+        msbox.setIcon(QMessageBox::Question);
+        msbox.exec();
+        if (msbox.clickedButton() == myDeleteButton)
+        {
+            deleteNode();
+        }
+        if (msbox.clickedButton() == myCancelButton)
+        {
+            return;
+        }
+    }
 }
 
 void QClient::on_actionOpen_Note_triggered()
 {
     OpenNote();
+}
+
+void QClient::on_actionRecover_Node_triggered()
+{
+
 }
 
 void QClient::on_actionOpen_triggered()

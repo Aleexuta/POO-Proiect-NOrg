@@ -5,6 +5,7 @@ TreeItem::TreeItem(const QVector<QVariant>& data, TreeItem* parent)
 {
 	m_parentItem = parent;
 	m_itemData = data;
+	//trash = false;
 }
 
 TreeItem::~TreeItem()
@@ -98,6 +99,17 @@ bool TreeItem::setData(int column, const QVariant& value)
 	return true;
 }
 
+void TreeItem::moveChildrenToParent()
+{
+	int size = this->childCount();
+	for (int i=0;i<size;i++)
+	{
+		m_parentItem->addChild(m_childItems.front());
+		m_childItems.front()->setParentGranny();
+		m_childItems.pop_front();
+	}
+}
+
 void TreeItem::sedID(int id)
 {
 	IDNode = id;
@@ -106,6 +118,10 @@ void TreeItem::sedID(int id)
 int TreeItem::getID()
 {
 	return IDNode;
+}
+int TreeItem::getIDParent()
+{
+	return m_parentItem->getID();
 }
 bool TreeItem::setPhoto(QVariant photo)
 {
@@ -126,5 +142,37 @@ void TreeItem::setText(std::string text)
 std::string TreeItem::getText()
 {
 	return m_text;
+}
+
+bool TreeItem::isTrash()
+{
+	if (IDNode == 1)
+		return true;
+	if (m_parentItem->getID() == 1)
+		return true;
+	return false;
+}
+
+void TreeItem::addChild(TreeItem* child)
+{
+	m_childItems.push_back(child);
+}
+
+void TreeItem::removeChild(TreeItem* child)
+{
+	int i = child->childNumber();
+	m_childItems.removeAt(i);
+}
+
+void TreeItem::setOldParent(TreeItem* parent)
+{
+	m_oldParentItem = m_parentItem;
+	m_parentItem = parent;
+}
+
+void TreeItem::setParentGranny()
+{
+	m_oldParentItem = m_parentItem;
+	m_parentItem = m_parentItem->parent();
 }
 

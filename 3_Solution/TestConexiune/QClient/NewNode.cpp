@@ -31,6 +31,8 @@ void NewNode::on_OKButton_clicked()
 	{
 		photo = "../photos/music.png";
 	}
+
+//fa aici culoarea font si data
 	//daca nu e selectata niciuna at se pune un default 
 	QClient* main = QClient::getInstance();
 	if (m_tip == 1)

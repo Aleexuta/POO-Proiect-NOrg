@@ -104,31 +104,43 @@
 		main->sendLoginMessage(str);
 		main->IncomingMessages();
 	}
-	inline void convertIntoTilda(QString& str)
+	inline void makeSecretPassword(std::string pass)
 	{
-		for (int i = 0; i < str.size(); i++)
+		for (int i = 0; i < pass.size(); i++)
 		{
-			if (str[i] == '\'')
-			{
-				str[i] = '~';
-			}
-			if (str[i] == '"')
-			{
-				str[i] = '~';
-			}
+			pass[i] = pass[i] << 3;
 		}
 	}
-	inline void convertFromTilda(QString& str)
+	inline void convertIntoTilda(std::string& str)
 	{
+		std::string nou="";
+		int k = 0;
 		for (int i = 0; i < str.size(); i++)
 		{
+			if (str[i] == '\n')
+				str[i] = ' ';
+			if (str[i] == '\'')
+				str[i] = '~';
+			if (str[i] == '"')
+				str[i] = '@';
+			if (str[i] == '{')
+				str[i] = '(';
+			if (str[i] == '}')
+				str[i] = ')';	
+		}
+	}
+	inline void convertFromTilda(std::string& str)
+	{
+		std::string nou="";
+		for (int i = 0; i <= str.size(); i++)
+		{
 			if (str[i] == '~')
-			{
 				str[i] = '\'';
-			}
-			if (str[i] == '^')
-			{
+			if (str[i] == '@')
 				str[i] = '"';
-			}
+			if (str[i] == '(')
+				str[i] = '{';
+			if (str[i] == ')')
+				str[i] = '}';
 		}
 	}

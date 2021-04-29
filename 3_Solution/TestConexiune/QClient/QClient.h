@@ -37,6 +37,8 @@ enum class CustomMsgTypes : uint32_t
     LoadAllNodes,
     LoadAllNodesAccept,
     RemoveNode,
+    MoveToTrashNode,
+    MoveFromTrashNode,
     SaveNode
 };
 
@@ -73,6 +75,8 @@ public:
     void sendNewNodeMessage(std::string j);
     void sendRemoveNodeMessage(std::string j);
     void sendSaveNotesMessage(std::string j);
+    void sendMoveNodeTrash(std::string j);
+    void sendRecoverNodeMessage(std::string j);
 
     void setUserInfo(std::string mesaj);
     void setGuestInfo();
@@ -82,12 +86,16 @@ public:
     int  getNumberOfNodes();
     void incrementNumberOfNodes();
     void decrementNumberOfNodes();
+
 private:
     auto makeJsonNewNode(std::string name, int iduser, int idparent, int idnode, std::string namephoto = "");
     void sendLoadAllNodesMessage(std::string id);
     void LoadAllNodes(std::string j);
     void LoadChildren(TreeItem * root,nlohmann::basic_json<> js, int &pos);
     void prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, int pos);
+    void moveNodeToTrash();
+    void recoverNodeFromTrash();
+    void makeMotherNode();
 public:
     void insertNewNode(const std::string photo,const std::string name);
     void inservNewSubnode(const std::string photo,const std::string name);
@@ -100,7 +108,7 @@ public slots:
     void on_actionAdd_New_Subnode_triggered();
     void on_actionDelete_Node_triggered();
     void on_actionOpen_Note_triggered();
-
+    void on_actionRecover_Node_triggered();
 private slots:
     
     void on_actionNew_triggered();

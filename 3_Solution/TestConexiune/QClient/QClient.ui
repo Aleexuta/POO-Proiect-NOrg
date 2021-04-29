@@ -22,7 +22,7 @@
      <rect>
       <x>10</x>
       <y>30</y>
-      <width>253</width>
+      <width>200</width>
       <height>192</height>
      </rect>
     </property>
@@ -110,7 +110,7 @@
      <x>0</x>
      <y>0</y>
      <width>610</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -166,6 +166,7 @@
     <addaction name="actionAdd_New_Subnode"/>
     <addaction name="actionDelete_Node"/>
     <addaction name="actionOpen_Note"/>
+    <addaction name="actionRecover_Node"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuNodes"/>
@@ -320,6 +321,11 @@
    </property>
    <property name="text">
     <string>Open Note</string>
+   </property>
+  </action>
+  <action name="actionRecover_Node">
+   <property name="text">
+    <string>Recover Node</string>
    </property>
   </action>
  </widget>

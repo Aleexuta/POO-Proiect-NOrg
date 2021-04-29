@@ -27,7 +27,7 @@ private:
 	int numberOfNodes; //maximul idnode, nu nr de noduri
 public:
 	User() {
-		numberOfNodes = 0;
+		numberOfNodes = -1;
 	}
 	~User() {};
 	std::string getUsername() {
@@ -73,7 +73,7 @@ private:
 	int numberOfNodes;
 	int maxNumberOfNodes = MAXNUMBER;
 public:
-	Guest() { numberOfNodes = 0; }
+	Guest() { numberOfNodes = -1; }
 	~Guest() {};
 	std::string getUsername() {
 		return "guest";

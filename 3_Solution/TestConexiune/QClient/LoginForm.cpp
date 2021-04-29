@@ -45,7 +45,9 @@ void LoginForm::on_LoginButton_clicked()
 
 	bool incorect = false;
 	j["email"] = (ui->emailText->text()).toStdString();
-	j["password"] = (ui->PasswordText->text()).toStdString();
+	std::string ps = (ui->PasswordText->text()).toStdString();
+	makeSecretPassword(ps);
+	j["password"] = ps;
 	QClient* main = QClient::getInstance();
 	if (!validateString(j["email"], StrType::Email))
 	{
