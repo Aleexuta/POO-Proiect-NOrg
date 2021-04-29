@@ -23,10 +23,15 @@ public:
 	bool removeChildren(int position, int count);
 	int childNumber()const;
 	bool setData(int column, const QVariant& value);
+
 	void moveChildrenToParent(); //move the children to his father
 	void addChild(TreeItem* child);
 	void removeChild(TreeItem* child);
 
+	void moveChildrenFromParent();//move the children to his old father
+	void restoreOldParent();
+
+	void setOldParentNode(TreeItem* node);
 	void sedID(int id);
 	int getID();
 	int getIDParent();
@@ -36,9 +41,10 @@ public:
 	std::string getText();
 	bool isTrash();
 
-	
+	int getOldParent();
 	void setOldParent(TreeItem* parent);
 	void setParentGranny();
+	bool canRecover();
 private:
 	int IDNode;//il punem din iuser
 	QList<TreeItem*> m_childItems;

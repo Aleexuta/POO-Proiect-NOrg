@@ -104,7 +104,7 @@
 		main->sendLoginMessage(str);
 		main->IncomingMessages();
 	}
-	inline void makeSecretPassword(std::string pass)
+	inline void makeSecretPassword(std::string& pass)
 	{
 		for (int i = 0; i < pass.size(); i++)
 		{

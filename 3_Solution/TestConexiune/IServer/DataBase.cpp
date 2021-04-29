@@ -314,7 +314,7 @@ std::string DataBase::selectIdForLastNode(std::string iduser)
 std::string DataBase::selectAllNodes(int iduser)
 {
 	char* messaggeError;
-	std::string sql("SELECT NODE.iduser, NODE.idnode, NODE.idparent, NODE.name, NODE.photoname FROM NODE where NODE.iduser like " + std::to_string(iduser) + " and NODE.idnode is not 0 ORDER BY NODE.idparent asc , NODE.idnode desc");
+	std::string sql("SELECT NODE.iduser, NODE.idnode, NODE.idparent, NODE.name, NODE.photoname, NODE.idoldparent FROM NODE where NODE.iduser like " + std::to_string(iduser) + " and NODE.idnode is not 0 ORDER BY NODE.idparent asc , NODE.idnode desc");
 	std::string data("CALLBACK FUNCTION");
 	//final = "[";
 	int exit = sqlite3_exec(DB, sql.c_str(), callbackMore, (void*)data.c_str(), NULL);
@@ -376,8 +376,10 @@ bool DataBase::moveToTrashNode(std::string iduser, std::string idnode,std::strin
 	char* messaggeError;
 	std::string data("CALLBACK FUNCTION");
 	std::string sql("Update NODE set idparent=1 where iduser = " + iduser + " and idnode = " + idnode +
-		"; Update NODE set idparent = " + idparent + " where idparent = " + idnode + " and iduser = " + iduser +
-		"; Update NODE set idoldparent= "+idparent + " where idparent = " + idnode + " and iduser = " + iduser);
+		"; Update NODE set idoldparent= " + idparent + " where idnode = " + idnode + " and iduser = " + iduser +
+		"; Update NODE set idoldparent= "+idnode+ " where idparent= "+idnode + " and iduser = " + iduser +
+		"; Update NODE set idparent = " + idparent + " where idparent = " + idnode + " and iduser = " + iduser);
+		
 	int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
 	if (exit != SQLITE_OK)
 	{
@@ -395,8 +397,8 @@ bool DataBase::moveFromTrashNode(std::string iduser, std::string idnode,std::str
 {
 	char* messaggeError;
 	std::string data("CALLBACK FUNCTION");
-	std::string sql("Update NODES set NODES.idparent= "+idoldparent+" where iduser = " + iduser + " and idnode = " + idnode + 
-		"; Updates NODES set NODES.idparent = " + idnode + "where NODES.idoldparent = " + idnode + " and NODES.iduser = " + iduser);
+	std::string sql("Update NODE set idparent= "+idoldparent+" where iduser = " + iduser + " and idnode = " + idnode + 
+		"; Update NODE set idparent = " + idnode + " where idoldparent = " + idnode + " and iduser = " + iduser);
 	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
 	if (exit != SQLITE_OK)
 	{
@@ -451,7 +453,8 @@ std::string DataBase::getLastVersionText(std::string iduser, std::string idnode)
 bool DataBase::removeNode(std::string id,std::string iduser)
 {
 	char* messaggeError;
-	std::string sql("DELETE FROM NODE WHERE NODE.idnode = "+ id+" and NODE.iduser="+ iduser);
+	std::string sql("DELETE FROM NODE WHERE NODE.idnode = "+ id+" and NODE.iduser="+ iduser+
+		"; Update NODE set idoldparent = 1 where idoldparent= "+ id +" and iduser= "+iduser);//update pt toti care au ca si old parent id cu 1(ramane in trash)
 	std::string data("CALLBACK FUNCTION");
 	int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
 

@@ -178,6 +178,11 @@ TreeItem* TreeModel::getRootItem()
     return rootItem;
 }
 
+TreeItem* TreeModel::getNodeForId(int id)
+{
+    return findNode(rootItem, id);
+}
+
 
 void TreeModel::setID(int id)
 {
@@ -198,6 +203,12 @@ int TreeModel::getIdForIndex(const QModelIndex& index)
 int TreeModel::getIdParentForIndex(const QModelIndex& index)
 {
     return getItem(index)->getIDParent();
+}
+
+int TreeModel::getIdOldparentForIndex(const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    return item->getOldParent();
 }
 
 void TreeModel::setIDNode(int id, const QModelIndex& index)
@@ -257,9 +268,21 @@ void TreeModel::moveToTrash(const QModelIndex& index)
     
 }
 
-void TreeModel::moveFromTrash(const QModelIndex& index)
+bool TreeModel::moveFromTrash(const QModelIndex& index)
 {
+    TreeItem* item = getItem(index);
+    bool x = item->canRecover();
+    if (!x)
+    {   
+        return false;
+    }
 
+    TreeItem* trash = getTrashNode();
+    trash->removeChild(item);
+    item->restoreOldParent();
+    item->moveChildrenFromParent();
+    item->parent()->addChild(item);
+    return true;
 }
 
 void TreeModel::getChildren(std::string iduser, TreeItem* parent, std::string& full)
@@ -281,6 +304,23 @@ TreeItem* TreeModel::getTrashNode()
     }
     //return rootItem->child(rootItem->childCount() - 1);
     return rootItem;
+}
+
+TreeItem* TreeModel::findNode(TreeItem* root, int id)
+{
+    if (root->getID() == id)
+        return root;
+    int size = root->childCount();
+    for (int i = 0; i < size; i++)
+    {
+        TreeItem* rez = findNode(root->child(i), id);
+        if (rez)
+            return rez;
+
+    }
+    return nullptr;
+   // return this->rootItem;
+
 }
 
 

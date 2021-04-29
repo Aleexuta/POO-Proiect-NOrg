@@ -407,20 +407,13 @@ auto QClient::makeJsonNewNode(std::string name, int iduser, int idparent, int id
     return js;
 }
 
-void QClient::sendLoadAllNodesMessage(std::string id)
-{
-    olc::net::message<CustomMsgTypes> msg;
-    msg.header.id = CustomMsgTypes::LoadAllNodes;
-    for (int i = 0; i < id.size(); i++)
-        msg << id[i];
-    Send(msg);
-}
 
 void QClient::LoadAllNodes(std::string j)
 {
     auto js1 = nlohmann::json::parse(j);
     int pos = 1;
     LoadChildren(getRootItem(), js1, pos);
+    LoadChildrenOldParent(getRootItem(), js1, pos);
     updateActions();
 }
 
@@ -452,7 +445,35 @@ void QClient::LoadChildren(TreeItem* root, nlohmann::basic_json<> js, int &pos)
         LoadChildren(root->child(i), js, pos);
     }
 }
+void QClient::LoadChildrenOldParent(TreeItem* root, nlohmann::basic_json<> js, int& pos)
+{
+    pos = 1;
+    if (pos < js.size() && root!=model->getRootItem())
+    {
+        std::string js1 = js[pos]["idoldparent"];
+        std::string noid = js[pos]["idnode"];
+        while (pos < js.size())
+        {
 
+            if (js1!="NULL" && root->getID() == std::stoi(js1))
+            {
+                TreeItem* node = model->getNodeForId(std::stoi(noid));//nu merge functia asta
+                node->setOldParentNode(root);
+            }
+
+            pos++;
+            if (pos < js.size())
+            {
+                js1 = js[pos]["idoldparent"];
+                noid = js[pos]["idnode"];
+            }
+        }
+    }
+    for (int i = 0; i < root->childCount(); i++)
+    {
+        LoadChildrenOldParent(root->child(i), js, pos);
+    }
+}
 void QClient::prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, int pos)
 {
     auto st1 = js[pos];
@@ -461,6 +482,7 @@ void QClient::prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, in
     std::string name = st1["name"];
     std::string photoname = st1["photoname"];
     std::string text = st1["text"];
+    std::string idoldparent = st1["idoldparent"];
     if (idnode == "1")
     {
         idparent = "-1";
@@ -496,13 +518,36 @@ void QClient::moveNodeToTrash()
 void QClient::recoverNodeFromTrash()
 {
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
-    if (user->getType())
+    //if (model->isTrash(index))//aici trebuie verificat daca old parent e trash
+    //{
+    //    QMessageBox::warning(this, "Recover Impossible", "This node can not be recovered because his sourse do not exist");
+    //    return;
+    //}
+    //else
     {
+        if (user->getType())
+        {
+            QClient* main = QClient::getInstance();
+            int idnode = model->getIdForIndex(index);
+            int iduser = user->getID();
+            int idoldparent = model->getIdOldparentForIndex(index);
+            nlohmann::json js;
+            js["idnode"] = std::to_string(idnode);
+            js["iduser"] = std::to_string(iduser);
+            if (idoldparent < 0)
+                idoldparent = 1;
+            js["idoldparent"] = std::to_string(idoldparent);
+            std::string mes = js.dump();
+            sendRecoverNodeMessage(mes);
+            IncomingMessages();
 
-
+        }
+        if (!model->moveFromTrash(index))
+        {
+            QMessageBox::warning(this, "Recover Failed", "The node can not be recovered because the location is invalid.");
+        }
+        updateActions();
     }
-    model->moveFromTrash(index);
-    updateActions();
 }
 
 void QClient::makeMotherNode()
@@ -642,16 +687,13 @@ void QClient::updateActions()
 
     bool hasSelection = !ui.treeView->selectionModel()->selection().isEmpty();
     ui.actionDelete_Node->setEnabled(hasSelection);
+    ui.actionRecover_Node->setEnabled(hasSelection);
     
     bool hasCurrent = ui.treeView->selectionModel()->currentIndex().isValid();
     ui.actionAdd_New_Node->setEnabled(hasCurrent);
 
-    ui.actionRecover_Node->setEnabled(false);
-
     if (hasCurrent)
     {
-        bool isTrash = model->isTrash((ui.treeView->selectionModel()->currentIndex()));
-        ui.actionRecover_Node->setEnabled(isTrash);
 
         ui.treeView->closePersistentEditor(ui.treeView->selectionModel()->currentIndex());
         
@@ -766,7 +808,7 @@ void QClient::on_actionOpen_Note_triggered()
 
 void QClient::on_actionRecover_Node_triggered()
 {
-
+    recoverNodeFromTrash();
 }
 
 void QClient::on_actionOpen_triggered()

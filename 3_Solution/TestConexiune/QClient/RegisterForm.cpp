@@ -54,7 +54,7 @@ void RegisterForm::on_RegisterButton_clicked()
 	j["lastname"] = (ui->LastnameText->text()).toStdString();
 	j["email"] = (ui->EmailText->text()).toStdString();
 	std::string ps = (ui->PasswordText->text()).toStdString();
-	makeSecretPassword(ps);
+	//makeSecretPassword(ps);
 	j["password"] = ps;
 	QClient* main = QClient::getInstance();
 	if (!validateString(j["email"], StrType::Email))

@@ -62,6 +62,7 @@ void TreeItem::insertChildrenLoad(int position, int id,int columns,std::string t
 		item->setPhoto(photoname);
 		item->setData(0, name);
 		item->setText(text);
+		item->setOldParentNode(nullptr);
 	}
 }
 
@@ -108,6 +109,33 @@ void TreeItem::moveChildrenToParent()
 		m_childItems.front()->setParentGranny();
 		m_childItems.pop_front();
 	}
+}
+
+void TreeItem::moveChildrenFromParent()
+{
+	int size = parent()->childCount();
+	for (int i = 0; i < size; i++)
+	{
+		TreeItem* child = parent()->child(i);
+		if (child->getOldParent() == IDNode)
+		{
+			child->restoreOldParent();
+			addChild(child);
+			parent()->removeChild(child);
+		}
+	}
+
+}
+
+void TreeItem::restoreOldParent()
+{
+	m_parentItem = m_oldParentItem;
+	m_oldParentItem = nullptr;
+}
+
+void TreeItem::setOldParentNode(TreeItem* node)
+{
+	m_oldParentItem = node;
 }
 
 void TreeItem::sedID(int id)
@@ -164,6 +192,13 @@ void TreeItem::removeChild(TreeItem* child)
 	m_childItems.removeAt(i);
 }
 
+int TreeItem::getOldParent()
+{
+	if(m_oldParentItem)
+		return m_oldParentItem->getID();
+	return -1;
+}
+
 void TreeItem::setOldParent(TreeItem* parent)
 {
 	m_oldParentItem = m_parentItem;
@@ -174,5 +209,14 @@ void TreeItem::setParentGranny()
 {
 	m_oldParentItem = m_parentItem;
 	m_parentItem = m_parentItem->parent();
+}
+
+bool TreeItem::canRecover()
+{
+	if (!m_oldParentItem)
+		return false;
+	if (m_oldParentItem->getID() == 1|| m_oldParentItem->getID()<0)
+		return false;
+	return true;
 }
 

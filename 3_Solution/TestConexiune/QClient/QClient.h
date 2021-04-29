@@ -89,9 +89,9 @@ public:
 
 private:
     auto makeJsonNewNode(std::string name, int iduser, int idparent, int idnode, std::string namephoto = "");
-    void sendLoadAllNodesMessage(std::string id);
     void LoadAllNodes(std::string j);
     void LoadChildren(TreeItem * root,nlohmann::basic_json<> js, int &pos);
+    void LoadChildrenOldParent(TreeItem* root, nlohmann::basic_json<> js, int& pos);
     void prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, int pos);
     void moveNodeToTrash();
     void recoverNodeFromTrash();
