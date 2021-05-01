@@ -278,10 +278,26 @@ void TreeModel::setDate(QDate date, QModelIndex& index)
     item->setDate(date.toString().toStdString());
 }
 
+bool TreeModel::isHome(const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    if (item->getID() == 0)
+        return true;
+    return false;
+}
+
 bool TreeModel::isTrash(const QModelIndex& index)
 {
     TreeItem* item = getItem(index);
     return item->isTrash();
+}
+
+bool TreeModel::isDeleted(const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    if (item->isTrash() && item->getID() != 1)
+        return true;
+    return false;
 }
 
 void TreeModel::moveToTrash(const QModelIndex& index)

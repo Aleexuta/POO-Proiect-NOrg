@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>3</x>
@@ -193,7 +193,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QDateTimeEdit" name="dateTimeEdit"/>
+     <widget class="QDateEdit" name="dateEdit"/>
     </item>
     <item>
      <widget class="QPushButton" name="OKButton">

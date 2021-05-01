@@ -98,6 +98,8 @@ private:
     void moveNodeToTrash();
     void recoverNodeFromTrash();
     void makeMotherNode();
+    void verifyDate();
+    void verifyDateFor(TreeItem* root,std::list<std::string>& allNodes, std::string curDate);
 public:
     void insertNewNode(const std::string photo, const std::string name, const QFont font, const QColor color, const QDate date);
     void inservNewSubnode(const std::string photo,const std::string name, const QFont font, const QColor color, const QDate date);

@@ -49,7 +49,9 @@ public:
     void setText(std::string text,const QModelIndex& index = QModelIndex());
     void setDate(QDate date, QModelIndex& index = QModelIndex());
 
+    bool isHome(const QModelIndex& index = QModelIndex());
     bool isTrash(const QModelIndex& index = QModelIndex());
+    bool isDeleted(const QModelIndex& index = QModelIndex());
     void moveToTrash(const QModelIndex& index = QModelIndex());
     bool moveFromTrash(const QModelIndex& index = QModelIndex());
 

@@ -6,6 +6,7 @@
 #include <qvariant.h>
 #include <string>
 #include <qicon.h>
+#include <time.h>
 
 #include "RegisterForm.h"
 #include "LoginForm.h"
@@ -417,6 +418,7 @@ void QClient::LoadAllNodes(std::string j)
     int pos = 1;
     LoadChildren(getRootItem(), js1, pos);
     LoadChildrenOldParent(getRootItem(), js1, pos);
+    verifyDate();
     updateActions();
 }
 
@@ -604,18 +606,51 @@ void QClient::makeMotherNode()
     updateActions();
 }
 
+void QClient::verifyDate()
+{
+    time_t rawTime;
+    struct tm* timeinfo;
+    char buffer[80];
+    time(&rawTime);
+    timeinfo = localtime(&rawTime);
+    strftime(buffer, 80, "%a %h%e %Y", timeinfo);
+
+    std::list<std::string> lista;
+    std::string mesaj("This notes have limit date:\n");
+    verifyDateFor(getRootItem(), lista,buffer);
+    for (auto it = lista.begin(); it != lista.end(); it++)
+    {
+        mesaj += (*it);
+        mesaj += ",\n";
+    }
+    QMessageBox::information(this, "Limit Date",mesaj.c_str());
+}
+
+void QClient::verifyDateFor(TreeItem* root, std::list<std::string>& allNodes, std::string curDate)
+{
+    if (root->getDate() == curDate)
+    {
+        allNodes.push_back(root->data(0).toString().toStdString());
+    }
+    int size = root->childCount();
+    for (int i = 0; i < size; i++)
+    {
+        verifyDateFor(root->child(i), allNodes, curDate);
+    }
+}
+
 
 
 void QClient::insertNewNode(const std::string photo, const std::string name, const QFont font, const QColor color, const QDate date)
 {
     //daca e din cosul de gunoi sau cosul at nu se poate
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+
     if (!this->user->canNewNode())
     {
         QMessageBox::information(this, "client message", "You can't create more notes in guest mode");
         return;
     }
-
     if (!model->insertRow(index.row()+1, index.parent()))
         return;
 
@@ -654,6 +689,7 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name, 
         QMessageBox::information(this, "client message", "You can't create more notes in guest mode");
         return;
     }
+
     if (this->model->columnCount(index) == 0) {
         if (!model->insertColumn(0, index))
             return;
@@ -749,6 +785,16 @@ void QClient::OpenNote()
     //vezi care e selectat
     //de la itemul selectat se ia textul din memorie si se trimite la editorul de text pt a l scrie pe ecran
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+    if (model->isTrash(index))
+    {
+        if (model->isDeleted(index))
+        {
+            QMessageBox::information(this, "Deleted Node", "This note can not be open because it is deleted!");
+          
+        }
+        return;
+    }
+
     std::string text = model->getText(index);
    // name += " hello";
    // QMessageBox::information(this, "test message", name.c_str());
@@ -760,12 +806,20 @@ void QClient::OpenNote()
 
 void QClient::on_actionAdd_New_Node_triggered()
 {
+    QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+    if (this->model->isTrash(index))
+        return;
+    if (model->isHome(index))
+        return;
     NewNode *nn=new NewNode(1);
     nn->show();
 }
 
 void QClient::on_actionAdd_New_Subnode_triggered()
 {
+    QModelIndex index = ui.treeView->selectionModel()->currentIndex();
+    if (this->model->isTrash(index))
+        return;
     NewNode* nn = new NewNode(2);
     nn->show();
 }

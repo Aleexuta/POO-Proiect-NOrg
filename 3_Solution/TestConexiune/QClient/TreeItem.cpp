@@ -211,6 +211,7 @@ std::string TreeItem::getDate()
 	return m_date;
 }
 
+
 bool TreeItem::isTrash()
 {
 	if (IDNode == 1)
