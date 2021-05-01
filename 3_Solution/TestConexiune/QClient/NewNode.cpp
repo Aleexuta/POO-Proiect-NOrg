@@ -41,11 +41,11 @@ void NewNode::on_OKButton_clicked()
 
 //fa aici culoarea font si data
 	QFont font = ui->fontComboBox->currentFont();
-	QDate data = ui->dateTimeEdit->date();
+	QDate data = ui->dateEdit->date();
 	//daca nu e selectata niciuna at se pune un default 
 	QClient* main = QClient::getInstance();
 	if (m_tip == 1)
-		main->insertNewNode(photo, name,font, m_color,data);
+		main->insertNewNode(photo , name,font, m_color,data);
 	else
 		main->inservNewSubnode(photo, name, font, m_color, data);
 	

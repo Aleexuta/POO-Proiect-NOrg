@@ -62,6 +62,7 @@ private:
     void setupModelData(const QStringList& lines, TreeItem* parent);
     TreeItem* getItem(const QModelIndex & index) const;
 
+    QVariant background;
     TreeItem* rootItem;
 };
 

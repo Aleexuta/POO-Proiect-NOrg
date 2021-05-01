@@ -45,7 +45,21 @@ bool TreeItem::insertChildren(int position, int count, int columns)
 		QClient* main = QClient::getInstance();
 		item->sedID(main->getNumberOfNodes()+1);
 		main->incrementNumberOfNodes();
-		item->setBackground(QBrush(QColor(255, 0, 0)));
+		switch (main->getTheme())
+		{
+		case ThemeClient::LightTheme:
+		{
+			item->setBackground(QBrush(QColor(255,255,255)));
+		}
+		break;
+		case ThemeClient::DarkTheme:
+		{
+			item->setBackground(QBrush(QColor(30,30,30)));
+		}
+		break;
+		default:
+			break;
+		}
 		item->setText("Bine ai venit wai!");
 	}
 	return true;
@@ -66,6 +80,28 @@ void TreeItem::insertChildrenLoad(int position, int id,int columns,std::string t
 		item->setData(0, name);
 		item->setText(text);
 		item->setOldParentNode(nullptr);
+
+		//set background
+		QClient* main = QClient::getInstance();
+		switch (main->getTheme())
+		{
+		case ThemeClient::LightTheme:
+		{
+			//item->setBackground(QBrush(QColor(255,255,255)));
+			if (color == QColor(255, 255, 255))
+				color = QColor(0, 0, 0);
+		}
+		break;
+		case ThemeClient::DarkTheme:
+		{
+			//item->setBackground(QBrush(QColor(30, 30, 30)));
+			if (color == QColor(0, 0, 0))
+				color = QColor(255,255,255);
+		}
+		break;
+		default:
+			break;
+		}
 		item->setColor(color);
 		item->setFont(font);
 		item->setDate(date);

@@ -7,12 +7,13 @@
 #include <string>
 #include <qicon.h>
 #include <time.h>
+#include <qcolor.h>
 
 #include "RegisterForm.h"
 #include "LoginForm.h"
 #include "FirstForm.h"
 #include "NewNode.h"
-#include"TreeModel.h"
+#include "TreeModel.h"
 #include "TreeItem.h"
 #include "Common_function.h"
 bool isloged = false;
@@ -35,9 +36,8 @@ QClient::QClient(QWidget* parent)
     file.close();
     ui.treeView->setModel(model);
 
-    ui.treeView->setColumnWidth(0,100);
-    ui.treeView->setColumnWidth(1, 10);
 
+    isregistered = false;
     isloged = false;
     updateActions();
 }
@@ -396,6 +396,11 @@ void QClient::decrementNumberOfNodes()
     user->decrementNrNodes();
 }
 
+ThemeClient QClient::getTheme()
+{
+    return theme;
+}
+
 
 auto QClient::makeJsonNewNode(std::string name, int iduser, int idparent, int idnode, std::string font, std::string color, std::string date, std::string namephoto)
 {
@@ -639,9 +644,113 @@ void QClient::verifyDateFor(TreeItem* root, std::list<std::string>& allNodes, st
     }
 }
 
+void QClient::setTheme()
+{
+    switch (theme)
+    {
+    case ThemeClient::LightTheme:
+    {
+        //model->setHeaderData(0, Qt::Horizontal, QVariant(QColor(250,250,250)), Qt::FontRole);
+        //model->setHeaderData(0, Qt::Horizontal, QVariant(QColor(0,0,0)), Qt::ForegroundRole);
+        //model->setHeaderData(0, Qt::Horizontal, QVariant(QColor(250,250,250)), Qt::BackgroundRole);
+        this->setStyleSheet("background-color: rgb(240,240,240);"
+            "border-color: rgb(240,240,240);"
+            "color: rgb(0,0,0); ");
+        ui.textEdit->setStyleSheet("background-color: rgb(255,255,255);"
+            "border-color: rgb(255,255,255);"
+            "gridline-color: rgb(255,255,255);"
+            "color: rgb(0,0,0); ");
+        std::string tema(
+            "QHeaderView::section\n"
+            "{\n"
+            "color: rgb(0,0,0);\n"
+            "background-color: rgb(250,250,250);\n"
+            "border-color: rgb(250,250,250);\n"
+            "gridline-color: rgb(250,250,250);\n"
+            "selection-color: rgb(250,250,250);\n"
+            "selection-background-color: rgb(250,250,250);\n"
+            "}\n"
+            "QTreeView\n"
+            "{\n"
+            "background-color: rgb(255,255,255);\n"
+            "color: rgb(0,0,0);\n"
+            "alternate-background-color: rgb(250,250,250);\n"
+            "border-color: rgb(255, 255, 255);\n"
+            "gridline-color: rgb(255,255, 255);\n"
+            "selection-color: rgb(115, 129, 255);\n"
+            "selection-background-color: rgb(255, 183, 199);\n"
+            "}\n");
+
+        ui.treeView->setStyleSheet(tema.c_str());
+    }
+        break;
+    case ThemeClient::DarkTheme:
+    {
+        //model->setHeaderData(0, Qt::Horizontal, QVariant(QColor(35,35,35)),Qt::FontRole);
+        //model->setHeaderData(0, Qt::Horizontal, QVariant(QColor(255,255,255)),Qt::ForegroundRole);
+       // model->setHeaderData(0, Qt::Horizontal, QVariant(QColor(35,35,35)),Qt::BackgroundRole);
+        this->setStyleSheet("background-color: rgb(45,45,45);"
+            "border - color: rgb(255, 255, 255);"
+            "color: rgb(255, 255, 255); ");
+        ui.textEdit->setStyleSheet("background-color: rgb(30,30,30);"
+            "border - color: rgb(30, 30, 30);"
+            "gridline - color: rgb(30, 30, 30);"
+            "color: rgb(238, 238, 238); ");
+        std::string tema(
+            "QHeaderView::section\n"
+            "{\n"
+            "color: rgb(255, 255, 255);\n"
+            "background-color: rgb(50,50,50);\n"
+            "border-color: rgb(50,50,50);\n"
+            "gridline-color: rgb(50,50,50);\n"
+            "selection-color: rgb(50,50,50);\n"
+            "selection-background-color: rgb(50,50,50);\n"
+            "}\n"
+            "QTreeView\n"
+            "{\n"
+            "background-color: rgb(30,30,30);\n"
+            "color: rgb(255, 255, 255);\n"
+            "alternate-background-color: rgb(35,35,35);\n"
+            "border-color: rgb(255, 255, 255);\n"
+            "gridline-color: rgb(158, 226, 255);\n"
+            "selection-color: rgb(115, 129, 255);\n"
+            "selection-background-color: rgb(255, 183, 199);\n"
+            "}\n");
+        
+        ui.treeView->setStyleSheet(tema.c_str());
+        
+    }
+        break;
+    default:
+        break;
+    }
+
+}
+
+void QClient::modifyColor(QColor& color)
+{
+    switch (theme)
+    {
+    case ThemeClient::LightTheme:
+    {
+        if (color== QColor(255, 255, 255))
+            color = QColor(0, 0, 0);
+    }
+    break;
+    case ThemeClient::DarkTheme:
+    {
+        if (color == QColor(0, 0, 0))
+            color = QColor(255, 255, 255);
+    }
+    break;
+    default:
+        break;
+    }
+}
 
 
-void QClient::insertNewNode(const std::string photo, const std::string name, const QFont font, const QColor color, const QDate date)
+
+void QClient::insertNewNode(const std::string photo, const std::string name, const QFont font, QColor color, const QDate date)
 {
     //daca e din cosul de gunoi sau cosul at nu se poate
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
@@ -659,6 +768,7 @@ void QClient::insertNewNode(const std::string photo, const std::string name, con
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
     QIcon icon(photo.c_str());
     model->setData(child, QVariant(icon), Qt::DecorationRole);
+    modifyColor(color);
     model->setData(child, QVariant(color), Qt::ForegroundRole);
     model->setData(child, QVariant(font), Qt::FontRole);
     model->setDate(date, index);
@@ -678,7 +788,7 @@ void QClient::insertNewNode(const std::string photo, const std::string name, con
     }
    
 }
-void QClient::inservNewSubnode(const std::string photo, const std::string name, const QFont font, const QColor color, const QDate date)
+void QClient::inservNewSubnode(const std::string photo, const std::string name, const QFont font, QColor color, const QDate date)
 {
     //daca e din cosul de gunoi sau e cosul at nu se poate
 
@@ -710,6 +820,7 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name, 
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
     QIcon icon(photo.c_str());
     model->setData(child, QVariant(icon), Qt::DecorationRole);
+    modifyColor(color);
     model->setData(child, QVariant(color), Qt::ForegroundRole);
     model->setData(child, QVariant(font), Qt::FontRole);
     model->setDate(date, index);
@@ -796,10 +907,6 @@ void QClient::OpenNote()
     }
 
     std::string text = model->getText(index);
-   // name += " hello";
-   // QMessageBox::information(this, "test message", name.c_str());
-    ui.textEdit->setText("");//merge?
-
     ui.textEdit->setHtml(text.c_str());
 
 }
@@ -1034,6 +1141,7 @@ void QClient::on_actionColor_triggered()
 {
     QColor current = ui.textEdit->currentCharFormat().foreground().color();
     QColor color = QColorDialog::getColor(current, this, "Select a color");
+    modifyColor(color);
     ui.textEdit->setTextColor(color);
 }
 
@@ -1043,6 +1151,18 @@ void QClient::on_actionFont_triggered()
     QFont font = QFontDialog::getFont(&ok, ui.textEdit->currentFont(), this, "Select a font");
     if (ok)
         ui.textEdit->setFont(font);
+}
+
+void QClient::on_actionDark_Mode_triggered()
+{
+    theme = ThemeClient::DarkTheme;
+    setTheme();
+}
+
+void QClient::on_actionLight_Mode_triggered()
+{
+    theme = ThemeClient::LightTheme;
+    setTheme();
 }
 
 void QClient::on_actionNew_triggered()

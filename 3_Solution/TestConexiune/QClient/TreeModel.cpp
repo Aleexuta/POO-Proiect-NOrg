@@ -72,7 +72,25 @@ QVariant TreeModel::data(const QModelIndex& index, int role) const
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    {
         return rootItem->data(section);
+    }
+    //if (role == Qt::ForegroundRole)
+    //{
+    //    return rootItem->getColor();
+    //}
+    //if (role == Qt::FontRole)
+    //{
+    //    return rootItem->getFont();
+    //}
+    //if (role == Qt::BackgroundRole)
+    //{
+    //    return background;
+    //}
+    //if (role == Qt::BackgroundColorRole)
+    //{
+    //    return background;
+    //}
     return QVariant();
 }
 
@@ -159,6 +177,32 @@ bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int rol
 
 bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant& value, int role)
 {
+    //if (role == Qt::ForegroundRole)
+    //{
+    //    bool result = rootItem->setColor(value);
+    //    if (result)
+    //        emit headerDataChanged(orientation, section, section);
+    //    return result;
+    //}
+    //if (role == Qt::FontRole)
+    //{
+    //    bool result = rootItem->setFont(value);
+    //    if (result)
+    //        emit headerDataChanged(orientation, section, section);
+    //    return result;
+    //}
+    //if (role == Qt::BackgroundRole)
+    //{
+    //    background = value;
+    //    emit headerDataChanged(orientation, section, section);
+    //    return true;
+    //}
+    //if (role == Qt::BackgroundColorRole)
+    //{
+    //    background = value;
+    //    emit headerDataChanged(orientation, section, section);
+    //    return true;
+    //}
     if (role == Qt::EditRole || orientation == Qt::Horizontal)
     {
         bool result = rootItem->setData(section, value);
@@ -166,6 +210,7 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QV
             emit headerDataChanged(orientation, section, section);
         return result;
     }
+
     return false;
 }
 
