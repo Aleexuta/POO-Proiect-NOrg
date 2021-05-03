@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "QClient.h"
 #define NRCOL 1
 	enum class StrType
 	{

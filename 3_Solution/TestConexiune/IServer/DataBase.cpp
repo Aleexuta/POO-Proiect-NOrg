@@ -416,6 +416,67 @@ bool DataBase::moveFromTrashNode(std::string iduser, std::string idnode,std::str
 	}
 }
 
+bool DataBase::deleteUser(std::string iduser)
+{
+	char* messaggeError;
+	std::string sql("DELETE FROM USER WHERE USER.iduser=" + iduser);
+	std::string data("CALLBACK FUNCTION");
+	int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
+
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Delete User<DELETE> \n" << std::endl;
+		std::cout << "\n\n" << messaggeError << "\n\n";
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+bool DataBase::updatePasswordUser(std::string iduser, std::string oldpass, std::string newpass)
+{
+	//verifica daca parola se potriveste,daca nu se potriveste at o schimba
+	//fa un select
+	char* messaggeError;
+	std::string sql("SELECT password from USER where iduser= "+iduser);
+	std::string data("CALLBACK FUNCTION");
+	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
+	//adauga in final si nr de noduri pe care le are userul
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Update Password <select> \n" << std::endl;
+		return false;
+	}
+	else
+	{
+
+		auto js = nlohmann::json::parse(final);
+		std::string old = js["password"];
+		if (old != oldpass)
+		{
+			std::cerr << "Error Update password" << std::endl;
+			return false;
+		}
+		char* messaggeError;
+		std::string data("CALLBACK FUNCTION");
+		std::string sql("UPDATE USER SET password='" + newpass + "' where iduser= " + iduser);
+
+		int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
+		if (exit != SQLITE_OK)
+		{
+			std::cerr << "Error Update password" << std::endl;
+			return false;
+		}
+		else
+		{
+			std::cout << "Succes Update password" << std::endl;
+			return true;
+		}
+	}
+}
+
 std::string DataBase::getTextForNode(std::string iduser, std::string idnode)
 {
 	char* messaggeError;

@@ -11,7 +11,7 @@
 LoginForm* LoginForm::instance = nullptr;
 LoginForm::LoginForm(QWidget* parent) :
 	QDialog(parent),
-	ui(new Ui::Dialog)
+	ui(new Ui::LoginForm)
 {
 	ui->setupUi(this);
 	this->freeText();

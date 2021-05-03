@@ -6,6 +6,13 @@
 #include <qvariant.h>
 #include <string>
 #include <qicon.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif // _WIN32
+
+
 
 #include "RegisterForm.h"
 #include "LoginForm.h"
@@ -14,6 +21,10 @@
 #include"TreeModel.h"
 #include "TreeItem.h"
 #include "Common_function.h"
+#include "UserForm.h"
+
+
+#define SLEEP 2000
 bool isloged = false;
 bool isregistered = false;
 QClient* QClient::instance = nullptr;
@@ -168,7 +179,7 @@ void QClient::IncomingMessages()
                     if (!isregistered)
                     {
                         isregistered = true;
-                        QMessageBox::information(this, "Server Message", "Register Succes");
+                        //QMessageBox::information(this, "Server Message", "Register Succes");
                         LoginForm* log = LoginForm::getInstance();
                         log->show();
 
@@ -244,6 +255,27 @@ void QClient::IncomingMessages()
                     //QMessageBox::warning(this, "Server Message", "The New Note was not created correcty");
                 }
                 break;
+                case CustomMsgTypes::ChangePasswordSucces:
+                {
+                    QMessageBox::information(this, "Server message", "The password has been changed");
+                }
+                break;
+                case CustomMsgTypes::ChangePasswordError:
+                {
+                    QMessageBox::warning(this, "Server message", "The password has not changed");
+                }
+                break;
+                case CustomMsgTypes::DeleteAccountSucces:
+                {
+                    QMessageBox::information(this, "Server message", "The account has beed deleted");
+                    logout();
+                }
+                break;
+                case CustomMsgTypes::DeleteAccountError:
+                {
+                    QMessageBox::warning(this, "Server message", "The account wasnot deleted");
+                }
+                break;
                 }
             }
             else
@@ -272,6 +304,7 @@ void QClient::sendRegisterMessage(std::string j)
     for(int i=0;i<j.size();i++)
         msg << vect[i];
     Send(msg);
+    Sleep(SLEEP);
 }
 
 void QClient::sendLoginMessage(std::string j)
@@ -282,6 +315,7 @@ void QClient::sendLoginMessage(std::string j)
     for (int i = 0; i < j.size(); i++)
         msg << vect[i];
     Send(msg);
+    Sleep(SLEEP);
 }
 
 void QClient::sendNewNodeMessage(std::string j)
@@ -335,6 +369,31 @@ void QClient::sendRecoverNodeMessage(std::string j)
     Send(msg);
 }
 
+void QClient::sendDeleteAccountMessage(std::string j)
+{
+    olc::net::message<CustomMsgTypes> msg;
+    msg.header.id = CustomMsgTypes::DeleteAccount;
+    char* vect = const_cast<char*>(j.c_str());
+    for (int i = 0; i < j.size(); i++)
+        msg << vect[i];
+    Send(msg);
+    Sleep(SLEEP);
+    IncomingMessages();
+}
+
+void QClient::sendChangePasswordMessage(std::string j)
+{
+    olc::net::message<CustomMsgTypes> msg;
+    msg.header.id = CustomMsgTypes::ChangePassword;
+    char* vect = const_cast<char*>(j.c_str());
+    for (int i = 0; i < j.size(); i++)
+        msg << vect[i];
+    Send(msg);
+    Sleep(SLEEP);
+//Send(msg);
+    IncomingMessages();
+}
+
 void QClient::setUserInfo(std::string mesaj)
 {
 
@@ -385,6 +444,11 @@ TreeItem* QClient::getRootItem()
 int QClient::getNumberOfNodes()
 {
     return user->getNumberOfNodes();
+}
+
+IUser* QClient::getUser()
+{
+    return user;
 }
 
 void QClient::incrementNumberOfNodes()
@@ -622,6 +686,8 @@ void QClient::logout()
     hide();
     FirstForm* ff = FirstForm::getInstance();
     ff->show();
+    UserForm* us = UserForm::getInstance();
+    us->deleteInstance();
 }
 
 
@@ -849,6 +915,12 @@ void QClient::on_actionRecover_Node_triggered()
 void QClient::on_actionLogout_triggered()
 {
     logout();
+}
+
+void QClient::on_actionUser_triggered()
+{
+    UserForm* uf = UserForm::getInstance();
+    uf->show();
 }
 
 void QClient::on_actionOpen_triggered()

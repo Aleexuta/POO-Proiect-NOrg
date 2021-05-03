@@ -153,6 +153,46 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 		}
 	}
 	break;
+	case CustomMsgTypes::ChangePassword:
+	{
+		std::cout << "Change pass case\n";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (changePass(str))
+		{
+			std::cout << "Change Password Succes\n";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::ChangePasswordSucces;
+			client->Send(msg2);
+		}
+		else
+		{
+			std::cout << "Change Password Error\n";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::ChangePasswordError;
+			client->Send(msg2);
+		}
+	}
+	break;
+	case CustomMsgTypes::DeleteAccount:
+	{
+		std::cout << "Delete account case\n";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (deleteAcc(str))
+		{
+			std::cout << "Delete account Succes\n";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::DeleteAccountSucces;
+			client->Send(msg2);
+		}
+		else
+		{
+			std::cout << "Delete Account Error\n";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::DeleteAccountError;
+			client->Send(msg2);
+		}
+	}
+	break;
 	}
 }
 
@@ -313,6 +353,39 @@ bool IServer::recoverNode(std::string j)
 	catch (...)
 	{
 		std::cout << "\nEroare la moveNode(IServer)";
+		return false;
+	}
+}
+
+bool IServer::changePass(std::string j)
+{
+	try
+	{
+		auto js = nlohmann::json::parse(j);
+		std::string iduser = js["iduser"];
+		std::string pass = js["newpass"];
+		std::string old = js["oldpass"];
+		return DB.updatePasswordUser(iduser, old, pass);
+	}
+	catch (...)
+	{
+		std::cout << "\nEroare la changePass(IServer)";
+		return false;
+	}
+}
+
+bool IServer::deleteAcc(std::string j)
+{
+	try
+	{
+		auto js = nlohmann::json::parse(j);
+		std::string iduser = js["iduser"];
+		return DB.deleteUser(iduser);
+	}
+	catch (...)
+	{
+		std::cout << "\nEroare la deleteAcc(IServer)";
+		return false;
 	}
 }
 

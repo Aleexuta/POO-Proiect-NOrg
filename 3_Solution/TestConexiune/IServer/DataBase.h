@@ -38,6 +38,9 @@ public:
 	bool moveToTrashNode(std::string iduser, std::string idnode, std::string idparent);
 	bool moveFromTrashNode(std::string iduser, std::string idnode, std::string idoldparent);
 
+	bool deleteUser(std::string iduser);
+	bool updatePasswordUser(std::string iduser, std::string oldpass, std::string newpass);
+
 private:
 	std::string getTextForNode(std::string iduser, std::string idnode);
 	std::string getLastVersionText(std::string iduser, std::string idnode);
