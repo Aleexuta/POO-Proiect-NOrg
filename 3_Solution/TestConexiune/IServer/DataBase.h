@@ -26,7 +26,7 @@ public:
 	bool insertUser(/* date de inregistrare sub forma de stringuri*/ std::string username, std::string firstname, std::string lastname, std::string email, std::string password);
 	std::string loginUser(std::string email, std::string password);
 
-	void createTrigger();
+
 	void createTable();
 	void createNodeRoot(std::string email);
 	bool insertNewNode(std::string iduser, std::string idparinte, std::string name, std::string photo, 
@@ -37,6 +37,9 @@ public:
 	bool newVersionText(std::string text, std::string iduser, std::string idnode);
 	bool moveToTrashNode(std::string iduser, std::string idnode, std::string idparent);
 	bool moveFromTrashNode(std::string iduser, std::string idnode, std::string idoldparent);
+
+	bool deleteUser(std::string iduser);
+	bool updatePasswordUser(std::string iduser, std::string oldpass, std::string newpass);
 
 private:
 	std::string getTextForNode(std::string iduser, std::string idnode);
