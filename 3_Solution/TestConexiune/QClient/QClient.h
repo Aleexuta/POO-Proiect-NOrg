@@ -40,7 +40,13 @@ enum class CustomMsgTypes : uint32_t
 	RemoveNode,
 	MoveToTrashNode,
 	MoveFromTrashNode,
-	SaveNode
+	SaveNode,
+	DeleteAccount,
+	DeleteAccountSucces,
+	DeleteAccountError,
+	ChangePassword,
+	ChangePasswordSucces,
+	ChangePasswordError
 };
 enum class ThemeClient : int
 {
@@ -63,7 +69,7 @@ private:
 	void newFile();
 	void openFile();
 
-	
+    
 private:
 	Ui::QClientClass ui;
 	IUser* user;
@@ -84,6 +90,8 @@ public:
 	void sendSaveNotesMessage(std::string j);
 	void sendMoveNodeTrash(std::string j);
 	void sendRecoverNodeMessage(std::string j);
+	void sendDeleteAccountMessage(std::string j);
+	void sendChangePasswordMessage(std::string j);
 
 	void setUserInfo(std::string mesaj);
 	void setGuestInfo();
@@ -91,9 +99,11 @@ public:
 
 	TreeItem* getRootItem();
 	int  getNumberOfNodes();
+	IUser* getUser();
 	void incrementNumberOfNodes();
 	void decrementNumberOfNodes();
-	ThemeClient getTheme();
+
+	void logout();
 
 private:
 	auto makeJsonNewNode(std::string name, int iduser, int idparent, int idnode,std::string font, std::string color, std::string date,std::string namephoto = "");
@@ -121,6 +131,8 @@ public slots:
 	void on_actionDelete_Node_triggered();
 	void on_actionOpen_Note_triggered();
 	void on_actionRecover_Node_triggered();
+	void on_actionLogout_triggered();
+	void on_actionUser_triggered();
 private slots:
 	
 	void on_actionNew_triggered();

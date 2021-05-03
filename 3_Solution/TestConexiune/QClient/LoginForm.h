@@ -5,7 +5,7 @@
 #include <qmainwindow.h>
 #include <qdialog.h>
 #include <regex>
-#include <iostream>
+#include <iostream> 
 #include "ui_LoginForm.h"
 
 class LoginForm :
@@ -16,17 +16,15 @@ private:
     LoginForm(QWidget* parent = 0);
     ~LoginForm();
     static LoginForm* instance;
-private://private function 
-
-
 public:
     static LoginForm* getInstance();
     void deleteInstance();
+    void freeText();
 public slots:
     void on_LoginButton_clicked();
     void on_closeButton_clicked();
 private:
-    Ui::Dialog* ui;
+    Ui::LoginForm* ui;
 };
 
 #endif

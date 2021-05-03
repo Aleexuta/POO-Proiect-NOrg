@@ -54,6 +54,8 @@ public:
 	void setOldParent(TreeItem* parent);
 	void setParentGranny();
 	bool canRecover();
+
+	void deleteForLogout();
 private:
 	int IDNode;//il punem din iuser
 	QList<TreeItem*> m_childItems;

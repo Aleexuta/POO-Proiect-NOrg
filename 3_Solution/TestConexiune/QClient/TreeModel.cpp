@@ -216,8 +216,6 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QV
 
 bool TreeModel::insertRows(int position, int rows, const QModelIndex& parent)
 {
-    
-
     TreeItem* parentItem = getItem(parent);
     bool succes;
     beginInsertRows(parent, position, position + rows - 1);
@@ -244,6 +242,11 @@ std::string TreeModel::getAllChildren(std::string iduser,QModelIndex& parent)
     getChildren(iduser, item, mesaj);
     mesaj[mesaj.size() - 1] = ']';
     return mesaj;
+}
+
+QModelIndex TreeModel::indexForTreeItem(TreeItem* item)
+{
+    return createIndex(item->childNumber(), 0, item);
 }
 
 TreeItem* TreeModel::getRootItem()
@@ -378,6 +381,11 @@ bool TreeModel::moveFromTrash(const QModelIndex& index)
     item->moveChildrenFromParent();
     item->parent()->addChild(item);
     return true;
+}
+
+void TreeModel::deleteChildren()
+{
+    rootItem->deleteForLogout();
 }
 
 void TreeModel::getChildren(std::string iduser, TreeItem* parent, std::string& full)

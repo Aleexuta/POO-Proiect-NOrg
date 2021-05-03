@@ -138,6 +138,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionPrint"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
+    <addaction name="actionLogout"/>
+    <addaction name="actionUser"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -329,6 +331,12 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Add New Node</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionAdd_New_Subnode">
    <property name="icon">
@@ -337,6 +345,12 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Add New Subnode</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionDelete_Node">
@@ -352,10 +366,26 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Open Note</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionRecover_Node">
    <property name="text">
     <string>Recover Node</string>
+   </property>
+  </action>
+  <action name="actionLogout">
+   <property name="text">
+    <string>Logout</string>
+   </property>
+  </action>
+  <action name="actionUser">
+   <property name="text">
+    <string>User</string>
    </property>
   </action>
   <action name="actionDark_Mode">

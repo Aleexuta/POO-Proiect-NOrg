@@ -296,3 +296,12 @@ bool TreeItem::canRecover()
 	return true;
 }
 
+void TreeItem::deleteForLogout()
+{
+	int size = childCount();
+	for (int i = 0; i < size; i++)
+	{
+		m_childItems.pop_back();
+	}
+}
+

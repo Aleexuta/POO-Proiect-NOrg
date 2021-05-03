@@ -6,8 +6,15 @@
 #include <qvariant.h>
 #include <string>
 #include <qicon.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif // _WIN32
 #include <time.h>
 #include <qcolor.h>
+
+
 
 #include "RegisterForm.h"
 #include "LoginForm.h"
@@ -16,6 +23,10 @@
 #include "TreeModel.h"
 #include "TreeItem.h"
 #include "Common_function.h"
+#include "UserForm.h"
+
+
+#define SLEEP 2000
 bool isloged = false;
 bool isregistered = false;
 QClient* QClient::instance = nullptr;
@@ -174,6 +185,7 @@ void QClient::IncomingMessages()
                         log->show();
 
                         RegisterForm* reg = RegisterForm::getInstance();
+                        reg->freeText();
                         reg->close();
                         // reg->deleteInstance();
                     }
@@ -192,13 +204,17 @@ void QClient::IncomingMessages()
                 {
                     if (!isloged)
                     {
-                        isloged = true;
-                        QMessageBox::information(this, "Server Message", "Login Succes");
-                        this->show();
-                        LoginForm* reg = LoginForm::getInstance();
-                        reg->close();
                         std::string rasp(msg.body.begin(), msg.body.end());
                         this->setUserInfo(rasp);
+                        std::string mesaj("Login Succes, ");
+                        mesaj += this->user->getUsername();
+                        isloged = true;
+                        QMessageBox::information(this, "Server Message", mesaj.c_str());
+                        this->show();
+                        LoginForm* reg = LoginForm::getInstance();
+                        reg->freeText();
+                        reg->close();
+
                         FirstForm* ff = FirstForm::getInstance();
                         ff->close();
 
@@ -220,13 +236,13 @@ void QClient::IncomingMessages()
                 case CustomMsgTypes::ServerAccept:
                 {
                     // Server has responded to a ping request				
-                    QMessageBox::information(this, "Server Message", "Server Accepted Connection");
+                    //QMessageBox::information(this, "Server Message", "Server Accepted Connection");
                 }
                 break;
                 case CustomMsgTypes::ServerDeny:
                 {
                     // Server has responded to a ping request				
-                    QMessageBox::warning(this, "Server Message", "Server Deny Connection");
+                    //QMessageBox::warning(this, "Server Message", "Server Deny Connection");
                 }
                 break;
                 case CustomMsgTypes::NewNodeAccept:
@@ -241,6 +257,27 @@ void QClient::IncomingMessages()
                 case CustomMsgTypes::NewNodeDeny:
                 {
                     //QMessageBox::warning(this, "Server Message", "The New Note was not created correcty");
+                }
+                break;
+                case CustomMsgTypes::ChangePasswordSucces:
+                {
+                    QMessageBox::information(this, "Server message", "The password has been changed");
+                }
+                break;
+                case CustomMsgTypes::ChangePasswordError:
+                {
+                    QMessageBox::warning(this, "Server message", "The password has not changed");
+                }
+                break;
+                case CustomMsgTypes::DeleteAccountSucces:
+                {
+                    QMessageBox::information(this, "Server message", "The account has beed deleted");
+                    logout();
+                }
+                break;
+                case CustomMsgTypes::DeleteAccountError:
+                {
+                    QMessageBox::warning(this, "Server message", "The account wasnot deleted");
                 }
                 break;
                 }
@@ -271,6 +308,7 @@ void QClient::sendRegisterMessage(std::string j)
     for(int i=0;i<j.size();i++)
         msg << vect[i];
     Send(msg);
+    Sleep(SLEEP);
 }
 
 void QClient::sendLoginMessage(std::string j)
@@ -281,6 +319,7 @@ void QClient::sendLoginMessage(std::string j)
     for (int i = 0; i < j.size(); i++)
         msg << vect[i];
     Send(msg);
+    Sleep(SLEEP);
 }
 
 void QClient::sendNewNodeMessage(std::string j)
@@ -334,6 +373,31 @@ void QClient::sendRecoverNodeMessage(std::string j)
     Send(msg);
 }
 
+void QClient::sendDeleteAccountMessage(std::string j)
+{
+    olc::net::message<CustomMsgTypes> msg;
+    msg.header.id = CustomMsgTypes::DeleteAccount;
+    char* vect = const_cast<char*>(j.c_str());
+    for (int i = 0; i < j.size(); i++)
+        msg << vect[i];
+    Send(msg);
+    Sleep(SLEEP);
+    IncomingMessages();
+}
+
+void QClient::sendChangePasswordMessage(std::string j)
+{
+    olc::net::message<CustomMsgTypes> msg;
+    msg.header.id = CustomMsgTypes::ChangePassword;
+    char* vect = const_cast<char*>(j.c_str());
+    for (int i = 0; i < j.size(); i++)
+        msg << vect[i];
+    Send(msg);
+    Sleep(SLEEP);
+//Send(msg);
+    IncomingMessages();
+}
+
 void QClient::setUserInfo(std::string mesaj)
 {
 
@@ -384,6 +448,11 @@ TreeItem* QClient::getRootItem()
 int QClient::getNumberOfNodes()
 {
     return user->getNumberOfNodes();
+}
+
+IUser* QClient::getUser()
+{
+    return user;
 }
 
 void QClient::incrementNumberOfNodes()
@@ -532,12 +601,6 @@ void QClient::moveNodeToTrash()
 void QClient::recoverNodeFromTrash()
 {
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
-    //if (model->isTrash(index))//aici trebuie verificat daca old parent e trash
-    //{
-    //    QMessageBox::warning(this, "Recover Impossible", "This node can not be recovered because his sourse do not exist");
-    //    return;
-    //}
-    //else
     {
         if (user->getType())
         {
@@ -575,15 +638,13 @@ void QClient::makeMotherNode()
         if (!model->insertRow(0, index))
             return;
 
-
         for (int column = 0; column < model->columnCount(index); ++column)
         {
             if (!model->headerData(column, Qt::Horizontal).isValid())
                 model->setHeaderData(column, Qt::Horizontal, QVariant("[caini]"),
                     Qt::DisplayRole);
-
         }
-        QModelIndex child = model->index(0, 0, index);
+        QModelIndex child = model->indexForTreeItem(model->getRootItem()->child(0));
         model->setData(child, QVariant("Trash"), Qt::DisplayRole);
         QIcon icon("../photos/trash.png");
 
@@ -594,20 +655,21 @@ void QClient::makeMotherNode()
     {
         if (!model->insertRow(0, index))
             return;
+
         for (int column = 0; column < model->columnCount(index); ++column)
         {
             if (!model->headerData(column, Qt::Horizontal).isValid())
                 model->setHeaderData(column, Qt::Horizontal, QVariant("[caini]"),
                     Qt::DisplayRole);
-
         }
-        QModelIndex child = model->index(0, 0, index);
+        QModelIndex child = model->indexForTreeItem(model->getRootItem()->child(0));
         model->setData(child, QVariant("MyNotes"), Qt::DisplayRole);
         QIcon icon("../photos/icon.png");
         model->setData(child, QVariant(icon), Qt::DecorationRole);
         model->setID(0);
+
+        ui.treeView->selectionModel()->setCurrentIndex(model->index(0,0,index), QItemSelectionModel::ClearAndSelect);
     }
-    ui.treeView->selectionModel()->setCurrentIndex(model->index(0, 0, index), QItemSelectionModel::ClearAndSelect);
     updateActions();
 }
 
@@ -726,6 +788,19 @@ void QClient::setTheme()
     }
 
 }
+void QClient::logout()
+{
+    ui.treeView->selectionModel()->setCurrentIndex(model->index(-1, -1), QItemSelectionModel::Clear);
+    isloged = false;
+    isregistered = false;
+    delete(user);
+    model->deleteChildren();
+    hide();
+    FirstForm* ff = FirstForm::getInstance();
+    ff->show();
+    UserForm* us = UserForm::getInstance();
+    us->deleteInstance();
+}
 
 void QClient::modifyColor(QColor& color)
 {
@@ -752,7 +827,6 @@ void QClient::modifyColor(QColor& color)
 
 void QClient::insertNewNode(const std::string photo, const std::string name, const QFont font, QColor color, const QDate date)
 {
-    //daca e din cosul de gunoi sau cosul at nu se poate
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
 
     if (!this->user->canNewNode())
@@ -762,7 +836,6 @@ void QClient::insertNewNode(const std::string photo, const std::string name, con
     }
     if (!model->insertRow(index.row()+1, index.parent()))
         return;
-
 
     QModelIndex child = model->index(index.row()+1, 0, index.parent());
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
@@ -790,8 +863,6 @@ void QClient::insertNewNode(const std::string photo, const std::string name, con
 }
 void QClient::inservNewSubnode(const std::string photo, const std::string name, const QFont font, QColor color, const QDate date)
 {
-    //daca e din cosul de gunoi sau e cosul at nu se poate
-
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
 
     if (!this->user->canNewNode())
@@ -814,7 +885,6 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name, 
         if (!model->headerData(column, Qt::Horizontal).isValid())
             model->setHeaderData(column, Qt::Horizontal, QVariant("[caini]"),
                 Qt::DisplayRole);
-
     }
     QModelIndex child = model->index(0, 0, index);
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
@@ -827,7 +897,6 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name, 
 
     ui.treeView->selectionModel()->setCurrentIndex(model->index(0, 0, index),QItemSelectionModel::ClearAndSelect);
     updateActions();
-
 
     //make json
     if (user->getType())
@@ -874,8 +943,6 @@ void QClient::deleteNode()
 {
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
 
-    //verifica daca chiar vrea sa l stearga
-    //verifica daca e din cosul de gunoi at face ce e mai jos
     if (user->getType())
     {
         QClient* main = QClient::getInstance();
@@ -888,7 +955,7 @@ void QClient::deleteNode()
 
     if (model->removeRow(index.row(), index.parent()))
         updateActions();
-    //daca nu e din cosul de gunoi face o mutare si un update in baza de date
+
 }
 
 void QClient::OpenNote()
@@ -907,8 +974,9 @@ void QClient::OpenNote()
     }
 
     std::string text = model->getText(index);
-    ui.textEdit->setHtml(text.c_str());
+    ui.textEdit->setHtml("");
 
+    ui.textEdit->setHtml(text.c_str());
 }
 
 void QClient::on_actionAdd_New_Node_triggered()
@@ -985,6 +1053,17 @@ void QClient::on_actionOpen_Note_triggered()
 void QClient::on_actionRecover_Node_triggered()
 {
     recoverNodeFromTrash();
+}
+
+void QClient::on_actionLogout_triggered()
+{
+    logout();
+}
+
+void QClient::on_actionUser_triggered()
+{
+    UserForm* uf = UserForm::getInstance();
+    uf->show();
 }
 
 void QClient::on_actionOpen_triggered()

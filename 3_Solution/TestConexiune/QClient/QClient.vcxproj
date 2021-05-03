@@ -91,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ChangePassForm.cpp" />
     <ClCompile Include="LoginForm.cpp" />
     <ClCompile Include="NewNode.cpp" />
     <ClCompile Include="Find_Form.cpp" />
@@ -98,8 +99,10 @@
     <ClCompile Include="TreeItem.cpp" />
     <ClCompile Include="TreeModel.cpp" />
     <ClCompile Include="Replace_Form.cpp" />
+    <ClCompile Include="UserForm.cpp" />
     <QtRcc Include="QClient.qrc" />
     <QtRcc Include="Icon_Resource.qrc" />
+    <QtUic Include="ChangePassForm.ui" />
     <QtUic Include="Find_Form.ui" />
     <QtUic Include="FirstForm.ui" />
     <QtUic Include="LoginForm.ui" />
@@ -111,9 +114,12 @@
     <ClCompile Include="main.cpp" />
     <QtUic Include="RegisterForm.ui" />
     <QtUic Include="Replace_Form.ui" />
+    <QtUic Include="UserForm.ui" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="ChangePassForm.h" />
     <ClInclude Include="Common_function.h" />
+    <QtMoc Include="UserForm.h" />
     <QtMoc Include="NewNode.h" />
     <QtMoc Include="TreeItem.h" />
     <QtMoc Include="TreeModel.h" />
