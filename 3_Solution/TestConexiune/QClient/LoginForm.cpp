@@ -57,12 +57,12 @@ void LoginForm::on_LoginButton_clicked()
 	QClient* main = QClient::getInstance();
 	if (!validateString(j["email"], StrType::Email))
 	{
-		QMessageBox::warning(main, "client message", "The email has not a correct format");
+		QMessageBox::warning(main, "Client message", "The email has not a correct format");
 		incorect = true;
 	}
 	if (!validateString(ps, StrType::Password))
 	{
-		QMessageBox::warning(main, "client message", "The password has not a correct format");
+		QMessageBox::warning(main, "Client message", "The password has not a correct format");
 		incorect = true;
 	}
 	//makeSecretPassword(ps);

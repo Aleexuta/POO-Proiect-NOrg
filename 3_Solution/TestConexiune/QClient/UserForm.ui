@@ -63,6 +63,10 @@
      <height>23</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">border:none;
+</string>
+   </property>
    <property name="text">
     <string>Delete account</string>
    </property>
@@ -76,6 +80,9 @@
      <height>23</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">border:none</string>
+   </property>
    <property name="text">
     <string>Change password</string>
    </property>
@@ -88,6 +95,9 @@
      <width>101</width>
      <height>23</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border:none;</string>
    </property>
    <property name="text">
     <string>Logout</string>
