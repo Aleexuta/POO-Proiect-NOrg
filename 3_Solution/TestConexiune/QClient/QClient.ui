@@ -138,7 +138,6 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionPrint"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
-    <addaction name="actionLogout"/>
     <addaction name="actionUser"/>
    </widget>
    <widget class="QMenu" name="menuEdit">

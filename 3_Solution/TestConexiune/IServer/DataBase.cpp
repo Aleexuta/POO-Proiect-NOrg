@@ -136,7 +136,8 @@ std::string DataBase::loginUser(std::string email, std::string password)
 	else
 	{
 		std::string rasp = final;
-
+		if (rasp == "")
+			return "";
 		auto js = nlohmann::json::parse(final);
 		std::string id = js["iduser"];
 		final = "[" + rasp+",";
@@ -397,7 +398,9 @@ bool DataBase::moveFromTrashNode(std::string iduser, std::string idnode,std::str
 bool DataBase::deleteUser(std::string iduser)
 {
 	char* messaggeError;
-	std::string sql("DELETE FROM USER WHERE USER.iduser=" + iduser);
+	std::string sql("DELETE FROM USER WHERE USER.iduser=" + iduser+
+	"; DELETE FROM NODE WHERE NODE.iduser= "+iduser+
+	"; DELETE FROM NOTES WHERE NOTES.iduser= "+ iduser);
 	std::string data("CALLBACK FUNCTION");
 	int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
 

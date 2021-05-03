@@ -47,7 +47,8 @@ QClient::QClient(QWidget* parent)
     file.close();
     ui.treeView->setModel(model);
 
-
+    theme = ThemeClient::DarkTheme;
+    setTheme();
     isregistered = false;
     isloged = false;
     updateActions();
@@ -205,16 +206,13 @@ void QClient::IncomingMessages()
                     if (!isloged)
                     {
                         std::string rasp(msg.body.begin(), msg.body.end());
-                        this->setUserInfo(rasp);
-                        std::string mesaj("Login Succes, ");
-                        mesaj += this->user->getUsername();
                         isloged = true;
-                        QMessageBox::information(this, "Server Message", mesaj.c_str());
+                        QMessageBox::information(this, "Server Message","Login succes");
                         this->show();
                         LoginForm* reg = LoginForm::getInstance();
                         reg->freeText();
                         reg->close();
-
+                        this->setUserInfo(rasp);
                         FirstForm* ff = FirstForm::getInstance();
                         ff->close();
 
@@ -1055,10 +1053,6 @@ void QClient::on_actionRecover_Node_triggered()
     recoverNodeFromTrash();
 }
 
-void QClient::on_actionLogout_triggered()
-{
-    logout();
-}
 
 void QClient::on_actionUser_triggered()
 {

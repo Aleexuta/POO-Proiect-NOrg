@@ -69,7 +69,7 @@ private:
 	void newFile();
 	void openFile();
 
-    
+	
 private:
 	Ui::QClientClass ui;
 	IUser* user;
@@ -102,6 +102,7 @@ public:
 	IUser* getUser();
 	void incrementNumberOfNodes();
 	void decrementNumberOfNodes();
+	ThemeClient getTheme();
 
 	void logout();
 
@@ -131,7 +132,6 @@ public slots:
 	void on_actionDelete_Node_triggered();
 	void on_actionOpen_Note_triggered();
 	void on_actionRecover_Node_triggered();
-	void on_actionLogout_triggered();
 	void on_actionUser_triggered();
 private slots:
 	

@@ -51,6 +51,7 @@ void UserForm::deleteInstance()
 
 void UserForm::changePassword(std::string oldpass, std::string newpass)
 {
+
     nlohmann::json js;
     js["oldpass"] = oldpass;
     js["newpass"] = newpass;
@@ -64,12 +65,17 @@ void UserForm::on_logoutButton_clicked()
 {
     QClient* main = QClient::getInstance();
     main->logout();
-    close();
+    //close();
 }
 void UserForm::on_deleteAccButton_clicked()
 {
     //fa un string cu id-ul clietului
     QClient* main = QClient::getInstance();
+    if (!main->getUser()->getType())
+    {
+        QMessageBox::warning(this, "Error delete account", "The guests can not delete account");
+        return;
+    }
     IUser * user= main->getUser();
     nlohmann::json js;
     js["iduser"] = std::to_string(user->getID());
@@ -78,6 +84,12 @@ void UserForm::on_deleteAccButton_clicked()
 }
 void UserForm::on_changePassButton_clicked()
 {
+    QClient* main = QClient::getInstance();
+    if (!main->getUser()->getType())
+    {
+        QMessageBox::warning(this, "Error change password", "The guests can not change password");
+        return;
+    }
     ChangePassForm* cpf = new ChangePassForm;
     cpf->show();
 
