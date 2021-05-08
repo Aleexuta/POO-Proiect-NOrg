@@ -43,9 +43,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IUser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FirstForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -68,6 +65,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Replace_Form.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChangePassForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,6 +104,12 @@
     <QtUic Include="NewNode.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="UserForm.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="ChangePassForm.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="FirstForm.h">
@@ -125,6 +134,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="TreeItem.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="UserForm.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ChangePassForm.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

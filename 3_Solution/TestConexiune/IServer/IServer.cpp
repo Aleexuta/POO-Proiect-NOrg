@@ -123,14 +123,83 @@ void IServer::OnMessage(std::shared_ptr<olc::net::connection<CustomMsgTypes>> cl
 		}
 	}
 	break;
+	case CustomMsgTypes::MoveToTrashNode:
+	{
+		std::cout << "Move node case\n";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (moveNode(str))
+		{
+			std::cout << "Move Node Succes\n";
+			//trimite mesaj cu id ul nodului inapoi
+		}
+		else
+		{
+			std::cout << "Move Node Error\n";
+		}
+	}
+	break;
+	case CustomMsgTypes::MoveFromTrashNode:
+	{
+		std::cout << "Move node case\n";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (recoverNode(str))
+		{
+			std::cout << "Move Node Succes\n";
+			//trimite mesaj cu id ul nodului inapoi
+		}
+		else
+		{
+			std::cout << "Move Node Error\n";
+		}
+	}
+	break;
+	case CustomMsgTypes::ChangePassword:
+	{
+		std::cout << "Change pass case\n";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (changePass(str))
+		{
+			std::cout << "Change Password Succes\n";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::ChangePasswordSucces;
+			client->Send(msg2);
+		}
+		else
+		{
+			std::cout << "Change Password Error\n";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::ChangePasswordError;
+			client->Send(msg2);
+		}
+	}
+	break;
+	case CustomMsgTypes::DeleteAccount:
+	{
+		std::cout << "Delete account case\n";
+		std::string str(msg.body.begin(), msg.body.end());
+		if (deleteAcc(str))
+		{
+			std::cout << "Delete account Succes\n";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::DeleteAccountSucces;
+			client->Send(msg2);
+		}
+		else
+		{
+			std::cout << "Delete Account Error\n";
+			olc::net::message<CustomMsgTypes> msg2;
+			msg2.header.id = CustomMsgTypes::DeleteAccountError;
+			client->Send(msg2);
+		}
+	}
+	break;
 	}
 }
 
 bool IServer::RegisterUser(std::string j)
 {
 	try
-	{//nu face ceva bine
-		//auto src= j.find("username");
+	{
 		auto js = nlohmann::json::parse(j);
 		std::cout << j<<"\n\n\n\n";
 		std::string username=js["username"];
@@ -192,7 +261,10 @@ bool IServer::InsertNewNode(std::string j)
 		std::string name = js["name"];
 		std::string photoname = js["photoname"];
 		std::string idnode = js["idnode"];
-		return DB.insertNewNode(iduser, idparent, name, photoname,idnode);
+		std::string color = js["color"];
+		std::string font = js["font"];
+		std::string date = js["date"];
+		return DB.insertNewNode(iduser, idparent, name, photoname,idnode,color,font,date);
 
 	}
 	catch (...)
@@ -251,6 +323,71 @@ bool IServer::saveNode(std::string j)
 	}
 }
 
+bool IServer::moveNode(std::string j)
+{
+	try
+	{
+		auto js = nlohmann::json::parse(j);//array cu json
+		std::string id = js["idnode"];
+		std::string iduser = js["iduser"];
+		std::string idparent = js["idparent"];
+		return DB.moveToTrashNode(iduser, id,idparent);
+	}
+	catch (...)
+	{
+		std::cout << "\nEroare la moveNode(IServer)";
+	}
+}
+
+bool IServer::recoverNode(std::string j)
+{
+	try
+	{
+		auto js = nlohmann::json::parse(j);//array cu json
+		std::string id = js["idnode"];
+		std::string iduser = js["iduser"];
+		std::string idoldparent = js["idoldparent"];
+		return DB.moveFromTrashNode(iduser, id,idoldparent);
+	}
+	catch (...)
+	{
+		std::cout << "\nEroare la moveNode(IServer)";
+		return false;
+	}
+}
+
+bool IServer::changePass(std::string j)
+{
+	try
+	{
+		auto js = nlohmann::json::parse(j);
+		std::string iduser = js["iduser"];
+		std::string pass = js["newpass"];
+		std::string old = js["oldpass"];
+		return DB.updatePasswordUser(iduser, old, pass);
+	}
+	catch (...)
+	{
+		std::cout << "\nEroare la changePass(IServer)";
+		return false;
+	}
+}
+
+bool IServer::deleteAcc(std::string j)
+{
+	try
+	{
+		auto js = nlohmann::json::parse(j);
+		std::string iduser = js["iduser"];
+		return DB.deleteUser(iduser);
+	}
+	catch (...)
+	{
+		std::cout << "\nEroare la deleteAcc(IServer)";
+		return false;
+	}
+}
+
 
 IServer::~IServer()
 {
@@ -285,7 +422,6 @@ void IServer::connectDataBase()
 void IServer::createTable()
 {
 	DB.createTable();
-	DB.createTrigger();
 }
 
 DataBase IServer::getDatabase()

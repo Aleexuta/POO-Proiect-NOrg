@@ -11,9 +11,10 @@
 LoginForm* LoginForm::instance = nullptr;
 LoginForm::LoginForm(QWidget* parent) :
 	QDialog(parent),
-	ui(new Ui::Dialog)
+	ui(new Ui::LoginForm)
 {
 	ui->setupUi(this);
+	this->freeText();
 }
 LoginForm::~LoginForm()
 {
@@ -33,6 +34,12 @@ void LoginForm::deleteInstance()
 		delete instance;
 }
 
+void LoginForm::freeText()
+{
+	ui->emailText->setText("eg.email@gmail.com");
+	ui->PasswordText->setText("password");
+}
+
 void LoginForm::on_closeButton_clicked()
 {
 	close();
@@ -45,18 +52,21 @@ void LoginForm::on_LoginButton_clicked()
 
 	bool incorect = false;
 	j["email"] = (ui->emailText->text()).toStdString();
-	j["password"] = (ui->PasswordText->text()).toStdString();
+	std::string ps = (ui->PasswordText->text()).toStdString();
+
 	QClient* main = QClient::getInstance();
 	if (!validateString(j["email"], StrType::Email))
 	{
-		QMessageBox::warning(main, "client message", "The email has not a correct format");
+		QMessageBox::warning(main, "Client message", "The email has not a correct format");
 		incorect = true;
 	}
-	if (!validateString(j["password"], StrType::Username))
+	if (!validateString(ps, StrType::Password))
 	{
-		QMessageBox::warning(main, "client message", "The password has not a correct format");
+		QMessageBox::warning(main, "Client message", "The password has not a correct format");
 		incorect = true;
 	}
+	//makeSecretPassword(ps);
+	j["password"] = ps;
 	if (!incorect)
 	{
 		std::string str = j.dump();

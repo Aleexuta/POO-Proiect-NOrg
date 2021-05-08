@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "QClient.h"
 #define NRCOL 1
 	enum class StrType
 	{
@@ -28,7 +29,7 @@
 		break;
 		case StrType::Password:
 		{
-			regex = ("^.*(?=.{10,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$");
+			regex = ("(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}");
 		}
 		break;
 		default:
@@ -103,4 +104,46 @@
 		QClient* main = QClient::getInstance();
 		main->sendLoginMessage(str);
 		main->IncomingMessages();
+	}
+	inline void makeSecretPassword(std::string& pass)
+	{
+		std::string crypto("make_password_secret123456789");
+		for (int i = 0; i < pass.size(); i++)
+		{
+			pass[i] = pass[i] ^ crypto[i];
+		}
+
+	}
+	inline void convertIntoTilda(std::string& str)
+	{
+		std::string nou="";
+		int k = 0;
+		for (int i = 0; i < str.size(); i++)
+		{
+			if (str[i] == '\n')
+				str[i] = ' ';
+			if (str[i] == '\'')
+				str[i] = '~';
+			if (str[i] == '"')
+				str[i] = '@';
+			if (str[i] == '{')
+				str[i] = '(';
+			if (str[i] == '}')
+				str[i] = ')';	
+		}
+	}
+	inline void convertFromTilda(std::string& str)
+	{
+		std::string nou="";
+		for (int i = 0; i <= str.size(); i++)
+		{
+			if (str[i] == '~')
+				str[i] = '\'';
+			if (str[i] == '@')
+				str[i] = '"';
+			if (str[i] == '(')
+				str[i] = '{';
+			if (str[i] == ')')
+				str[i] = '}';
+		}
 	}

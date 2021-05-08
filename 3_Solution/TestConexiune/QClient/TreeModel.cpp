@@ -2,6 +2,8 @@
 #include <qstring.h>
 #include "treeitem.h"
 #include "treemodel.h"
+#include "qcolor.h"
+#include "qbrush.h"
 TreeModel* TreeModel::instance = 0;
 TreeModel::TreeModel(const QStringList& headers, const QString& data, QObject* parent)
     : QAbstractItemModel(parent)
@@ -54,13 +56,41 @@ QVariant TreeModel::data(const QModelIndex& index, int role) const
         TreeItem* item = getItem(index);
         return item->getPhoto();
     }
+    if (role == Qt::ForegroundRole)
+    {
+        TreeItem* item = getItem(index);
+        return item->getColor();
+    }
+    if (role == Qt::FontRole)
+    {
+        TreeItem* item = getItem(index);
+        return item->getFont();
+    }
     return QVariant();
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    {
         return rootItem->data(section);
+    }
+    //if (role == Qt::ForegroundRole)
+    //{
+    //    return rootItem->getColor();
+    //}
+    //if (role == Qt::FontRole)
+    //{
+    //    return rootItem->getFont();
+    //}
+    //if (role == Qt::BackgroundRole)
+    //{
+    //    return background;
+    //}
+    //if (role == Qt::BackgroundColorRole)
+    //{
+    //    return background;
+    //}
     return QVariant();
 }
 
@@ -126,11 +156,53 @@ bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int rol
             emit dataChanged(index, index);
         return result;
     }
+    if (role == Qt::ForegroundRole)
+    {
+        TreeItem* item = getItem(index);
+        bool result = item->setColor(value);
+        if (result)
+            emit dataChanged(index, index);
+        return result;
+    }
+    if (role == Qt::FontRole)
+    {
+        TreeItem* item = getItem(index);
+        bool result = item->setFont(value);
+        if (result)
+            emit dataChanged(index, index);
+        return result;
+    }
     return false;
 }
 
 bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant& value, int role)
 {
+    //if (role == Qt::ForegroundRole)
+    //{
+    //    bool result = rootItem->setColor(value);
+    //    if (result)
+    //        emit headerDataChanged(orientation, section, section);
+    //    return result;
+    //}
+    //if (role == Qt::FontRole)
+    //{
+    //    bool result = rootItem->setFont(value);
+    //    if (result)
+    //        emit headerDataChanged(orientation, section, section);
+    //    return result;
+    //}
+    //if (role == Qt::BackgroundRole)
+    //{
+    //    background = value;
+    //    emit headerDataChanged(orientation, section, section);
+    //    return true;
+    //}
+    //if (role == Qt::BackgroundColorRole)
+    //{
+    //    background = value;
+    //    emit headerDataChanged(orientation, section, section);
+    //    return true;
+    //}
     if (role == Qt::EditRole || orientation == Qt::Horizontal)
     {
         bool result = rootItem->setData(section, value);
@@ -138,6 +210,7 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QV
             emit headerDataChanged(orientation, section, section);
         return result;
     }
+
     return false;
 }
 
@@ -171,19 +244,47 @@ std::string TreeModel::getAllChildren(std::string iduser,QModelIndex& parent)
     return mesaj;
 }
 
+QModelIndex TreeModel::indexForTreeItem(TreeItem* item)
+{
+    return createIndex(item->childNumber(), 0, item);
+}
+
 TreeItem* TreeModel::getRootItem()
 {
     return rootItem;
 }
 
+TreeItem* TreeModel::getNodeForId(int id)
+{
+    return findNode(rootItem, id);
+}
+
+
 void TreeModel::setID(int id)
 {
-    this->rootItem->sedID(id);
+    TreeItem* first = rootItem->child(0);
+    first->sedID(id);
+}
+
+void TreeModel::setRootID(int id)
+{
+    rootItem->sedID(id);
 }
 
 int TreeModel::getIdForIndex(const QModelIndex& index)
 {
     return getItem(index)->getID();
+}
+
+int TreeModel::getIdParentForIndex(const QModelIndex& index)
+{
+    return getItem(index)->getIDParent();
+}
+
+int TreeModel::getIdOldparentForIndex(const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    return item->getOldParent();
 }
 
 void TreeModel::setIDNode(int id, const QModelIndex& index)
@@ -213,6 +314,80 @@ std::string TreeModel::getText(const QModelIndex& index)
     return text;
 }
 
+void TreeModel::setText(std::string text, const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    item->setText(text);
+}
+
+void TreeModel::setDate(QDate date, QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    item->setDate(date.toString().toStdString());
+}
+
+bool TreeModel::isHome(const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    if (item->getID() == 0)
+        return true;
+    return false;
+}
+
+bool TreeModel::isTrash(const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    return item->isTrash();
+}
+
+bool TreeModel::isDeleted(const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    if (item->isTrash() && item->getID() != 1)
+        return true;
+    return false;
+}
+
+void TreeModel::moveToTrash(const QModelIndex& index)
+{
+    //change the parent for the item with the trash(id node 1)
+    //set oldparent 
+    TreeItem* item = getItem(index);
+
+
+    //move all the children(list) to granny
+    item->moveChildrenToParent();
+    TreeItem* trash = getTrashNode();
+
+   
+    item->parent()->removeChild(item);
+    item->setOldParent(trash);
+    trash->addChild(item);
+    
+}
+
+bool TreeModel::moveFromTrash(const QModelIndex& index)
+{
+    TreeItem* item = getItem(index);
+    bool x = item->canRecover();
+    if (!x)
+    {   
+        return false;
+    }
+
+    TreeItem* trash = getTrashNode();
+    trash->removeChild(item);
+    item->restoreOldParent();
+    item->moveChildrenFromParent();
+    item->parent()->addChild(item);
+    return true;
+}
+
+void TreeModel::deleteChildren()
+{
+    rootItem->deleteForLogout();
+}
+
 void TreeModel::getChildren(std::string iduser, TreeItem* parent, std::string& full)
 {
     for (int i = 0; i < parent->childCount(); i++)
@@ -221,6 +396,34 @@ void TreeModel::getChildren(std::string iduser, TreeItem* parent, std::string& f
     }
     int idnode = parent->getID();
     full += "{\"iduser\":\"" + iduser + "\",\"idnode\":\"" + std::to_string(idnode) + "\"},";
+}
+
+TreeItem* TreeModel::getTrashNode()
+{
+    for (int i = 0; i < rootItem->childCount(); i++)
+    {
+        if (rootItem->child(i)->getID() == 1)
+            return rootItem->child(i);
+    }
+    //return rootItem->child(rootItem->childCount() - 1);
+    return rootItem;
+}
+
+TreeItem* TreeModel::findNode(TreeItem* root, int id)
+{
+    if (root->getID() == id)
+        return root;
+    int size = root->childCount();
+    for (int i = 0; i < size; i++)
+    {
+        TreeItem* rez = findNode(root->child(i), id);
+        if (rez)
+            return rez;
+
+    }
+    return nullptr;
+   // return this->rootItem;
+
 }
 
 

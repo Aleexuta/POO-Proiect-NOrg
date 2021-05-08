@@ -15,7 +15,7 @@ RegisterForm::RegisterForm(QWidget* parent):
 	ui(new Ui::RegisterForm)
 {
 	ui->setupUi(this);
-	
+	this->freeText();
 }
 RegisterForm::~RegisterForm()
 {
@@ -33,6 +33,16 @@ void RegisterForm::deleteInstance()
 {
 	if (instance)
 		delete instance;
+}
+
+void RegisterForm::freeText()
+{
+	ui->UsernameText->setText("eg.username");
+	ui->FirstnameText->setText("eg.Ana Maria");
+	ui->LastnameText->setText("eg.Popa");
+	ui->EmailText->setText("eg.email@gmail.com");
+	ui->PasswordText->setText("password");
+	ui->ConfirmText->setText("password");
 }
 
 void RegisterForm::on_CloseButton_clicked()
@@ -53,7 +63,8 @@ void RegisterForm::on_RegisterButton_clicked()
 	j["firstname"] = (ui->FirstnameText->text()).toStdString();
 	j["lastname"] = (ui->LastnameText->text()).toStdString();
 	j["email"] = (ui->EmailText->text()).toStdString();
-	j["password"] = (ui->PasswordText->text()).toStdString();
+	std::string ps = (ui->PasswordText->text()).toStdString();
+	std::string ps2 = (ui->ConfirmText->text()).toStdString();
 	QClient* main = QClient::getInstance();
 	if (!validateString(j["email"], StrType::Email))
 	{
@@ -65,16 +76,18 @@ void RegisterForm::on_RegisterButton_clicked()
 		QMessageBox::warning(main, "client message", "The username has not a correct format");
 		incorect = true;
 	}
-	if (!validateString(j["password"], StrType::Username))
+	if (!validateString(ps, StrType::Password))
 	{
 		QMessageBox::warning(main, "client message", "The password has not a correct format");
 		incorect = true;
 	}
-	if (j["password"] != (ui->ConfirmText->text()).toStdString())
+	if (ps != ps2)
 	{
 		QMessageBox::warning(main, "client message", "The passwords does not match");
 		incorect = true;
 	}
+	//makeSecretPassword(ps);
+	j["password"] = ps;
 	if (!incorect)
 	{
 		std::string str = j.dump();

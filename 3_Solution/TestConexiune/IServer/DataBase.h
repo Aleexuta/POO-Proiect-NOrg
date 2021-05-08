@@ -26,17 +26,23 @@ public:
 	bool insertUser(/* date de inregistrare sub forma de stringuri*/ std::string username, std::string firstname, std::string lastname, std::string email, std::string password);
 	std::string loginUser(std::string email, std::string password);
 
-	void createTrigger();
+
 	void createTable();
 	void createNodeRoot(std::string email);
-	bool insertNewNode(std::string iduser, std::string idparinte, std::string name, std::string photo, std::string idnode);
+	bool insertNewNode(std::string iduser, std::string idparinte, std::string name, std::string photo, 
+		std::string idnode,std::string color, std::string font, std::string date);
 	std::string selectIdForLastNode(std::string iduser);
 	bool removeNode(std::string id, std::string iduser);
 	std::string selectAllNodes(int iduser);
 	bool newVersionText(std::string text, std::string iduser, std::string idnode);
+	bool moveToTrashNode(std::string iduser, std::string idnode, std::string idparent);
+	bool moveFromTrashNode(std::string iduser, std::string idnode, std::string idoldparent);
 
+	bool deleteUser(std::string iduser);
+	bool updatePasswordUser(std::string iduser, std::string oldpass, std::string newpass);
 
 private:
 	std::string getTextForNode(std::string iduser, std::string idnode);
+	std::string getLastVersionText(std::string iduser, std::string idnode);
 };
 

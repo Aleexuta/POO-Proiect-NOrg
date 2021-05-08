@@ -41,6 +41,7 @@ int DataBase::callbackString(void* data, int argc, char** argv, char** azColName
 		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
 		std::string col(azColName[i]);
 		std::string sol(argv[i] ? argv[i] : "NULL");
+		std::string text("<!DOCTYPE HTML PUBLIC @-//W3C//DTD HTML 4.0//EN@ @http://www.w3.org/TR/REC-html40/strict.dtd@> < html > <head><meta name = @qrichtext@ content = @1@ / ><style type = @text / css@>p, li(white - space: pre - wrap; )< / style > < / head> < body style = @ font - family:~MS Shell Dlg 2~; font - size:8pt; font - weight:400; font - style:normal; @ >< p style = @ margin - top:0px; margin - bottom:0px; margin - left:0px; margin - right:0px; -qt - block - indent:0; text - indent:0px; @ > test< / p>< / body> < / html>");
 		rasp += "\"" + col + "\":" + "\"" + sol + "\"";
 
 	}
@@ -135,7 +136,8 @@ std::string DataBase::loginUser(std::string email, std::string password)
 	else
 	{
 		std::string rasp = final;
-
+		if (rasp == "")
+			return "";
 		auto js = nlohmann::json::parse(final);
 		std::string id = js["iduser"];
 		final = "[" + rasp+",";
@@ -144,28 +146,6 @@ std::string DataBase::loginUser(std::string email, std::string password)
 	}
 }
 
-
-void DataBase::createTrigger()
-{
-	char* messaggeError;
-	std::string data("CALLBACK FUNCTION");
-	std::string sql(//"drop trigger stergere_nod;"
-		"CREATE TRIGGER stergere_nod "
-		"BEFORE DELETE ON NODE "
-		"BEGIN "
-		"DELETE FROM NODE WHERE idparent = old.idnode and iduser=old.iduser; DELETE FROM NODE WHERE iduser=old.iduser and idnode=old.idnode;  END;");
-	//insert in notes varianta 0 a nodului
-	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
-	if (exit != SQLITE_OK)
-	{
-		std::cerr << "Error <CreateTRIGGER> \n" << std::endl;
-	}
-	else
-	{
-		std::cout << "succes  <CreateTRIGGER> \n" << std::endl;
-		//return selectIdForLastNode(iduser);
-	}
-}
 
 void DataBase::createTable()
 {
@@ -194,12 +174,16 @@ void DataBase::createTable()
 
 	{
 		std::string sql =//"DROP TABLE NODE;"
-			"CREATE TABLE NODE("	//CREAZA TABEL NODE, cheie primara dubla(idnod si iduser)
+			"CREATE TABLE NODE("	
 			"iduser		integer not null,"
 			"idnode		integer not null,"
 			"idparent	integer	not null,"
+			"idoldparent	integer ,"
 			"name		TEXT	not null,"
 			"photoname	text	not null,"
+			"color		text,"
+			"font		text,"
+			"date		text,"
 			"Primary key(iduser,idnode),"
 			"Foreign key(iduser) REFERENCES USER(iduser),"
 			"Foreign key(idparent) REFERENCES NODE(idnode));";
@@ -216,12 +200,12 @@ void DataBase::createTable()
 
 	}
 	{
-		std::string sql = //  "drop table NOTES;"
+		std::string sql =   //"drop table NOTES;"
 			"CREATE TABLE NOTES ("
 			"iduser		integer not null,"
 			"idnode		integer not null,"
 			"text		text,"
-			"versiune	int,"
+			"versiune	int		not null,"
 			"Primary key(iduser,idnode,versiune),"
 			"Foreign key(iduser,idnode) REFERENCES NODE(iduser,idnode));";
 
@@ -254,7 +238,7 @@ void DataBase::createNodeRoot(std::string email)
 		std::cout << "Select  <CreateNodeRoot> successfully!" << std::endl;
 		auto js = nlohmann::json::parse(final);
 		std::string id = js["iduser"];
-		std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname) VALUES(" + id+",0,0"+",'root','-')");
+		std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname) VALUES(" + id + ",0,0" + ",'root','-')");
 		//adauga insertia in notes versiunea 0
 		exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
 		if (exit != SQLITE_OK)
@@ -263,17 +247,19 @@ void DataBase::createNodeRoot(std::string email)
 		}
 		else
 		{
-			std::cout << "Insert  <CreateNodeRoot> successfully!" << std::endl;
+			std::cerr << "Succes <CreateNodeRoot> Insert" << std::endl;
+			
 		}
 	}
 }
 
-bool DataBase::insertNewNode(std::string iduser, std::string idparent, std::string name, std::string photo,std::string idnode)
+bool DataBase::insertNewNode(std::string iduser, std::string idparent, std::string name, std::string photo,
+	std::string idnode, std::string color, std::string font, std::string date)
 {
 	char* messaggeError;
 	std::string data("CALLBACK FUNCTION");
-	std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname) VALUES(" + iduser + "," + idnode + "," + idparent + ",'" + name + "','" + photo + "');"
-		+ "INSERT INTO NOTES(idnode, iduser,text,versiune) VALUES ("+idnode+","+iduser+",'Bine ai venit',0);");
+	std::string sql("INSERT INTO NODE(iduser,idnode,idparent,name,photoname,color,font,date) VALUES(" + iduser + "," + idnode + "," + idparent + ",'" + name + "','" + photo + "','"+color+"','"+font+"','"+date+"');"
+		+ " INSERT INTO NOTES(idnode, iduser,versiune,text) VALUES ("+idnode+","+iduser+",0,"+" 'Bine ai venit!' );");//pune in loc de bine ai venit codul aferent
 	//insert in notes varianta 0 a nodului
 	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
 	if (exit != SQLITE_OK)
@@ -311,7 +297,7 @@ std::string DataBase::selectIdForLastNode(std::string iduser)
 std::string DataBase::selectAllNodes(int iduser)
 {
 	char* messaggeError;
-	std::string sql("SELECT NODE.iduser, NODE.idnode, NODE.idparent, NODE.name, NODE.photoname FROM NODE where NODE.iduser like " + std::to_string(iduser) + " and NODE.idnode is not 0 ORDER BY NODE.idparent asc , NODE.idnode desc");
+	std::string sql("SELECT NODE.iduser, NODE.idnode, NODE.idparent, NODE.name, NODE.photoname, NODE.idoldparent, NODE.color, NODE.font,NODE.date FROM NODE where NODE.iduser like " + std::to_string(iduser) + " and NODE.idnode is not 0 ORDER BY NODE.idparent asc , NODE.idnode desc");
 	std::string data("CALLBACK FUNCTION");
 	//final = "[";
 	int exit = sqlite3_exec(DB, sql.c_str(), callbackMore, (void*)data.c_str(), NULL);
@@ -329,13 +315,32 @@ std::string DataBase::selectAllNodes(int iduser)
 		return final;
 	}
 }
-
+void convertTextToInsert(std::string& text)
+{
+	for (int i = 0; i < text.size(); i++)
+	{
+		if (text[i] == '\'')
+			text[i] = '~';
+		if (text[i] == '"')
+			text[i] = '@';
+		if (text[i] == '{')
+			text[i] = '(';
+		if (text[i] == '}')
+			text[i] = ')';
+	}
+}
 bool DataBase::newVersionText(std::string text, std::string iduser, std::string idnode)
 {
+	std::string vers = getLastVersionText(iduser, idnode);
+	int ver = std::stoi(vers);
+	ver++;
+	convertTextToInsert(text);
 	char* messaggeError;
 	std::string data("CALLBACK FUNCTION");
-	std::string sql("INSERT INTO NOTES(iduser,idnode,text) VALUES "+ iduser+","+idnode+",'"+text+"'");
+	std::string sql("INSERT INTO NOTES(iduser,idnode,versiune,text) VALUES ("+ iduser+","+idnode+","+std::to_string(ver)+",'"+text+"')");
 	//insert in notes varianta 0 a nodului
+	//fa versiunea
+	std::cout << sql<<"\n\n\n";
 	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
 	if (exit != SQLITE_OK)
 	{
@@ -346,6 +351,110 @@ bool DataBase::newVersionText(std::string text, std::string iduser, std::string 
 	{
 		std::cout << "Insert  <createVersion> successfully!" << std::endl;
 		return true;
+	}
+}
+
+bool DataBase::moveToTrashNode(std::string iduser, std::string idnode,std::string idparent)
+{
+	char* messaggeError;
+	std::string data("CALLBACK FUNCTION");
+	std::string sql("Update NODE set idparent=1 where iduser = " + iduser + " and idnode = " + idnode +
+		"; Update NODE set idoldparent= " + idparent + " where idnode = " + idnode + " and iduser = " + iduser +
+		"; Update NODE set idoldparent= "+idnode+ " where idparent= "+idnode + " and iduser = " + iduser +
+		"; Update NODE set idparent = " + idparent + " where idparent = " + idnode + " and iduser = " + iduser);
+		
+	int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Move to Trash" << std::endl;
+		return false;
+	}
+	else
+	{
+		std::cout << "Succes Move to trash" << std::endl;
+		return true;
+	}
+}
+
+bool DataBase::moveFromTrashNode(std::string iduser, std::string idnode,std::string idoldparent)
+{
+	char* messaggeError;
+	std::string data("CALLBACK FUNCTION");
+	std::string sql("Update NODE set idparent= "+idoldparent+" where iduser = " + iduser + " and idnode = " + idnode + 
+		"; Update NODE set idparent = " + idnode + " where idoldparent = " + idnode + " and iduser = " + iduser);
+	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Move from Trash" << std::endl;
+		return false;
+	}
+	else
+	{
+		std::cout << "Succes Move from trash" << std::endl;
+		return true;
+	}
+}
+
+bool DataBase::deleteUser(std::string iduser)
+{
+	char* messaggeError;
+	std::string sql("DELETE FROM USER WHERE USER.iduser=" + iduser+
+	"; DELETE FROM NODE WHERE NODE.iduser= "+iduser+
+	"; DELETE FROM NOTES WHERE NOTES.iduser= "+ iduser);
+	std::string data("CALLBACK FUNCTION");
+	int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
+
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Delete User<DELETE> \n" << std::endl;
+		std::cout << "\n\n" << messaggeError << "\n\n";
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+bool DataBase::updatePasswordUser(std::string iduser, std::string oldpass, std::string newpass)
+{
+	//verifica daca parola se potriveste,daca nu se potriveste at o schimba
+	//fa un select
+	char* messaggeError;
+	std::string sql("SELECT password from USER where iduser= "+iduser);
+	std::string data("CALLBACK FUNCTION");
+	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
+	//adauga in final si nr de noduri pe care le are userul
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Update Password <select> \n" << std::endl;
+		return false;
+	}
+	else
+	{
+
+		auto js = nlohmann::json::parse(final);
+		std::string old = js["password"];
+		if (old != oldpass)
+		{
+			std::cerr << "Error Update password" << std::endl;
+			return false;
+		}
+		char* messaggeError;
+		std::string data("CALLBACK FUNCTION");
+		std::string sql("UPDATE USER SET password='" + newpass + "' where iduser= " + iduser);
+
+		int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
+		if (exit != SQLITE_OK)
+		{
+			std::cerr << "Error Update password" << std::endl;
+			return false;
+		}
+		else
+		{
+			std::cout << "Succes Update password" << std::endl;
+			return true;
+		}
 	}
 }
 
@@ -367,10 +476,31 @@ std::string DataBase::getTextForNode(std::string iduser, std::string idnode)
 	}
 }
 
+std::string DataBase::getLastVersionText(std::string iduser, std::string idnode)
+{
+	char* messaggeError;
+	std::string sql("SELECT NOTES.versiune FROM NOTES where NOTES.iduser = " + iduser + " and NOTES.idnode = " + idnode + " order by NOTES.versiune desc limit 1");
+	std::string data("CALLBACK FUNCTION");
+	int exit = sqlite3_exec(DB, sql.c_str(), callback, (void*)data.c_str(), NULL);
+	//adauga in final si nr de noduri pe care le are userul
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Select<SELECT TEXT NOTES> \n" << std::endl;
+		return "0";
+	}
+	else
+	{
+		auto js = nlohmann::json::parse(final);
+		std::string rasp= js["versiune"];
+		return rasp;
+	}
+}
+
 bool DataBase::removeNode(std::string id,std::string iduser)
 {
 	char* messaggeError;
-	std::string sql("DELETE FROM NODE WHERE NODE.idnode = "+ id+" and NODE.iduser="+ iduser);
+	std::string sql("DELETE FROM NODE WHERE NODE.idnode = "+ id+" and NODE.iduser="+ iduser+
+		"; Update NODE set idoldparent = 1 where idoldparent= "+ id +" and iduser= "+iduser);//update pt toti care au ca si old parent id cu 1(ramane in trash)
 	std::string data("CALLBACK FUNCTION");
 	int exit = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messaggeError);
 
