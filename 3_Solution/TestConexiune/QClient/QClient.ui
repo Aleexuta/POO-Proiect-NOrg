@@ -231,6 +231,21 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionAdd_New_Node"/>
+   <addaction name="actionAdd_New_Subnode"/>
+   <addaction name="actionOpen_Note"/>
+   <addaction name="separator"/>
+   <addaction name="actionBold"/>
+   <addaction name="actionItalic"/>
+   <addaction name="actionUnderline"/>
+   <addaction name="actionStrikeout"/>
+   <addaction name="actionColor"/>
+   <addaction name="actionFont"/>
+   <addaction name="separator"/>
+   <addaction name="actionAlign_Left"/>
+   <addaction name="actionAlign_Center"/>
+   <addaction name="actionAlign_Right"/>
+   <addaction name="separator"/>
    <addaction name="actionNew"/>
    <addaction name="actionOpen"/>
    <addaction name="actionPrint"/>
@@ -549,6 +564,38 @@
   <action name="actionInsert_Checkbox">
    <property name="text">
     <string>Insert Checkbox</string>
+   </property>
+  </action>
+  <action name="actionAlign_Left">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align left.png</normaloff>:/new/prefix1/Icons/align left.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Left</string>
+   </property>
+  </action>
+  <action name="actionAlign_Center">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align_center.png</normaloff>:/new/prefix1/Icons/align_center.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Center</string>
+   </property>
+  </action>
+  <action name="actionAlign_Right">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align_right.png</normaloff>:/new/prefix1/Icons/align_right.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Right</string>
+   </property>
+  </action>
+  <action name="action_Insert_List">
+   <property name="text">
+    <string>Insert Bulleted List</string>
    </property>
   </action>
  </widget>
