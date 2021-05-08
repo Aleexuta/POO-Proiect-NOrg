@@ -54,7 +54,7 @@ QClient::QClient(QWidget* parent)
     ui.treeView->setColumnWidth(0,100);
     ui.treeView->setColumnWidth(1, 10);
 
-    theme = ThemeClient::DarkTheme;
+    theme = ThemeClient::LightTheme;
     setTheme();
     isregistered = false;
     isloged = false;
@@ -110,6 +110,7 @@ void QClient::save()
         m_path = path;
         ui.statusBar->showMessage(m_path);
         m_changed = false;
+
     }
     else
     {
@@ -132,10 +133,6 @@ void QClient::save()
         IncomingMessages();
     }
 
-}
-    m_path = path;
-    ui.statusBar->showMessage(m_path);
-    m_changed = false;
 }
 void QClient::newFile()
 {
@@ -446,6 +443,7 @@ void QClient::setGuestInfo()
     this->makeMotherNode();
     //this->insertNewNode("../photos/trash.png", "Trash");
     updateActions();
+    QMessageBox::information(this, "Guest message", "Create an account for full privileges");
 }
 
 void QClient::setNodeId(int id)
@@ -660,7 +658,7 @@ void QClient::makeMotherNode()
         }
         QModelIndex child = model->indexForTreeItem(model->getRootItem()->child(0));
         model->setData(child, QVariant("Trash"), Qt::DisplayRole);
-        QIcon icon("../photos/trash.png");
+        QIcon icon("../photos/trashi.png");
 
 
         model->setData(child, QVariant(icon), Qt::DecorationRole);
@@ -739,6 +737,7 @@ void QClient::setTheme()
         std::string tema(
             "QHeaderView::section\n"
             "{\n"
+            //"text: rgb(0,0,0)\n"
             "color: rgb(0,0,0);\n"
             "background-color: rgb(250,250,250);\n"
             "border-color: rgb(250,250,250);\n"
@@ -775,6 +774,7 @@ void QClient::setTheme()
         std::string tema(
             "QHeaderView::section\n"
             "{\n"
+            //"text: rgb(255,255,255)\n"
             "color: rgb(255, 255, 255);\n"
             "background-color: rgb(50,50,50);\n"
             "border-color: rgb(50,50,50);\n"

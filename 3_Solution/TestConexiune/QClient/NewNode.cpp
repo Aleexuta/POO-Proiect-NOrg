@@ -8,6 +8,11 @@ NewNode::NewNode(int tip,QWidget* parent) :
 {
 	ui->setupUi(this);
 	m_tip = tip;
+	QClient* main = QClient::getInstance();
+	if (main->getTheme() == ThemeClient::LightTheme)
+		m_color.setRgb(0, 0, 0);
+	else if (main->getTheme() == ThemeClient::DarkTheme)
+		m_color.setRgb(255, 255, 255);
 }
 NewNode::~NewNode()
 {
@@ -15,7 +20,13 @@ NewNode::~NewNode()
 }
 void NewNode::on_colorSet_clicked()
 {
-	QColor current(0, 0, 0);
+	QColor current;
+	QClient* main = QClient::getInstance();
+	if (main->getTheme() == ThemeClient::LightTheme)
+		current.setRgb(0, 0, 0);
+	else if (main->getTheme() == ThemeClient::DarkTheme)
+		current.setRgb(255, 255, 255);
+		
 	QColor color = QColorDialog::getColor(current, this, "Select a color");
 	m_color = color;
 }
@@ -38,7 +49,34 @@ void NewNode::on_OKButton_clicked()
 	{
 		photo = "../photos/music.png";
 	}
-
+	if (ui->attentionButton->isChecked())
+	{
+		photo = "../photos/attention.png";
+	}
+	if (ui->foodButton->isChecked())
+	{
+		photo = "../photos/food.png";
+	}
+	if (ui->bookButton->isChecked())
+	{
+		photo = "../photos/books.png";
+	}
+	if (ui->ideaButton->isChecked())
+	{
+		photo = "../photos/idea.png";
+	}
+	if (ui->locationButton->isChecked())
+	{
+		photo = "../photos/location.png";
+	}
+	if (ui->pinButton->isChecked())
+	{
+		photo = "../photos/pin.png";
+	}
+	if (ui->workButton->isChecked())
+	{
+		photo = "../photos/work.png";
+	}
 //fa aici culoarea font si data
 	QFont font = ui->fontComboBox->currentFont();
 	QDate data = ui->dateEdit->date();

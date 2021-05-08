@@ -26,9 +26,6 @@
     <QtRcc Include="QClient.qrc">
       <Filter>Source Files\Resource Files</Filter>
     </QtRcc>
-    <QtUic Include="QClient.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
     <QtMoc Include="QClient.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -114,6 +111,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Table_Dialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="QClient.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

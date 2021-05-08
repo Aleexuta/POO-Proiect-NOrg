@@ -19,7 +19,7 @@ UserForm::UserForm(QWidget* parent) :
 
     ui->label->setText(("Hello, " + user->getUsername()).c_str());
 
-    QPixmap pixmap("../photos/panda.jpg");
+    QPixmap pixmap("../photos/userPhoto.png");
     ui->photo->setPixmap(pixmap);
     ui->photo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     ui->photo->setFixedSize(80,80);
