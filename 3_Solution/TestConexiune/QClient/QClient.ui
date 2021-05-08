@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>567</width>
+    <width>803</width>
     <height>452</height>
    </rect>
   </property>
@@ -20,6 +20,117 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralWidget">
+   <widget class="QTreeView" name="treeView">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>200</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Maximum">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>200</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="toolTipDuration">
+     <number>-1</number>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="autoScrollMargin">
+     <number>18</number>
+    </property>
+    <property name="alternatingRowColors">
+     <bool>true</bool>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+    <property name="textElideMode">
+     <enum>Qt::ElideLeft</enum>
+    </property>
+    <property name="indentation">
+     <number>10</number>
+    </property>
+    <property name="uniformRowHeights">
+     <bool>true</bool>
+    </property>
+    <property name="itemsExpandable">
+     <bool>true</bool>
+    </property>
+    <property name="wordWrap">
+     <bool>false</bool>
+    </property>
+    <property name="headerHidden">
+     <bool>false</bool>
+    </property>
+    <attribute name="headerVisible">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="headerCascadingSectionResizes">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="headerStretchLastSection">
+     <bool>true</bool>
+    </attribute>
+   </widget>
+   <widget class="QTextEdit" name="textEdit">
+    <property name="geometry">
+     <rect>
+      <x>279</x>
+      <y>30</y>
+      <width>511</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::ActionsContextMenu</enum>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(158, 255, 249);</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="nr_of_words">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>310</y>
+      <width>41</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+   </widget>
+  </widget>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QSplitter" name="splitter">
@@ -124,8 +235,8 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>567</width>
-     <height>22</height>
+     <width>803</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -176,6 +287,11 @@ p, li { white-space: pre-wrap; }
     <addaction name="separator"/>
     <addaction name="actionColor"/>
     <addaction name="actionFont"/>
+    <addaction name="separator"/>
+    <addaction name="actionAlign_Left"/>
+    <addaction name="actionAlign_Center"/>
+    <addaction name="actionAlign_Right"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuNodes">
     <property name="title">
@@ -187,12 +303,35 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionOpen_Note"/>
     <addaction name="actionRecover_Node"/>
    </widget>
+   <widget class="QMenu" name="menuTable">
+    <property name="title">
+     <string>Table</string>
+    </property>
+    <addaction name="actionInsert_Table"/>
+    <addaction name="actionAdd_Column"/>
+    <addaction name="actionAdd_Row"/>
+   </widget>
+   <widget class="QMenu" name="menuInsert">
+    <property name="title">
+     <string>Insert</string>
+    </property>
+    <addaction name="action_Insert_List"/>
+    <addaction name="actionInsert_Image"/>
+    <addaction name="actionInsert_Checkbox"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuNodes"/>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
+   <addaction name="menuTable"/>
    <addaction name="menuText"/>
+   <addaction name="menuInsert"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -204,6 +343,21 @@ p, li { white-space: pre-wrap; }
    <addaction name="actionAdd_New_Node"/>
    <addaction name="actionAdd_New_Subnode"/>
    <addaction name="actionOpen_Note"/>
+   <addaction name="separator"/>
+   <addaction name="actionBold"/>
+   <addaction name="actionItalic"/>
+   <addaction name="actionUnderline"/>
+   <addaction name="actionStrikeout"/>
+   <addaction name="actionColor"/>
+   <addaction name="actionFont"/>
+   <addaction name="separator"/>
+   <addaction name="actionAlign_Left"/>
+   <addaction name="actionAlign_Center"/>
+   <addaction name="actionAlign_Right"/>
+   <addaction name="separator"/>
+   <addaction name="actionNew"/>
+   <addaction name="actionOpen"/>
+   <addaction name="actionPrint"/>
    <addaction name="separator"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -218,106 +372,222 @@ p, li { white-space: pre-wrap; }
    </attribute>
   </widget>
   <action name="actionNew">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/add-file.png</normaloff>:/new/prefix1/Icons/add-file.png</iconset>
+   </property>
    <property name="text">
     <string>New</string>
    </property>
   </action>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/open.png</normaloff>:/new/prefix1/Icons/open.png</iconset>
+   </property>
    <property name="text">
     <string>Open</string>
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/diskette.png</normaloff>:/new/prefix1/Icons/diskette.png</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
   </action>
   <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/printer.png</normaloff>:/new/prefix1/Icons/printer.png</iconset>
+   </property>
    <property name="text">
     <string>Print</string>
    </property>
   </action>
   <action name="actionCopy_Text">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/files.png</normaloff>:/new/prefix1/Icons/files.png</iconset>
+   </property>
    <property name="text">
     <string>Copy Text</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
   </action>
   <action name="actionCut_Text">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/cut.png</normaloff>:/new/prefix1/Icons/cut.png</iconset>
+   </property>
    <property name="text">
     <string>Cut Text</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
   </action>
   <action name="actionPaste_Text">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/paste.png</normaloff>:/new/prefix1/Icons/paste.png</iconset>
+   </property>
    <property name="text">
     <string>Paste Text</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
   </action>
   <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/undo.png</normaloff>:/new/prefix1/Icons/undo.png</iconset>
+   </property>
    <property name="text">
     <string>Undo</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
   </action>
   <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/redo.png</normaloff>:/new/prefix1/Icons/redo.png</iconset>
+   </property>
    <property name="text">
     <string>Redo</string>
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/logout.png</normaloff>:/new/prefix1/Icons/logout.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
   </action>
   <action name="actionZoom_in">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/zoom-in.png</normaloff>:/new/prefix1/Icons/zoom-in.png</iconset>
+   </property>
    <property name="text">
     <string>Zoom in</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
   </action>
   <action name="actionZoom_out">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/zoom_out.png</normaloff>:/new/prefix1/Icons/zoom_out.png</iconset>
+   </property>
    <property name="text">
     <string>Zoom out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
    </property>
   </action>
   <action name="actionSelect_All">
    <property name="text">
     <string>Select All</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
   </action>
   <action name="actionFind">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/find.png</normaloff>:/new/prefix1/Icons/find.png</iconset>
+   </property>
    <property name="text">
     <string>Find</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
   </action>
   <action name="actionReplace">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/replacement.png</normaloff>:/new/prefix1/Icons/replacement.png</iconset>
+   </property>
    <property name="text">
     <string>Replace</string>
    </property>
   </action>
   <action name="actionBold">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/bold.png</normaloff>:/new/prefix1/Icons/bold.png</iconset>
+   </property>
    <property name="text">
     <string>Bold</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionItalic">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/italic-text.png</normaloff>:/new/prefix1/Icons/italic-text.png</iconset>
+   </property>
    <property name="text">
     <string>Italic</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
   </action>
   <action name="actionUnderline">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/underline.png</normaloff>:/new/prefix1/Icons/underline.png</iconset>
+   </property>
    <property name="text">
     <string>Underline</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
   </action>
   <action name="actionStrikeout">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/strikethrough.png</normaloff>:/new/prefix1/Icons/strikethrough.png</iconset>
+   </property>
    <property name="text">
     <string>Strikethrough</string>
    </property>
   </action>
   <action name="actionColor">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/color-circle.png</normaloff>:/new/prefix1/Icons/color-circle.png</iconset>
+   </property>
    <property name="text">
     <string>Color</string>
    </property>
   </action>
   <action name="actionFont">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/font.png</normaloff>:/new/prefix1/Icons/font.png</iconset>
+   </property>
    <property name="text">
     <string>Font</string>
    </property>
@@ -325,7 +595,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionAdd_New_Node">
    <property name="icon">
     <iconset>
-     <normaloff>C:/Users/alexa/OneDrive/Pictures/Desktop/a se sterge regulat/n.png</normaloff>C:/Users/alexa/OneDrive/Pictures/Desktop/a se sterge regulat/n.png</iconset>
+     <normaloff>../../../../../../../../alexa/OneDrive/Pictures/Desktop/a se sterge regulat/n.png</normaloff>../../../../../../../../alexa/OneDrive/Pictures/Desktop/a se sterge regulat/n.png</iconset>
    </property>
    <property name="text">
     <string>Add New Node</string>
@@ -340,7 +610,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionAdd_New_Subnode">
    <property name="icon">
     <iconset>
-     <normaloff>C:/Users/alexa/OneDrive/Pictures/Desktop/a se sterge regulat/c.png</normaloff>C:/Users/alexa/OneDrive/Pictures/Desktop/a se sterge regulat/c.png</iconset>
+     <normaloff>../../../../../../../../alexa/OneDrive/Pictures/Desktop/a se sterge regulat/c.png</normaloff>../../../../../../../../alexa/OneDrive/Pictures/Desktop/a se sterge regulat/c.png</iconset>
    </property>
    <property name="text">
     <string>Add New Subnode</string>
@@ -397,10 +667,106 @@ p, li { white-space: pre-wrap; }
     <string>Light Mode</string>
    </property>
   </action>
+  <action name="actionAlign_Left">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align left.png</normaloff>:/new/prefix1/Icons/align left.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Left</string>
+   </property>
+  </action>
+  <action name="actionAlign_Center">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align_center.png</normaloff>:/new/prefix1/Icons/align_center.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Center</string>
+   </property>
+  </action>
+  <action name="actionAlign_Right">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align_right.png</normaloff>:/new/prefix1/Icons/align_right.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Right</string>
+   </property>
+  </action>
+  <action name="action_Insert_List">
+   <property name="text">
+    <string>Insert Bulleted List</string>
+   </property>
+  </action>
+  <action name="actionAdd_Column">
+   <property name="text">
+    <string>Add Column</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionAdd_Row">
+   <property name="text">
+    <string>Add Row</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionInsert_Table">
+   <property name="text">
+    <string>Insert Table</string>
+   </property>
+  </action>
+  <action name="actionInsert_Image">
+   <property name="text">
+    <string>Insert Image</string>
+   </property>
+  </action>
+  <action name="actionInsert_Checkbox">
+   <property name="text">
+    <string>Insert Checkbox</string>
+   </property>
+  </action>
+  <action name="actionAlign_Left">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align left.png</normaloff>:/new/prefix1/Icons/align left.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Left</string>
+   </property>
+  </action>
+  <action name="actionAlign_Center">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align_center.png</normaloff>:/new/prefix1/Icons/align_center.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Center</string>
+   </property>
+  </action>
+  <action name="actionAlign_Right">
+   <property name="icon">
+    <iconset resource="Icon_Resource.qrc">
+     <normaloff>:/new/prefix1/Icons/align_right.png</normaloff>:/new/prefix1/Icons/align_right.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Right</string>
+   </property>
+  </action>
+  <action name="action_Insert_List">
+   <property name="text">
+    <string>Insert Bulleted List</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
   <include location="QClient.qrc"/>
+  <include location="Icon_Resource.qrc"/>
  </resources>
  <connections/>
 </ui>

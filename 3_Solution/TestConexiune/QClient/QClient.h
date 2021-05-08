@@ -21,6 +21,7 @@
 #include "Find_Form.h"
 #include "Replace_Form.h"
 #include "IUser.h"
+#include "Table_Dialog.h"
 class TreeModel;
 class TreeItem;
 enum class CustomMsgTypes : uint32_t
@@ -75,6 +76,12 @@ private:
 	ThemeClient theme = ThemeClient::LightTheme;
 
 	TreeModel* model;
+    Ui::QClientClass ui;
+    IUser* user;
+    QString m_path;
+    bool m_changed;
+    TreeModel* model;
+    QVector<QCheckBox *> m_checkboxes;
     Ui::QClientClass ui;
     IUser* user;
     QString m_path;
@@ -177,6 +184,42 @@ private slots:
     void on_actionInsert_Checkbox_triggered();
 };
 
+private slots:
+    
+    void on_actionNew_triggered();
+    void on_actionOpen_triggered();
+    void on_actionPrint_triggered();
+    void on_actionExit_triggered();
+    void on_actionSave_triggered();
+    void on_actionCopy_triggered();
+    void on_textEdit_textChanged();
+    void on_actionCut_triggered();
+    void on_actionPaste_triggered();
+    void on_actionUndo_triggered();
+    void on_actionRedo_triggered();
+    void on_actionZoom_in_triggered();
+    void on_actionZoom_out_triggered();
+    void on_actionSelect_All_triggered();
+    void on_actionFind_triggered();
+    void on_actionReplace_triggered();
+    void on_actionBold_triggered();
+    void on_actionItalic_triggered();
+    void on_actionStrikeout_triggered();
+    void on_actionUnderline_triggered();
+    void on_actionColor_triggered();
+    void on_actionFont_triggered();
+    void on_actionAlign_Left_triggered();
+    void on_actionAlign_Right_triggered();
+    void on_actionAlign_Center_triggered();
+    void on_action_Insert_List_triggered();
+    void on_actionInsert_Table_triggered();
+    void on_actionAdd_Column_triggered();
+    void on_actionAdd_Row_triggered();
+    void on_actionInsert_Image_triggered();
+    void on_actionInsert_Checkbox_triggered();
+};
+
+//ceva
 //ceva
 	
 	void on_actionNew_triggered();

@@ -22,5 +22,12 @@
         <file>Icons/strikethrough.png</file>
         <file>Icons/underline.png</file>
         <file>Icons/undo.png</file>
+        <file>Icons/zoom_out.png</file>
+        <file>Icons/zoom-in.png</file>
+        <file>Icons/find.png</file>
+        <file>Icons/replacement.png</file>
+        <file>Icons/align left.png</file>
+        <file>Icons/align_center.png</file>
+        <file>Icons/align_right.png</file>
     </qresource>
 </RCC>

@@ -73,6 +73,9 @@
     <ClCompile Include="ChangePassForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Table_Dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IUser.h">
@@ -110,6 +113,9 @@
     <QtUic Include="ChangePassForm.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="Table_Dialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="FirstForm.h">
@@ -140,6 +146,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="ChangePassForm.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Table_Dialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
