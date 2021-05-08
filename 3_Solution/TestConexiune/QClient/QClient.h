@@ -135,3 +135,5 @@ private slots:
     void on_actionInsert_Image_triggered();
     void on_actionInsert_Checkbox_triggered();
 };
+
+//ceva
