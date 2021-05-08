@@ -19,6 +19,7 @@
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QCloseEvent>
+#include "Table_Dialog.h"
 class TreeModel;
 class TreeItem;
 enum class CustomMsgTypes : uint32_t
@@ -50,19 +51,17 @@ private:
      QClient(QWidget *parent = Q_NULLPTR);
     ~QClient();
     void closeEvent(QCloseEvent *event)override;
-    void checkSave();
+    void checkSave(bool &cancel);
     void save();
     void newFile();
     void openFile();
-
-    
 private:
     Ui::QClientClass ui;
     IUser* user;
     QString m_path;
     bool m_changed;
-
     TreeModel* model;
+    QVector<QCheckBox *> m_checkboxes;
 public:
     static QClient* getInstance();
     void deleteInstance();
@@ -81,6 +80,8 @@ public:
     int  getNumberOfNodes();
     void incrementNumberOfNodes();
     void decrementNumberOfNodes();
+    void add_corresponding_checkboxes();
+    void save_type_checkboxes();
 private:
     auto makeJsonNewNode(std::string name, int iduser, int idparent, int idnode, std::string namephoto = "");
     void sendLoadAllNodesMessage(std::string id);
@@ -124,5 +125,15 @@ private slots:
     void on_actionUnderline_triggered();
     void on_actionColor_triggered();
     void on_actionFont_triggered();
-    
+    void on_actionAlign_Left_triggered();
+    void on_actionAlign_Right_triggered();
+    void on_actionAlign_Center_triggered();
+    void on_action_Insert_List_triggered();
+    void on_actionInsert_Table_triggered();
+    void on_actionAdd_Column_triggered();
+    void on_actionAdd_Row_triggered();
+    void on_actionInsert_Image_triggered();
+    void on_actionInsert_Checkbox_triggered();
 };
+
+//ceva
