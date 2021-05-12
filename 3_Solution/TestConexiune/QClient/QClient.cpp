@@ -26,7 +26,7 @@
 #include "UserForm.h"
 
 
-#define SLEEP 2000
+#define SLEEP 1000 
 bool isloged = false;
 bool isregistered = false;
 QClient* QClient::instance = nullptr;
@@ -60,6 +60,8 @@ QClient::QClient(QWidget* parent)
     isloged = false;
     updateActions();
     ui.textEdit->setAcceptRichText(true);
+    ui.textEdit->setEnabled(false);
+    ui.textEdit->setText("test");
 }
 QClient:: ~QClient()
 {
@@ -89,7 +91,7 @@ void QClient::checkSave(bool &cancel)
 }
 void QClient::save()
 {
-    if (!user->getType())
+    if (!user->getType()) //un extract ca sa faca asta daca e user.
     {
         QString path = QFileDialog::getSaveFileName(this, "Save file");
         if (path.isEmpty())
@@ -692,7 +694,7 @@ void QClient::verifyDate()
     char buffer[80];
     time(&rawTime);
     timeinfo = localtime(&rawTime);
-    strftime(buffer, 80, "%a %h%e %Y", timeinfo);
+    strftime(buffer, 80, "%a %h %e %Y", timeinfo);
 
     std::list<std::string> lista;
     std::string mesaj("This notes have limit date:\n");
@@ -745,6 +747,10 @@ void QClient::setTheme()
             "selection-color: rgb(250,250,250);\n"
             "selection-background-color: rgb(250,250,250);\n"
             "}\n"
+            "QToolTip\n"
+            "{\n"
+            "color:rgb(0,0,0);background-color: rgb(255,255,255);border:none;"
+            "}\n"
             "QTreeView\n"
             "{\n"
             "background-color: rgb(255,255,255);\n"
@@ -782,6 +788,10 @@ void QClient::setTheme()
             "selection-color: rgb(50,50,50);\n"
             "selection-background-color: rgb(50,50,50);\n"
             "}\n"
+            "QToolTip\n"
+            "{\n"
+            "color:rgb(255,255,255);background-color: rgb(27,27,27);border:none;"
+            "}\n"
             "QTreeView\n"
             "{\n"
             "background-color: rgb(30,30,30);\n"
@@ -809,11 +819,13 @@ void QClient::logout()
     isregistered = false;
     delete(user);
     model->deleteChildren();
+    ui.textEdit->setText(" ");
+    ui.textEdit->setEnabled(false);
     hide();
     FirstForm* ff = FirstForm::getInstance();
     ff->show();
     UserForm* us = UserForm::getInstance();
-    us->deleteInstance();
+    us->hide();
 }
 
 void QClient::modifyColor(QColor& color)
@@ -986,7 +998,11 @@ void QClient::OpenNote()
         }
         return;
     }
-
+    if (model->isHome(index))
+    {
+        return;
+    }
+    ui.textEdit->setEnabled(true);
     std::string text = model->getText(index);
     ui.textEdit->setHtml("");
 
@@ -1062,6 +1078,7 @@ void QClient::on_actionDelete_Node_triggered()
 void QClient::on_actionOpen_Note_triggered()
 {
     OpenNote();
+    add_corresponding_checkboxes();
 }
 
 void QClient::add_corresponding_checkboxes()

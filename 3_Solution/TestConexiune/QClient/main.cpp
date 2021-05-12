@@ -14,17 +14,25 @@ int main(int argc, char *argv[])
     QClient* w = QClient::getInstance();
 
     // apare doar daca s a conectat la server
-    w->Connect("8.tcp.ngrok.io",19401);
+
+
+    std::fstream server("server_info.txt", std::ios::in);
+    if (!server)
+    {
+        QMessageBox::critical(w, "ERROR", "Client down");
+        return 0;
+    }
+    std::string serv;
+    long int port;
+    server >> serv;
+    server >> port;
+    //deschide un fisier
+    w->Connect(serv, port);
 
     w->IncomingMessages();
 
-
-    //deschide un fisier
-
-
-        FirstForm* f1 = FirstForm::getInstance();
-        f1->show();
-        w->IncomingMessages();
+    FirstForm* f1 = FirstForm::getInstance();
+    f1->show();
     w->IncomingMessages();
     return a.exec();
 }

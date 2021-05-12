@@ -5,6 +5,7 @@ TreeItem::TreeItem(const QVector<QVariant>& data, TreeItem* parent)
 {
 	m_parentItem = parent;
 	m_itemData = data;
+	m_oldParentItem = nullptr;
 	//trash = false;
 }
 
@@ -155,16 +156,23 @@ void TreeItem::moveChildrenToParent()
 
 void TreeItem::moveChildrenFromParent()
 {
-	int size = parent()->childCount();
-	for (int i = 0; i < size; i++)
+	try
 	{
-		TreeItem* child = parent()->child(i);
-		if (child->getOldParent() == IDNode)
+		int size = parent()->childCount();
+		for (int i = 0; i < size; i++)
 		{
-			child->restoreOldParent();
-			addChild(child);
-			parent()->removeChild(child);
+			TreeItem* child = parent()->child(i);
+			if (child->getOldParent() == IDNode)
+			{
+				child->restoreOldParent();
+				addChild(child);
+				parent()->removeChild(child);
+			}
 		}
+	}
+	catch (...)
+	{
+		return;
 	}
 
 }
