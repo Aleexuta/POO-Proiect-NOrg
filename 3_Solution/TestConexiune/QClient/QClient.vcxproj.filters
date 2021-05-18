@@ -113,6 +113,9 @@
     <QtUic Include="Table_Dialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="QClient.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="FirstForm.h">

@@ -112,6 +112,7 @@
     <ClCompile Include="FirstForm.cpp" />
     <ClCompile Include="QClient.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="QClient.ui" />
     <QtUic Include="RegisterForm.ui" />
     <QtUic Include="Replace_Form.ui" />
     <QtUic Include="UserForm.ui" />

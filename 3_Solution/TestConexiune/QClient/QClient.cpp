@@ -61,7 +61,9 @@ QClient::QClient(QWidget* parent)
     updateActions();
     ui.textEdit->setAcceptRichText(true);
     ui.textEdit->setEnabled(false);
-    ui.textEdit->setText("test");
+    ui.textEdit->setText("Bine ai venit in SCRIBE");
+    this->setWindowIcon(QIcon("../photos/user.png"));
+    this->setWindowTitle("Scribe");
 }
 QClient:: ~QClient()
 {

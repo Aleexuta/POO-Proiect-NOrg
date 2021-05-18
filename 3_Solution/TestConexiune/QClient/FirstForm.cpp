@@ -23,7 +23,8 @@ FirstForm::FirstForm(QWidget* parent):
 	ui(new Ui::FirstForm)
 {
 	ui->setupUi(this);
-	
+	this->setWindowIcon(QIcon("../photos/user.png"));
+	this->setWindowTitle("Scribe");
 }
 FirstForm::~FirstForm()
 {

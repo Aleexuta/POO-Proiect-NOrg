@@ -15,6 +15,8 @@ LoginForm::LoginForm(QWidget* parent) :
 {
 	ui->setupUi(this);
 	this->freeText();
+	this->setWindowIcon(QIcon("../photos/user.png"));
+	this->setWindowTitle("Login");
 }
 LoginForm::~LoginForm()
 {
