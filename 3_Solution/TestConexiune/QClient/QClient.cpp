@@ -14,8 +14,6 @@
 #include <time.h>
 #include <qcolor.h>
 
-
-
 #include "RegisterForm.h"
 #include "LoginForm.h"
 #include "FirstForm.h"
@@ -41,7 +39,7 @@ QClient::QClient(QWidget* parent)
     QFile file(":/default.txt");
     file.open(QIODevice::ReadOnly);
     this->model = TreeModel::getInstance(headers, file.readAll());
-   // this->model = new TreeModel(headers, file.readAll());
+    // this->model = new TreeModel(headers, file.readAll());
 
 
     file.close();
@@ -51,19 +49,20 @@ QClient::QClient(QWidget* parent)
     //{
     //    ui.treeView->resizeColumnToContents(column);
     //}
-    ui.treeView->setColumnWidth(0,100);
+    ui.treeView->setColumnWidth(0, 100);
     ui.treeView->setColumnWidth(1, 10);
 
-    theme = ThemeClient::DarkTheme;
+    theme = ThemeClient::LightTheme;
     setTheme();
     isregistered = false;
     isloged = false;
     updateActions();
     ui.textEdit->setAcceptRichText(true);
+    ui.textEdit->setEnabled(false);
 }
 QClient:: ~QClient()
 {
-    
+
 }
 void QClient::closeEvent(QCloseEvent* event)
 {
@@ -74,11 +73,11 @@ void QClient::closeEvent(QCloseEvent* event)
     else event->ignore();
 
 }
-void QClient::checkSave(bool &cancel)
+void QClient::checkSave(bool& cancel)
 {
     if (!m_changed)
         return;
-    QMessageBox::StandardButton value = QMessageBox::question(this, "Save file", "You have unsaved changes. Do you want to save now?", QMessageBox::Yes | QMessageBox::No |QMessageBox::Cancel);
+    QMessageBox::StandardButton value = QMessageBox::question(this, "Save file", "You have unsaved changes. Do you want to save now?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
     if (value == QMessageBox::StandardButton::No)
         return;
     else if (value == QMessageBox::StandardButton::Yes)
@@ -89,7 +88,7 @@ void QClient::checkSave(bool &cancel)
 }
 void QClient::save()
 {
-    if (!user->getType())
+    if (!user->getType()) //un extract ca sa faca asta daca e user.
     {
         QString path = QFileDialog::getSaveFileName(this, "Save file");
         if (path.isEmpty())
@@ -110,21 +109,22 @@ void QClient::save()
         m_path = path;
         ui.statusBar->showMessage(m_path);
         m_changed = false;
+
     }
     else
     {
         QModelIndex index = ui.treeView->selectionModel()->currentIndex();
         //memorie
-        model->setText((ui.textEdit->toHtml()).toStdString(),index);
+        model->setText((ui.textEdit->toHtml()).toStdString(), index);
 
         //baza de data
-       
+
         int iduser = user->getID();
         int idnode = model->getIdForIndex(index);
         nlohmann::json js;
         js["idnode"] = std::to_string(idnode);//nu ia id ul cum trebe
         js["iduser"] = std::to_string(iduser);
-        std::string str= ui.textEdit->toHtml().toStdString();
+        std::string str = ui.textEdit->toHtml().toStdString();
         convertIntoTilda(str);
         js["text"] = str;
         std::string mes = js.dump();
@@ -132,10 +132,6 @@ void QClient::save()
         IncomingMessages();
     }
 
-}
-    m_path = path;
-    ui.statusBar->showMessage(m_path);
-    m_changed = false;
 }
 void QClient::newFile()
 {
@@ -163,7 +159,7 @@ void QClient::openFile()
     m_changed = false;
 }
 
-   
+
 QClient* QClient::getInstance()
 {
     if (!instance)
@@ -223,7 +219,7 @@ void QClient::IncomingMessages()
                     {
                         std::string rasp(msg.body.begin(), msg.body.end());
                         isloged = true;
-                        QMessageBox::information(this, "Server Message","Login succes");
+                        QMessageBox::information(this, "Server Message", "Login succes");
                         this->show();
                         LoginForm* reg = LoginForm::getInstance();
                         reg->freeText();
@@ -261,11 +257,11 @@ void QClient::IncomingMessages()
                 break;
                 case CustomMsgTypes::NewNodeAccept:
                 {
-                  /*  std::string rasp(msg.body.begin(), msg.body.end());
-                    auto js = nlohmann::json::parse(rasp);
-                    std::string st = js["max(NODE.idnode)"];
-                    int id = std::stoi(st);
-                    this->setNodeId(id);*/
+                    /*  std::string rasp(msg.body.begin(), msg.body.end());
+                      auto js = nlohmann::json::parse(rasp);
+                      std::string st = js["max(NODE.idnode)"];
+                      int id = std::stoi(st);
+                      this->setNodeId(id);*/
                 }
                 break;
                 case CustomMsgTypes::NewNodeDeny:
@@ -318,8 +314,8 @@ void QClient::sendRegisterMessage(std::string j)
 {
     olc::net::message<CustomMsgTypes> msg;
     msg.header.id = CustomMsgTypes::ServerRegister;
-    char * vect=const_cast<char*>(j.c_str());
-    for(int i=0;i<j.size();i++)
+    char* vect = const_cast<char*>(j.c_str());
+    for (int i = 0;i < j.size();i++)
         msg << vect[i];
     Send(msg);
     Sleep(SLEEP);
@@ -408,7 +404,7 @@ void QClient::sendChangePasswordMessage(std::string j)
         msg << vect[i];
     Send(msg);
     Sleep(SLEEP);
-//Send(msg);
+    //Send(msg);
     IncomingMessages();
 }
 
@@ -424,13 +420,13 @@ void QClient::setUserInfo(std::string mesaj)
     this->user->setUsername(user);
     this->user->setID(idd);
     //adauga idul in nodul tata
-    
+
     std::string nrnode = js2[0]["nrnodes"];
     int nr = std::stoi(nrnode);
     this->model->setRootID(-1);
     this->makeMotherNode();
     updateActions();
-    this->user->setNumberOfNodes(nr+1);
+    this->user->setNumberOfNodes(nr + 1);
     //seteaza si load la toate nodurile
     //sendLoadAllNodesMessage(id);
     LoadAllNodes(mesaj);
@@ -441,17 +437,18 @@ void QClient::setUserInfo(std::string mesaj)
 
 void QClient::setGuestInfo()
 {
-    this->user = new Guest;  
+    this->user = new Guest;
     this->model->setRootID(-1);
     this->makeMotherNode();
     //this->insertNewNode("../photos/trash.png", "Trash");
     updateActions();
+    QMessageBox::information(this, "Guest message", "Create an account for full privileges");
 }
 
 void QClient::setNodeId(int id)
 {
     QModelIndex index = ui.treeView->selectionModel()->currentIndex();
-    this->model->setIDNode(id,index);
+    this->model->setIDNode(id, index);
 }
 
 TreeItem* QClient::getRootItem()
@@ -510,7 +507,7 @@ void QClient::LoadAllNodes(std::string j)
     updateActions();
 }
 
-void QClient::LoadChildren(TreeItem* root, nlohmann::basic_json<> js, int &pos)
+void QClient::LoadChildren(TreeItem* root, nlohmann::basic_json<> js, int& pos)
 {
     pos = 1;
     if (pos < js.size())
@@ -520,10 +517,10 @@ void QClient::LoadChildren(TreeItem* root, nlohmann::basic_json<> js, int &pos)
         while (pos < js.size())
         {
 
-             if (root->getID() == std::stoi(js1))
-             {
+            if (root->getID() == std::stoi(js1))
+            {
                 prepareChildToInsert(root, js, pos);
-             }
+            }
 
             pos++;
             if (pos < js.size())
@@ -533,7 +530,7 @@ void QClient::LoadChildren(TreeItem* root, nlohmann::basic_json<> js, int &pos)
             }
         }
     }
-    for (int i = 0;i<root->childCount();i++)
+    for (int i = 0;i < root->childCount();i++)
     {
         LoadChildren(root->child(i), js, pos);
     }
@@ -541,14 +538,14 @@ void QClient::LoadChildren(TreeItem* root, nlohmann::basic_json<> js, int &pos)
 void QClient::LoadChildrenOldParent(TreeItem* root, nlohmann::basic_json<> js, int& pos)
 {
     pos = 1;
-    if (pos < js.size() && root!=model->getRootItem())
+    if (pos < js.size() && root != model->getRootItem())
     {
         std::string js1 = js[pos]["idoldparent"];
         std::string noid = js[pos]["idnode"];
         while (pos < js.size())
         {
 
-            if (js1!="NULL" && root->getID() == std::stoi(js1))
+            if (js1 != "NULL" && root->getID() == std::stoi(js1))
             {
                 TreeItem* node = model->getNodeForId(std::stoi(noid));//nu merge functia asta
                 node->setOldParentNode(root);
@@ -584,8 +581,8 @@ void QClient::prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, in
         idparent = "-1";
     }
     convertFromTilda(text);
-    root->insertChildrenLoad(0, std::stoi(idnode),NRCOL,text, QVariant(name.c_str()),
-        QVariant(QIcon(photoname.c_str())),QVariant(QColor(color.c_str())),QVariant(QFont(font.c_str())),date);
+    root->insertChildrenLoad(0, std::stoi(idnode), NRCOL, text, QVariant(name.c_str()),
+        QVariant(QIcon(photoname.c_str())), QVariant(QColor(color.c_str())), QVariant(QFont(font.c_str())), date);
     updateActions();
 }
 
@@ -660,7 +657,7 @@ void QClient::makeMotherNode()
         }
         QModelIndex child = model->indexForTreeItem(model->getRootItem()->child(0));
         model->setData(child, QVariant("Trash"), Qt::DisplayRole);
-        QIcon icon("../photos/trash.png");
+        QIcon icon("../photos/trashi.png");
 
 
         model->setData(child, QVariant(icon), Qt::DecorationRole);
@@ -682,7 +679,7 @@ void QClient::makeMotherNode()
         model->setData(child, QVariant(icon), Qt::DecorationRole);
         model->setID(0);
 
-        ui.treeView->selectionModel()->setCurrentIndex(model->index(0,0,index), QItemSelectionModel::ClearAndSelect);
+        ui.treeView->selectionModel()->setCurrentIndex(model->index(0, 0, index), QItemSelectionModel::ClearAndSelect);
     }
     updateActions();
 }
@@ -698,13 +695,13 @@ void QClient::verifyDate()
 
     std::list<std::string> lista;
     std::string mesaj("This notes have limit date:\n");
-    verifyDateFor(getRootItem(), lista,buffer);
+    verifyDateFor(getRootItem(), lista, buffer);
     for (auto it = lista.begin(); it != lista.end(); it++)
     {
         mesaj += (*it);
         mesaj += ",\n";
     }
-    QMessageBox::information(this, "Limit Date",mesaj.c_str());
+    QMessageBox::information(this, "Limit Date", mesaj.c_str());
 }
 
 void QClient::verifyDateFor(TreeItem* root, std::list<std::string>& allNodes, std::string curDate)
@@ -739,12 +736,17 @@ void QClient::setTheme()
         std::string tema(
             "QHeaderView::section\n"
             "{\n"
+            //"text: rgb(0,0,0)\n"
             "color: rgb(0,0,0);\n"
             "background-color: rgb(250,250,250);\n"
             "border-color: rgb(250,250,250);\n"
             "gridline-color: rgb(250,250,250);\n"
             "selection-color: rgb(250,250,250);\n"
             "selection-background-color: rgb(250,250,250);\n"
+            "}\n"
+            "QToolTip\n"
+            "{\n"
+            "color:rgb(0,0,0);background-color: rgb(255,255,255);border:none;"
             "}\n"
             "QTreeView\n"
             "{\n"
@@ -759,7 +761,7 @@ void QClient::setTheme()
 
         ui.treeView->setStyleSheet(tema.c_str());
     }
-        break;
+    break;
     case ThemeClient::DarkTheme:
     {
         //model->setHeaderData(0, Qt::Horizontal, QVariant(QColor(35,35,35)),Qt::FontRole);
@@ -775,12 +777,17 @@ void QClient::setTheme()
         std::string tema(
             "QHeaderView::section\n"
             "{\n"
+            //"text: rgb(255,255,255)\n"
             "color: rgb(255, 255, 255);\n"
             "background-color: rgb(50,50,50);\n"
             "border-color: rgb(50,50,50);\n"
             "gridline-color: rgb(50,50,50);\n"
             "selection-color: rgb(50,50,50);\n"
             "selection-background-color: rgb(50,50,50);\n"
+            "}\n"
+            "QToolTip\n"
+            "{\n"
+            "color:rgb(255,255,255);background-color: rgb(27,27,27);border:none;"
             "}\n"
             "QTreeView\n"
             "{\n"
@@ -792,11 +799,11 @@ void QClient::setTheme()
             "selection-color: rgb(115, 129, 255);\n"
             "selection-background-color: rgb(255, 183, 199);\n"
             "}\n");
-        
+
         ui.treeView->setStyleSheet(tema.c_str());
-        
+
     }
-        break;
+    break;
     default:
         break;
     }
@@ -822,7 +829,7 @@ void QClient::modifyColor(QColor& color)
     {
     case ThemeClient::LightTheme:
     {
-        if (color== QColor(255, 255, 255))
+        if (color == QColor(255, 255, 255))
             color = QColor(0, 0, 0);
     }
     break;
@@ -848,10 +855,10 @@ void QClient::insertNewNode(const std::string photo, const std::string name, con
         QMessageBox::information(this, "client message", "You can't create more notes in guest mode");
         return;
     }
-    if (!model->insertRow(index.row()+1, index.parent()))
+    if (!model->insertRow(index.row() + 1, index.parent()))
         return;
 
-    QModelIndex child = model->index(index.row()+1, 0, index.parent());
+    QModelIndex child = model->index(index.row() + 1, 0, index.parent());
     model->setData(child, QVariant(name.c_str()), Qt::DisplayRole);
     QIcon icon(photo.c_str());
     model->setData(child, QVariant(icon), Qt::DecorationRole);
@@ -873,7 +880,7 @@ void QClient::insertNewNode(const std::string photo, const std::string name, con
         sendNewNodeMessage(mes);
         IncomingMessages();
     }
-   
+
 }
 void QClient::inservNewSubnode(const std::string photo, const std::string name, const QFont font, QColor color, const QDate date)
 {
@@ -909,7 +916,7 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name, 
     model->setData(child, QVariant(font), Qt::FontRole);
     model->setDate(date, index);
 
-    ui.treeView->selectionModel()->setCurrentIndex(model->index(0, 0, index),QItemSelectionModel::ClearAndSelect);
+    ui.treeView->selectionModel()->setCurrentIndex(model->index(0, 0, index), QItemSelectionModel::ClearAndSelect);
     updateActions();
 
     //make json
@@ -919,12 +926,12 @@ void QClient::inservNewSubnode(const std::string photo, const std::string name, 
         int iduser = this->user->getID();
         int idparent = model->getIdForIndex(index);
         nlohmann::json js = makeJsonNewNode(name, iduser, idparent, main->getNumberOfNodes(),
-            font.family().toStdString(), color.name().toStdString(), date.toString().toStdString(), photo); 
+            font.family().toStdString(), color.name().toStdString(), date.toString().toStdString(), photo);
         std::string mes = js.dump();
         sendNewNodeMessage(mes);
         IncomingMessages();
     }
-    
+
 }
 
 void QClient::updateActions()
@@ -933,7 +940,7 @@ void QClient::updateActions()
     bool hasSelection = !ui.treeView->selectionModel()->selection().isEmpty();
     ui.actionDelete_Node->setEnabled(hasSelection);
     ui.actionRecover_Node->setEnabled(hasSelection);
-    
+
     bool hasCurrent = ui.treeView->selectionModel()->currentIndex().isValid();
     ui.actionAdd_New_Node->setEnabled(hasCurrent);
 
@@ -941,7 +948,7 @@ void QClient::updateActions()
     {
 
         ui.treeView->closePersistentEditor(ui.treeView->selectionModel()->currentIndex());
-        
+
         int row = ui.treeView->selectionModel()->currentIndex().row();
         int column = ui.treeView->selectionModel()->currentIndex().column();
 
@@ -962,7 +969,7 @@ void QClient::deleteNode()
         QClient* main = QClient::getInstance();
         int idnode = model->getIdForIndex(index);
         int iduser = user->getID();
-        std::string mes=model->getAllChildren(std::to_string(iduser), index);
+        std::string mes = model->getAllChildren(std::to_string(iduser), index);
         sendRemoveNodeMessage(mes);
         IncomingMessages();
     }
@@ -982,11 +989,12 @@ void QClient::OpenNote()
         if (model->isDeleted(index))
         {
             QMessageBox::information(this, "Deleted Node", "This note can not be open because it is deleted!");
-          
+
         }
         return;
     }
 
+    ui.textEdit->setEnabled(true);
     std::string text = model->getText(index);
     ui.textEdit->setHtml("");
 
@@ -1000,7 +1008,7 @@ void QClient::on_actionAdd_New_Node_triggered()
         return;
     if (model->isHome(index))
         return;
-    NewNode *nn=new NewNode(1);
+    NewNode* nn = new NewNode(1);
     nn->show();
 }
 
@@ -1072,16 +1080,18 @@ void QClient::add_corresponding_checkboxes()
         bool is_there_a_checkbox = ui.textEdit->find("~c");
         if (!is_there_a_checkbox)
             break;
-         QCheckBox* check = new QCheckBox(this);
-         check->isCheckable();
-         QRect rect1(ui.textEdit->cursorRect());
-         QRect rect2(ui.textEdit->geometry());
-         QRect rect3(check->geometry());
-         QRect rect4(ui.toolBar->geometry());
-         check->show();
-         check->move(rect1.x() + rect2.x() + rect3.x() - 15, rect1.y() + rect2.y() + rect3.height() - 10 + rect4.height());
-         cursor = ui.textEdit->textCursor();
-         m_checkboxes << check;
+        QCheckBox* check = new QCheckBox(this);
+        check->isCheckable();
+        QRect rect1(ui.textEdit->cursorRect());
+        QRect rect2(ui.centralWidget->rect());
+        QRect rect3(check->geometry());
+        QRect rect4(ui.toolBar->geometry());
+        QTextCursor cursor_aux(ui.textEdit->textCursor());
+        check->show();
+        check->move(rect1.x() + ui.layoutWidget->x() -5 + rect3.x(),
+            rect1.y() + rect2.y() + rect3.height() + rect4.height());
+        cursor_aux = ui.textEdit->textCursor();
+        m_checkboxes << check;
     }
     cursor.movePosition(QTextCursor::Start);
     ui.textEdit->setTextCursor(cursor);
@@ -1090,19 +1100,29 @@ void QClient::add_corresponding_checkboxes()
         bool is_there_a_checked_checkbox = ui.textEdit->find("`c");
         if (!is_there_a_checked_checkbox)
             break;
-         QCheckBox* check = new QCheckBox(this);
-         check->isCheckable();
-         check->setChecked(true);
-         QRect rect1(ui.textEdit->cursorRect());
-         QRect rect2(ui.textEdit->geometry());
-         QRect rect3(check->geometry());
-         QRect rect4(ui.toolBar->geometry());
-         check->show();
-         check->move(rect1.x() + rect2.x() + rect3.x() - 15, rect1.y() + rect2.y() + rect3.height() - 10 + rect4.height());
-         cursor = ui.textEdit->textCursor();
-         m_checkboxes << check;
-        
+        QCheckBox* check = new QCheckBox(this);
+        cursor.insertHtml("~c");
+        check->isCheckable();
+        check->setChecked(true);
+        QRect rect1(ui.textEdit->cursorRect());
+        QRect rect2(ui.centralWidget->rect());
+        QRect rect3(check->geometry());
+        QRect rect4(ui.toolBar->geometry());
+        QTextCursor cursor(ui.textEdit->textCursor());
+        check->show();
+        check->move(rect1.x() + ui.layoutWidget->x() -5 + rect3.x(),
+            rect1.y() + rect2.y() + rect3.height() + rect4.height());
+        cursor = ui.textEdit->textCursor();
+        m_checkboxes << check;
     }
+    /*cursor.movePosition(QTextCursor::Start);
+    ui.textEdit->setTextCursor(cursor);
+    while (cursor.position() != ui.textEdit->textCursor().End)
+    {
+        ui.textEdit->find("`c");
+        cursor = ui.textEdit->textCursor();
+        
+    }*/
 }
 
 void QClient::on_actionRecover_Node_triggered()
@@ -1121,8 +1141,8 @@ void QClient::on_actionOpen_triggered()
 {
     bool cancel = false;
     checkSave(cancel);
-    if(!cancel)
-    openFile();
+    if (!cancel)
+        openFile();
     add_corresponding_checkboxes();
 }
 
@@ -1142,7 +1162,7 @@ void QClient::on_actionExit_triggered()
 {
     bool cancel = false;
     checkSave(cancel);
-    if(!cancel)
+    if (!cancel)
         QApplication::quit();
 }
 
@@ -1158,7 +1178,7 @@ void QClient::save_type_checkboxes()
         {
             for (int j = 0;j <= i - nr_of_checked;j++)
             {
-               ui.textEdit->find("~c"); 
+                ui.textEdit->find("~c");
             }
             ui.textEdit->textCursor().insertText("`c");
             textCursor.movePosition(QTextCursor::Start);
@@ -1248,12 +1268,12 @@ void QClient::on_actionReplace_triggered()
         return;
     if (frm->get_all())
     {
-      //Replace All
+        //Replace All
         QString text = ui.textEdit->toHtml();
         text = text.replace(frm->get_findtext(), frm->get_replacetext());
         ui.textEdit->setHtml(text);
     }
-    else 
+    else
     {
         //Replace one
         bool value = ui.textEdit->find(frm->get_findtext());
@@ -1355,7 +1375,7 @@ void QClient::on_action_Insert_List_triggered()
         listFormat.setIndent(indent);
         listFormat.setStyle(QTextListFormat::ListSquare);
         cursor->insertList(listFormat);
-        indent +=1;
+        indent += 1;
     }
     else
     {
@@ -1375,7 +1395,7 @@ void QClient::on_actionInsert_Table_triggered()
         return;
     QTextCursor* cursor = new QTextCursor(ui.textEdit->textCursor());
     cursor->insertTable(diag->get_rows(), diag->get_columns());
-    for(int i=0;i<diag->get_rows()*diag->get_columns();i++)
+    for (int i = 0;i < diag->get_rows() * diag->get_columns();i++)
     {
         cursor->insertText("\ttext\t");
         cursor->movePosition(QTextCursor::NextCell);
@@ -1391,8 +1411,8 @@ void QClient::on_actionAdd_Column_triggered()
         cursor->currentTable()->appendColumns(1);
     else
     {
-            QMessageBox::information(this, "Error", "Select in which table you want to add the column or create a table first!");
-            return;
+        QMessageBox::information(this, "Error", "Select in which table you want to add the column or create a table first!");
+        return;
     }
 }
 
@@ -1401,7 +1421,7 @@ void QClient::on_actionAdd_Row_triggered()
     QTextCursor* cursor = new QTextCursor(ui.textEdit->textCursor());
     if (cursor->currentTable())
         cursor->currentTable()->appendRows(1);
-    else 
+    else
     {
         QMessageBox::information(this, "Error", "Select in which table you want to add the row or create a table first!");
         return;
@@ -1422,11 +1442,11 @@ void QClient::on_actionInsert_Image_triggered()
     textDocument->addResource(QTextDocument::ImageResource, Uri, QVariant(file));
     QTextCursor cursor = ui.textEdit->textCursor();
     QTextImageFormat imageFormat;
-    imageFormat.setWidth(image.width());
-    imageFormat.setHeight(image.height());
+    imageFormat.setWidth(300);
+    imageFormat.setHeight(300);
     imageFormat.setName(Uri.toString());
     cursor.insertImage(imageFormat);
-    
+
 }
 
 void QClient::on_actionInsert_Checkbox_triggered()
@@ -1434,13 +1454,14 @@ void QClient::on_actionInsert_Checkbox_triggered()
     QCheckBox* check = new QCheckBox(this);
     check->isCheckable();
     QRect rect1(ui.textEdit->cursorRect());
-    QRect rect2(ui.textEdit->geometry());
+    QRect rect2(ui.centralWidget->rect());
     QRect rect3(check->geometry());
     QRect rect4(ui.toolBar->geometry());
     QTextCursor cursor(ui.textEdit->textCursor());
     check->show();
-    check->move(rect1.x()+rect2.x()+rect3.x(),rect1.y()+rect2.y()+rect3.height()-10+rect4.height());
-    
+    check->move(rect1.x() + ui.layoutWidget->x()+12+ rect3.x(),
+        rect1.y() + rect2.y() + rect3.height() + rect4.height());
+
     /*QColor old_color = ui.textEdit->textColor();
     QPalette hidingspot = ui.textEdit->palette();
     hidingspot.setColor(QPalette::Text, ui.textEdit->palette().base().color());
@@ -1451,17 +1472,41 @@ void QClient::on_actionInsert_Checkbox_triggered()
     QColor old_color = ui.textEdit->textColor();
     QColor hidingspot = ui.textEdit->palette().base().color();
     ui.textEdit->setTextColor(hidingspot);
-    cursor.insertText("~c");
-    cursor.insertText("        ");
     m_checkboxes << check;
+    cursor.insertText("~c");
+    cursor.insertText("                          ");
     
+
+}
+
+void QClient::on_actionDelete_Checkbox_triggered()
+{
+    Delete_Checkboxes* frm = new Delete_Checkboxes(this);
+    if (!frm->exec())
+        return;
+    int index = frm->get_value();
+    QTextCursor cursor(ui.textEdit->textCursor());
+    cursor.setPosition(QTextCursor::Start);
+    ui.textEdit->setTextCursor(cursor);
+    for (int i = 0;i < index-1;i++)
+    {
+        ui.textEdit->find("~c");
+    }
+    ui.textEdit->textCursor().removeSelectedText();
+    delete(m_checkboxes[index - 1]);
+    m_checkboxes.remove(index - 1);
+    for (int i = index - 1;i < m_checkboxes.size();i++)
+    {
+        m_checkboxes[i]->move(m_checkboxes[i]->pos().x()-15, m_checkboxes[i]->pos().y());
+        m_checkboxes[i]->show();
+    }
 }
 
 void QClient::on_actionNew_triggered()
 {
     bool cancel = false;
     checkSave(cancel);
-    if(!cancel)
+    if (!cancel)
         newFile();
     qDeleteAll(m_checkboxes.begin(), m_checkboxes.end());
     m_checkboxes.clear();

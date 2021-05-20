@@ -92,6 +92,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ChangePassForm.cpp" />
+    <ClCompile Include="Delete_Checkboxes.cpp" />
     <ClCompile Include="LoginForm.cpp" />
     <ClCompile Include="NewNode.cpp" />
     <ClCompile Include="Find_Form.cpp" />
@@ -104,6 +105,7 @@
     <QtRcc Include="QClient.qrc" />
     <QtRcc Include="Icon_Resource.qrc" />
     <QtUic Include="ChangePassForm.ui" />
+    <QtUic Include="Delete_Checkboxes.ui" />
     <QtUic Include="Find_Form.ui" />
     <QtUic Include="FirstForm.ui" />
     <QtUic Include="LoginForm.ui" />
@@ -127,6 +129,7 @@
     <QtMoc Include="TreeItem.h" />
     <QtMoc Include="TreeModel.h" />
     <QtMoc Include="LoginForm.h" />
+    <QtMoc Include="Delete_Checkboxes.h" />
     <ClInclude Include="resource.h" />
     <QtMoc Include="Replace_Form.h" />
     <QtMoc Include="RegisterForm.h" />
