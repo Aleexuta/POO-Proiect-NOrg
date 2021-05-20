@@ -123,13 +123,15 @@
 			if (str[i] == '\n')
 				str[i] = ' ';
 			if (str[i] == '\'')
-				str[i] = '~';
+				str[i] = '$';
 			if (str[i] == '"')
 				str[i] = '@';
 			if (str[i] == '{')
 				str[i] = '(';
 			if (str[i] == '}')
-				str[i] = ')';	
+				str[i] = ')';
+			if (str[i] == '\t')
+				str[i] = '&';
 		}
 	}
 	inline void convertFromTilda(std::string& str)
@@ -137,7 +139,7 @@
 		std::string nou="";
 		for (int i = 0; i <= str.size(); i++)
 		{
-			if (str[i] == '~')
+			if (str[i] == '$')
 				str[i] = '\'';
 			if (str[i] == '@')
 				str[i] = '"';
@@ -145,5 +147,7 @@
 				str[i] = '{';
 			if (str[i] == ')')
 				str[i] = '}';
+			if (str[i] == '&')
+				str[i] = '\t';
 		}
 	}

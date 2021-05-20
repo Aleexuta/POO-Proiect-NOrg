@@ -234,7 +234,9 @@ std::string IServer::LoginUser(std::string j)
 
 		if (rasp!="")
 		{
+			std::cout << rasp << "\n";
 			auto js2 = nlohmann::json::parse(rasp);
+			
 			std::string passCorect = js2[0]["password"];
 			if (passCorect!= password)
 			{
@@ -247,6 +249,7 @@ std::string IServer::LoginUser(std::string j)
 	catch (...)
 	{
 		std::cout << "\n Eroare la LoginUser(IServer)";
+		return "";
 	}
 }
 
@@ -277,12 +280,11 @@ std::string IServer::loadAllNodes(std::string j)
 {
 	try
 	{
-
 		return DB.selectAllNodes(std::stoi(j));
-
 	}
-		catch (...)
+	catch (...)
 	{
+		return "";
 		std::cout << "\n Eroare la LoadAllNodes(IServer)";
 	}
 }

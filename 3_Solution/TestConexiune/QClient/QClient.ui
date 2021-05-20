@@ -525,7 +525,7 @@
   <action name="actionAdd_New_Node">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../../.designer/photos/addNode.png</normaloff>../../../../../../../.designer/photos/addNode.png</iconset>
+     <normaloff>../photos/addNode.png</normaloff>../photos/addNode.png</iconset>
    </property>
    <property name="text">
     <string>Add New Node</string>
@@ -534,7 +534,7 @@
   <action name="actionAdd_New_Subnode">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../../.designer/photos/addChild.png</normaloff>../../../../../../../.designer/photos/addChild.png</iconset>
+     <normaloff>../photos/addChild.png</normaloff>../photos/addChild.png</iconset>
    </property>
    <property name="text">
     <string>Add New Subnode</string>
@@ -543,7 +543,7 @@
   <action name="actionDelete_Node">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../../.designer/photos/trashi.png</normaloff>../../../../../../../.designer/photos/trashi.png</iconset>
+     <normaloff>../photos/trashi.png</normaloff>../photos/trashi.png</iconset>
    </property>
    <property name="text">
     <string>Delete Node</string>
@@ -588,7 +588,7 @@
   <action name="action_Insert_List">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../../.designer/photos/list.png</normaloff>../../../../../../../.designer/photos/list.png</iconset>
+     <normaloff>../photos/list.png</normaloff>../photos/list.png</iconset>
    </property>
    <property name="text">
     <string>Insert Bulleted List</string>
@@ -613,7 +613,7 @@
   <action name="actionInsert_Table">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../../.designer/photos/table.png</normaloff>../../../../../../../.designer/photos/table.png</iconset>
+     <normaloff>../photos/table.png</normaloff>../photos/table.png</iconset>
    </property>
    <property name="text">
     <string>Insert Table</string>
@@ -622,7 +622,7 @@
   <action name="actionInsert_Image">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../../.designer/photos/image.png</normaloff>../../../../../../../.designer/photos/image.png</iconset>
+     <normaloff>../photos/image.png</normaloff>../photos/image.png</iconset>
    </property>
    <property name="text">
     <string>Insert Image</string>
@@ -631,7 +631,7 @@
   <action name="actionInsert_Checkbox">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../../.designer/photos/checkbox.png</normaloff>../../../../../../../.designer/photos/checkbox.png</iconset>
+     <normaloff>../photos/checkbox.png</normaloff>../photos/checkbox.png</iconset>
    </property>
    <property name="text">
     <string>Insert Checkbox</string>
@@ -640,7 +640,7 @@
   <action name="actionUser">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../../.designer/photos/user.png</normaloff>../../../../../../../.designer/photos/user.png</iconset>
+     <normaloff>../photos/user.png</normaloff>../photos/user.png</iconset>
    </property>
    <property name="text">
     <string>User</string>
@@ -654,9 +654,11 @@
   <action name="actionDark_Mode">
    <property name="text">
     <string>Dark Mode</string>
+    <string>Recover Node</string>
    </property>
   </action>
   <action name="actionLight_Mode">
+  <action name="actionDark_Mode">
    <property name="text">
     <string>Light Mode</string>
    </property>

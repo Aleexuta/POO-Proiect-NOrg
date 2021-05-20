@@ -24,7 +24,7 @@
 #include "UserForm.h"
 
 
-#define SLEEP 2000
+#define SLEEP 1000 
 bool isloged = false;
 bool isregistered = false;
 QClient* QClient::instance = nullptr;
@@ -691,7 +691,7 @@ void QClient::verifyDate()
     char buffer[80];
     time(&rawTime);
     timeinfo = localtime(&rawTime);
-    strftime(buffer, 80, "%a %h%e %Y", timeinfo);
+    strftime(buffer, 80, "%a %h %e %Y", timeinfo);
 
     std::list<std::string> lista;
     std::string mesaj("This notes have limit date:\n");
@@ -816,11 +816,13 @@ void QClient::logout()
     isregistered = false;
     delete(user);
     model->deleteChildren();
+    ui.textEdit->setText(" ");
+    ui.textEdit->setEnabled(false);
     hide();
     FirstForm* ff = FirstForm::getInstance();
     ff->show();
     UserForm* us = UserForm::getInstance();
-    us->deleteInstance();
+    us->hide();
 }
 
 void QClient::modifyColor(QColor& color)
@@ -993,8 +995,11 @@ void QClient::OpenNote()
         }
         return;
     }
+    if (model->isHome(index))
+    {
+        return;
+    }
 
-    ui.textEdit->setEnabled(true);
     std::string text = model->getText(index);
     ui.textEdit->setHtml("");
 
@@ -1070,6 +1075,7 @@ void QClient::on_actionDelete_Node_triggered()
 void QClient::on_actionOpen_Note_triggered()
 {
     OpenNote();
+    add_corresponding_checkboxes();
 }
 
 void QClient::add_corresponding_checkboxes()
