@@ -26,6 +26,8 @@ UserForm::UserForm(QWidget* parent) :
     QRegion* region = new QRegion(0, 0, ui->photo->width(), ui->photo->height(), QRegion::Ellipse);
     ui->photo->setScaledContents(true);
     ui->photo->setMask(*region);
+    this->setWindowIcon(QIcon("../photos/user.png"));
+    this->setWindowTitle("USER");
 
     connect(ui->logout, SIGNAL(clicked()), this, SLOT(on_logoutButton_clicked()));
     connect(ui->deleteAcc, SIGNAL(clicked()), this, SLOT(on_deleteAccButton_clicked()));

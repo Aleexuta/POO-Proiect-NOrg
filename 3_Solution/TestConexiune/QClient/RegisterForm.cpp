@@ -16,6 +16,8 @@ RegisterForm::RegisterForm(QWidget* parent):
 {
 	ui->setupUi(this);
 	this->freeText();
+	this->setWindowIcon(QIcon("../photos/user.png"));
+	this->setWindowTitle("Register");
 }
 RegisterForm::~RegisterForm()
 {
