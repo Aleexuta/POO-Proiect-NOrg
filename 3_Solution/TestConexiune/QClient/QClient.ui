@@ -133,7 +133,7 @@
      <x>0</x>
      <y>0</y>
      <width>832</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -214,7 +214,13 @@
     </property>
     <addaction name="action_Insert_List"/>
     <addaction name="actionInsert_Image"/>
+   </widget>
+   <widget class="QMenu" name="menuCheckboxes">
+    <property name="title">
+     <string>Checkboxes</string>
+    </property>
     <addaction name="actionInsert_Checkbox"/>
+    <addaction name="actionDelete_Checkbox"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuNodes"/>
@@ -223,6 +229,7 @@
    <addaction name="menuTable"/>
    <addaction name="menuText"/>
    <addaction name="menuInsert"/>
+   <addaction name="menuCheckboxes"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="mainToolBar">
@@ -652,6 +659,11 @@
   <action name="actionLight_Mode">
    <property name="text">
     <string>Light Mode</string>
+   </property>
+  </action>
+  <action name="actionDelete_Checkbox">
+   <property name="text">
+    <string>Delete Checkbox</string>
    </property>
   </action>
  </widget>

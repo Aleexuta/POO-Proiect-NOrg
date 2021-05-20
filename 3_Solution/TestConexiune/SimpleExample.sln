@@ -47,7 +47,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		Qt5Version = 5.15.2_msvc2019_64(2)
 		SolutionGuid = {32A55B58-5D09-4F48-8BB5-C7ACF62A656F}
+		Qt5Version = 5.15.2_msvc2019_64
 	EndGlobalSection
 EndGlobal

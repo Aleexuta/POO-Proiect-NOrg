@@ -73,6 +73,9 @@
     <ClCompile Include="Table_Dialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Delete_Checkboxes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IUser.h">
@@ -113,6 +116,9 @@
     <QtUic Include="Table_Dialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="Delete_Checkboxes.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
     <QtUic Include="QClient.ui">
       <Filter>Form Files</Filter>
     </QtUic>
@@ -149,6 +155,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Table_Dialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Delete_Checkboxes.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

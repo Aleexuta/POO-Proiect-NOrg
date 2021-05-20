@@ -22,6 +22,7 @@
 #include "Replace_Form.h"
 #include "IUser.h"
 #include "Table_Dialog.h"
+#include "Delete_Checkboxes.h"
 class TreeModel;
 class TreeItem;
 enum class CustomMsgTypes : uint32_t
@@ -61,10 +62,10 @@ class QClient : public QMainWindow, public olc::net::client_interface<CustomMsgT
 
 private:
 	static QClient* instance;
-	 QClient(QWidget *parent = Q_NULLPTR);
+	QClient(QWidget* parent = Q_NULLPTR);
 	~QClient();
-	void closeEvent(QCloseEvent *event)override;
-	void checkSave(bool &cancel);
+	void closeEvent(QCloseEvent* event)override;
+	void checkSave(bool& cancel);
 	void save();
 	void newFile();
 	void openFile();
@@ -75,12 +76,11 @@ private:
 	bool m_changed;
 	ThemeClient theme = ThemeClient::LightTheme;
 	TreeModel* model;
-	QVector<QCheckBox *> m_checkboxes;
 public:
 	static QClient* getInstance();
 	void deleteInstance();
 	void IncomingMessages();
-
+	QVector<QCheckBox*> m_checkboxes;
 	void sendRegisterMessage(std::string j);
 	void sendLoginMessage(std::string j);
 	void sendNewNodeMessage(std::string j);
@@ -106,26 +106,26 @@ public:
 	void add_corresponding_checkboxes();//
 	void save_type_checkboxes();//
 private:
-	auto makeJsonNewNode(std::string name, int iduser, int idparent, int idnode,std::string font, std::string color, std::string date,std::string namephoto = "");
+	auto makeJsonNewNode(std::string name, int iduser, int idparent, int idnode, std::string font, std::string color, std::string date, std::string namephoto = "");
 	void LoadAllNodes(std::string j);
-	void LoadChildren(TreeItem * root,nlohmann::basic_json<> js, int &pos);
+	void LoadChildren(TreeItem* root, nlohmann::basic_json<> js, int& pos);
 	void LoadChildrenOldParent(TreeItem* root, nlohmann::basic_json<> js, int& pos);
 	void prepareChildToInsert(TreeItem* root, nlohmann::basic_json<> js, int pos);
 	void moveNodeToTrash();
 	void recoverNodeFromTrash();
 	void makeMotherNode();
 	void verifyDate();
-	void verifyDateFor(TreeItem* root,std::list<std::string>& allNodes, std::string curDate);
+	void verifyDateFor(TreeItem* root, std::list<std::string>& allNodes, std::string curDate);
 	void setTheme();
 	void modifyColor(QColor& color);
 public:
 	void insertNewNode(const std::string photo, const std::string name, const QFont font, QColor color, const QDate date);
-	void inservNewSubnode(const std::string photo,const std::string name, const QFont font, QColor color, const QDate date);
+	void inservNewSubnode(const std::string photo, const std::string name, const QFont font, QColor color, const QDate date);
 	void updateActions();
 	void deleteNode();
 	void OpenNote();
 public slots:
-	
+
 	void on_actionAdd_New_Node_triggered();//
 	void on_actionAdd_New_Subnode_triggered();//
 	void on_actionDelete_Node_triggered();//
@@ -133,7 +133,7 @@ public slots:
 	void on_actionRecover_Node_triggered();//
 	void on_actionUser_triggered();//
 private slots:
-	
+
 	void on_actionNew_triggered();
 	void on_actionOpen_triggered();//
 	void on_actionPrint_triggered();
@@ -165,8 +165,7 @@ private slots:
 	void on_actionAdd_Row_triggered();
 	void on_actionInsert_Image_triggered();
 	void on_actionInsert_Checkbox_triggered();
-	
-
+	void on_actionDelete_Checkbox_triggered();
 	void on_actionDark_Mode_triggered();
 	void on_actionLight_Mode_triggered();
 };
