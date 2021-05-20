@@ -1079,6 +1079,8 @@ void QClient::on_actionDelete_Node_triggered()
 
 void QClient::on_actionOpen_Note_triggered()
 {
+    qDeleteAll(m_checkboxes.begin(), m_checkboxes.end());
+    m_checkboxes.clear();
     OpenNote();
     add_corresponding_checkboxes();
 }
