@@ -166,7 +166,6 @@ private slots:
 	void on_actionInsert_Image_triggered();
 	void on_actionInsert_Checkbox_triggered();
 	void on_actionDelete_Checkbox_triggered();
-
 	void on_actionDark_Mode_triggered();
 	void on_actionLight_Mode_triggered();
 };

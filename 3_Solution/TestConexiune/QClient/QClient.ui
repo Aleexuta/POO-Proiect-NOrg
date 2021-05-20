@@ -552,7 +552,7 @@
   <action name="actionOpen_Note">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../../.designer/photos/open.png</normaloff>../../../../../../../.designer/photos/open.png</iconset>
+     <normaloff>../photos/open.png</normaloff>../photos/open.png</iconset>
    </property>
    <property name="text">
     <string>Open Note</string>
@@ -654,11 +654,9 @@
   <action name="actionDark_Mode">
    <property name="text">
     <string>Dark Mode</string>
-    <string>Recover Node</string>
    </property>
   </action>
   <action name="actionLight_Mode">
-  <action name="actionDark_Mode">
    <property name="text">
     <string>Light Mode</string>
    </property>
